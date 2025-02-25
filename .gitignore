@@ -1,0 +1,64 @@
+# Ignore bin and obj folders
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code settings
+.vscode/
+*.code-workspace
+
+# Build artifacts
+*.dll
+*.exe
+*.pdb
+*.cache
+*.log
+*.sqlite
+*.sqlite3
+
+# NuGet packages
+packages/
+*.nupkg
+*.snupkg
+.nuget/
+project.lock.json
+
+# Rider/JetBrains IDE files
+.idea/
+*.sln.iml
+
+# Resharper settings
+*.DotSettings.user
+
+# ASP.NET temporary files
+.vs/
+wwwroot/
+node_modules/
+.env
+
+# Publish output
+publish/
+dist/
+
+# Coverage reports
+coverage/
+
+# Logs
+logs/
+*.log
+
+# Database
+*.mdf
+*.ldf
+
+# macOS system files
+.DS_Store
+
+# Windows system files
+Thumbs.db
+Desktop.ini
