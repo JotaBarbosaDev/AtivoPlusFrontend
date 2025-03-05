@@ -793,7 +793,7 @@
         <ul class="space-y-2">
           <li>
             <a
-              href="#"
+              asp-page="Index"
               class="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
             >
               <svg
@@ -806,7 +806,7 @@
                 <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
                 <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
               </svg>
-              <span class="ml-3">Overview</span>
+              <span class="ml-3">Geral</span>
             </a>
           </li>
           <li>
@@ -830,7 +830,7 @@
                 ></path>
               </svg>
               <span class="flex-1 ml-3 text-left whitespace-nowrap"
-                >Pages</span
+                >Ativos Financeiros</span
               >
               <svg
                 aria-hidden="true"
@@ -848,11 +848,9 @@
             </button>
             <ul id="dropdown-pages" class="hidden py-2 space-y-2">
               <li>
-                <a
-                  href="#"
-                  class="flex items-center p-2 pl-11 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                  >Settings</a
-                >
+                <a 
+                asp-page="/Settings" 
+                class="flex items-center p-2 pl-11 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Settings</a>
               </li>
               <li>
                 <a
@@ -1334,81 +1332,13 @@
         </div>
       </div>
     </aside>
-
-    <main class="p-4 md:ml-64 h-auto pt-20">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-        <div class="flex flex-col justify-between bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 rounded-lg p-4 h-32 md:h-64">
-            <div class="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                Predio Coutinho
-            </div>
-            <div class="text-2xl font-semibold text-green-500 dark:text-green-400 mb-2">
-                24.987€
-            </div>
-            <div class="text-sm text-gray-500 dark:text-gray-400">
-                Uma descrição para o card
-            </div>
-        </div>
-        <div class="flex flex-col justify-between bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 rounded-lg p-4 h-32 md:h-64">
-            <div class="text-xl font-bold text-gray-900 dark:text-white mb-2">Acções: PETR4</div>
-            <div class="text-2xl font-semibold text-green-500 dark:text-green-400 mb-2">€ 32,45
-                
-            </div>
-            <div class="text-sm text-gray-500 dark:text-gray-400">Ação de petróleo da Petrobras</div>
-        </div>
-        <div class="flex flex-col justify-between bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 rounded-lg p-4 h-32 md:h-64">
-            <div class="text-xl font-bold text-gray-900 dark:text-white mb-2">Fundo Imobiliário: KNRI11</div>
-            <div class="text-2xl font-semibold text-green-500 dark:text-green-400 mb-2">€ 115,30</div>
-            <div class="text-sm text-gray-500 dark:text-gray-400">Investimento em imóveis comerciais</div>
-        </div>
-        <div class="flex flex-col justify-between bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 rounded-lg p-4 h-32 md:h-64">
-            <div class="text-xl font-bold text-gray-900 dark:text-white mb-2">Criptomoeda: BTC</div>
-            <div class="text-2xl font-semibold text-green-500 dark:text-green-400 mb-2">€ 150.000</div>
-            <div class="text-sm text-gray-500 dark:text-gray-400">Preço atual do Bitcoin</div>
-        </div>
-      </div>
-      <div
-        class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-96 mb-4"
-      ></div>
-      <div class="grid grid-cols-2 gap-4 mb-4">
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-      </div>
-      <div
-        class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-96 mb-4"
-      ></div>
-      <div class="grid grid-cols-2 gap-4">
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-      </div>
-    </main>
   </div>
     </header>
 
-    <main>
+    <main class="h-auto">
         @RenderBody() <!-- Aqui será injetado o conteúdo das páginas Razor -->
     </main>
 
-    <footer>
         
 
 <footer class="bg-white rounded-lg shadow-sm m-4 dark:bg-gray-800">
@@ -1430,7 +1360,6 @@
         </li>
     </ul>
     </div>
-</footer>
 
     </footer>
 
