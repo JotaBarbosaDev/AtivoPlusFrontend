@@ -14,25 +14,55 @@
     <title>Página Complexa com Animações</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        @@page {
+            size: A4 landscape;
+            margin: 0;
+        }
+
+        @@media print {
+            nav, header, #botao-print {
+                display: none !important;
+            }
+            [class*="md:hidden"],
+            [class*="lg:hidden"] {
+                display: table-cell !important;
+            }
+            .overflow-x-auto {
+                overflow: visible !important;
+            }
+            table {
+                width: 100% !important;
+                table-layout: auto !important;
+                font-size: 0.8rem;
+            }
+
+            .teste{
+                margin-left: 0px; !important
+            }
+        }
+    </style>
+
 </head>
 
 <body>
     <main class=" h-auto pt-20">
-        <section style="background: var(--fallback-b1,oklch(var(--b1)/1));" class="sm:py-5">
-            <div class="px-4 mx-auto max-w-screen-2xl lg:px-12">
+        <section style="background: var(--fallback-b1,oklch(var(--b1)/1));">
+            <div class="mx-auto max-w-screen-2xl">
                 <div class="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
                     <div class="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
                         <div class="flex items-center flex-1 space-x-4">
                             <h5>
                                 <span class="text-gray-500">Ativos:</span>
-                                <span class="dark:text-white">10</span>
+                                <span class="dark:text-white">20</span>
                             </h5>
                             <h5>
                                 <span class="text-gray-500">Total Lucro:</span>
-                                <span class="dark:text-white">€105.000</span>
+                                <span class="dark:text-white">€210.000</span>
                             </h5>
                         </div>
-                        <div class="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
+                        <div  id="botao-print" class="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
                             <button type="button" class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
                                 <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewBox="0 0 20 20"
                                     xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -41,7 +71,7 @@
                                 </svg>
                                 Adicionar Ativo
                             </button>
-                            <button type="button"
+                            <button type="button" id="botao-print" onclick="window.print()"
                                 class="flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                                 <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none"
                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
@@ -58,11 +88,11 @@
                                 class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
                                     <th scope="col" class="px-4 py-3">Ativo</th>
-                                    <th scope="col" class="px-4 py-3">Carteira</th>
-                                    <th scope="col" class="px-4 py-3 md:hidden">Tipo</th>
-                                    <th scope="col" class="px-4 py-3 md:hidden">Quantidade</th>
+                                    <th scope="col" class="px-4 py-3 md:hidden lg:table-cell">Carteira</th>
+                                    <th scope="col" class="px-4 py-3 md:hidden lg:table-cell">Tipo</th>
+                                    <th scope="col" class="px-4 py-3 md:hidden lg:table-cell">Quantidade</th>
                                     <th scope="col" class="px-4 py-3">Taxa Juro</th>
-                                    <th scope="col" class="px-4 py-3 md:hidden">Tipo Taxa</th>
+                                    <th scope="col" class="px-4 py-3 md:hidden lg:table-cell">Tipo Taxa</th>
                                     <th scope="col" class="px-4 py-3">Preço Compra</th>
                                     <th scope="col" class="px-4 py-3">Lucro</th>
                                 </tr>
@@ -73,25 +103,25 @@
                                     <th scope="row"
                                         class="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         <span class="text-2xl mr-3">🏠</span>
-                                        Casa em Lisboa
+                                        Casa em Lisboa  
                                     </th>
-                                    <td class="px-4 py-2">
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
                                         <span
                                             class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
                                             Carteira 1</span>
                                     </td>
-                                    <td class="px-4 py-2 md:hidden">
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
                                         <span
                                             class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
                                             Residencial</span>
                                     </td>
-                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden">
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
                                         1
                                     </td>
                                     <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         3.5%
                                     </td>
-                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden">
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
                                         Fixa
                                     </td>
                                     <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -108,23 +138,23 @@
                                         <span class="text-2xl mr-3">🏦</span>
                                         Fundo Imobiliário KNRI11
                                     </th>
-                                    <td class="px-4 py-2">
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
                                         <span
                                             class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
                                             Carteira 1</span>
                                     </td>
-                                    <td class="px-4 py-2 md:hidden">
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
                                         <span
-                                            class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 md:hidden">
+                                            class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 md:hidden lg:table-cell">
                                             Fundo Imobiliário</span>
                                     </td>
-                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden">
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
                                         150
                                     </td>
                                     <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         2.8%
                                     </td>
-                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden">
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
                                         Variável
                                     </td>
                                     <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -141,23 +171,23 @@
                                         <span class="text-2xl mr-3">📈</span>
                                         Ação PETR4
                                     </th>
-                                    <td class="px-4 py-2">
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
                                         <span
                                             class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
                                             Carteira 1</span>
                                     </td>
-                                    <td class="px-4 py-2 md:hidden">
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
                                         <span
                                             class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
                                             Ação</span>
                                     </td>
-                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden">
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
                                         500
                                     </td>
                                     <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         N/A
                                     </td>
-                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden">
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
                                         N/A
                                     </td>
                                     <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -174,23 +204,23 @@
                                         <span class="text-2xl mr-3">🪙</span>
                                         Criptomoeda BTC
                                     </th>
-                                    <td class="px-4 py-2">
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
                                         <span
                                             class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
                                             Carteira 2</span>
                                     </td>
-                                    <td class="px-4 py-2 md:hidden">
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
                                         <span
                                             class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 ">
                                             Criptomoeda</span>
                                     </td>
-                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden">
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
                                         0.5
                                     </td>
                                     <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         N/A
                                     </td>
-                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden">
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
                                         N/A
                                     </td>
                                     <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -207,23 +237,23 @@
                                         <span class="text-2xl mr-3">🏠</span>
                                         Casa em Porto
                                     </th>
-                                    <td class="px-4 py-2">
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
                                         <span
                                             class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
                                             Carteira 1</span>
                                     </td>
-                                    <td class="px-4 py-2 md:hidden">
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
                                         <span
                                             class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 ">
                                             Residencial</span>
                                     </td>
-                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden">
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
                                         1
                                     </td>
                                     <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         3.8%
                                     </td>
-                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden">
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
                                         Fixa
                                     </td>
                                     <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -240,23 +270,23 @@
                                         <span class="text-2xl mr-3">🏢</span>
                                         Apartamento no Algarve
                                     </th>
-                                    <td class="px-4 py-2">
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
                                         <span
                                             class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
                                             Carteira 1</span>
                                     </td>
-                                    <td class="px-4 py-2 md:hidden">
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
                                         <span
                                             class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 ">
                                             Residencial</span>
                                     </td>
-                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden">
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
                                         1
                                     </td>
                                     <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         4.0%
                                     </td>
-                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden">
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
                                         Fixa
                                     </td>
                                     <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -273,23 +303,23 @@
                                         <span class="text-2xl mr-3">📈</span>
                                         Ação ITUB4
                                     </th>
-                                    <td class="px-4 py-2">
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
                                         <span
                                             class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
                                             Carteira 2</span>
                                     </td>
-                                    <td class="px-4 py-2 md:hidden">
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
                                         <span
                                             class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 ">
                                             Ação</span>
                                     </td>
-                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden">
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
                                         1000
                                     </td>
                                     <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         N/A
                                     </td>
-                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden">
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
                                         N/A
                                     </td>
                                     <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -306,23 +336,23 @@
                                         <span class="text-2xl mr-3">💼</span>
                                         Fundo Multimercado XPML11
                                     </th>
-                                    <td class="px-4 py-2">
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
                                         <span
                                             class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
                                             Carteira 1</span>
                                     </td>
-                                    <td class="px-4 py-2 md:hidden">
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
                                         <span
                                             class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
                                             Fundo</span>
                                     </td>
-                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden">
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
                                         200
                                     </td>
                                     <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         3.2%
                                     </td>
-                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden">
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
                                         Variável
                                     </td>
                                     <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -339,23 +369,23 @@
                                         <span class="text-2xl mr-3">🪙</span>
                                         Criptomoeda ETH
                                     </th>
-                                    <td class="px-4 py-2">
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
                                         <span
                                             class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
                                             Carteira 1</span>
                                     </td>
-                                    <td class="px-4 py-2 md:hidden">
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
                                         <span
                                             class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
                                             Criptomoeda</span>
                                     </td>
-                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden">
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
                                         10
                                     </td>
                                     <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         N/A
                                     </td>
-                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden">
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
                                         N/A
                                     </td>
                                     <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -372,23 +402,352 @@
                                         <span class="text-2xl mr-3">💵</span>
                                         CDB Banco do Brasil
                                     </th>
-                                    <td class="px-4 py-2">
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
                                         <span
                                             class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
                                             Carteira 3</span>
                                     </td>
-                                    <td class="px-4 py-2 md:hidden">
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
                                         <span
                                             class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
                                             Renda Fixa</span>
                                     </td>
-                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden">
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
                                         5
                                     </td>
                                     <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         6.5%
                                     </td>
-                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden">
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
+                                        Fixa
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        €1,000
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        €150
+                                    </td>
+                                </tr>
+                                <tr class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <th scope="row"
+                                        class="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        <span class="text-2xl mr-3">🏠</span>
+                                        Casa em Lisboa  
+                                    </th>
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
+                                        <span
+                                            class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
+                                            Carteira 1</span>
+                                    </td>
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
+                                        <span
+                                            class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
+                                            Residencial</span>
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
+                                        1
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        3.5%
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
+                                        Fixa
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        €350,000
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        €25,000
+                                    </td>
+                                </tr>
+                                <!-- Linha 2: Fundo Imobiliário KNRI11 -->
+                                <tr class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <th scope="row"
+                                        class="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        <span class="text-2xl mr-3">🏦</span>
+                                        Fundo Imobiliário KNRI11
+                                    </th>
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
+                                        <span
+                                            class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
+                                            Carteira 1</span>
+                                    </td>
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
+                                        <span
+                                            class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 md:hidden lg:table-cell">
+                                            Fundo Imobiliário</span>
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
+                                        150
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        2.8%
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
+                                        Variável
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        €115.30
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        €3,200
+                                    </td>
+                                </tr>
+                                <!-- Linha 3: Ação PETR4 -->
+                                <tr class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <th scope="row"
+                                        class="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        <span class="text-2xl mr-3">📈</span>
+                                        Ação PETR4
+                                    </th>
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
+                                        <span
+                                            class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
+                                            Carteira 1</span>
+                                    </td>
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
+                                        <span
+                                            class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
+                                            Ação</span>
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
+                                        500
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        N/A
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
+                                        N/A
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        €32.45
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        €2,000
+                                    </td>
+                                </tr>
+                                <!-- Linha 4: Criptomoeda BTC -->
+                                <tr class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <th scope="row"
+                                        class="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        <span class="text-2xl mr-3">🪙</span>
+                                        Criptomoeda BTC
+                                    </th>
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
+                                        <span
+                                            class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
+                                            Carteira 2</span>
+                                    </td>
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
+                                        <span
+                                            class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 ">
+                                            Criptomoeda</span>
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
+                                        0.5
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        N/A
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
+                                        N/A
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        €150,000
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        €20,000
+                                    </td>
+                                </tr>
+                                <!-- Linha 5: Casa em Porto -->
+                                <tr class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <th scope="row"
+                                        class="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        <span class="text-2xl mr-3">🏠</span>
+                                        Casa em Porto
+                                    </th>
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
+                                        <span
+                                            class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
+                                            Carteira 1</span>
+                                    </td>
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
+                                        <span
+                                            class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 ">
+                                            Residencial</span>
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
+                                        1
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        3.8%
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
+                                        Fixa
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        €280,000
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        €18,000
+                                    </td>
+                                </tr>
+                                <!-- Linha 6: Apartamento no Algarve -->
+                                <tr class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <th scope="row"
+                                        class="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        <span class="text-2xl mr-3">🏢</span>
+                                        Apartamento no Algarve
+                                    </th>
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
+                                        <span
+                                            class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
+                                            Carteira 1</span>
+                                    </td>
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
+                                        <span
+                                            class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 ">
+                                            Residencial</span>
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
+                                        1
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        4.0%
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
+                                        Fixa
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        €220,000
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        €12,000
+                                    </td>
+                                </tr>
+                                <!-- Linha 7: Ação ITUB4 -->
+                                <tr class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <th scope="row"
+                                        class="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        <span class="text-2xl mr-3">📈</span>
+                                        Ação ITUB4
+                                    </th>
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
+                                        <span
+                                            class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
+                                            Carteira 2</span>
+                                    </td>
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
+                                        <span
+                                            class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 ">
+                                            Ação</span>
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
+                                        1000
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        N/A
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
+                                        N/A
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        €4.50
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        €500
+                                    </td>
+                                </tr>
+                                <!-- Linha 8: Fundo Multimercado XPML11 -->
+                                <tr class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <th scope="row"
+                                        class="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        <span class="text-2xl mr-3">💼</span>
+                                        Fundo Multimercado XPML11
+                                    </th>
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
+                                        <span
+                                            class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
+                                            Carteira 1</span>
+                                    </td>
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
+                                        <span
+                                            class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
+                                            Fundo</span>
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
+                                        200
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        3.2%
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
+                                        Variável
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        €85.00
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        €1,200
+                                    </td>
+                                </tr>
+                                <!-- Linha 9: Criptomoeda ETH -->
+                                <tr class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <th scope="row"
+                                        class="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        <span class="text-2xl mr-3">🪙</span>
+                                        Criptomoeda ETH
+                                    </th>
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
+                                        <span
+                                            class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
+                                            Carteira 1</span>
+                                    </td>
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
+                                        <span
+                                            class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
+                                            Criptomoeda</span>
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
+                                        10
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        N/A
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
+                                        N/A
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        €2,500
+                                    </td>
+                                    <td class="px-4 py-2">
+                                        €5,000
+                                    </td>
+                                </tr>
+                                <!-- Linha 10: CDB Banco do Brasil -->
+                                <tr class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <th scope="row"
+                                        class="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        <span class="text-2xl mr-3">💵</span>
+                                        CDB Banco do Brasil
+                                    </th>
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
+                                        <span
+                                            class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
+                                            Carteira 3</span>
+                                    </td>
+                                    <td class="px-4 py-2 md:hidden lg:table-cell">
+                                        <span
+                                            class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
+                                            Renda Fixa</span>
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
+                                        5
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        6.5%
+                                    </td>
+                                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
                                         Fixa
                                     </td>
                                     <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
