@@ -66,7 +66,7 @@
     </style>
 </head>
 <body>
-    <main class="h-auto pt-20">
+    <main class="h-auto pt-20 px-0">
         <section style="background: var(--fallback-b1,oklch(var(--b1)/1));">
             <div class="mx-auto max-w-screen-2xl">
                 <div class="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
@@ -103,14 +103,14 @@
                         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
-                                    <th scope="col" class="px-4 py-3">Ativo</th>
-                                    <th scope="col" class="px-4 py-3 md:hidden lg:table-cell">Carteira</th>
-                                    <th scope="col" class="px-4 py-3 md:hidden lg:table-cell">Tipo</th>
-                                    <th scope="col" class="px-4 py-3 md:hidden lg:table-cell">Quantidade</th>
-                                    <th scope="col" class="px-4 py-3">Taxa Juro</th>
-                                    <th scope="col" class="px-4 py-3 md:hidden lg:table-cell">Tipo Taxa</th>
-                                    <th scope="col" class="px-4 py-3">Preço Compra</th>
-                                    <th scope="col" class="px-4 py-3">Lucro</th>
+                                    <th scope="col" class="px-4 py-3 hidden md:table-cell">Ativo</th>
+                                    <th scope="col" class="px-4 py-3 hidden md:hidden lg:table-cell">Carteira</th>
+                                    <th scope="col" class="px-4 py-3 hidden md:hidden lg:table-cell">Tipo</th>
+                                    <th scope="col" class="px-4 py-3 hidden md:hidden lg:table-cell">Quantidade</th>
+                                    <th scope="col" class="px-4 py-3 hidden lg:table-cell">Taxa Juro</th>
+                                    <th scope="col" class="px-4 py-3 hidden md:hidden lg:table-cell">Tipo Taxa</th>
+                                    <th scope="col" class="px-4 py-3 hidden lg:table-cell">Preço Compra</th>
+                                    <th scope="col" class="px-4 py-3 hidden lg:table-cell">Lucro</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -122,28 +122,28 @@
                                             @ativo.Nome
                                         </th>
                                         <td class="px-4 py-2 md:hidden lg:table-cell">
-                                            <span class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
+                                            <span class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 hidden md:hidden lg:table-cell">
                                                 @ativo.Carteira
                                             </span>
                                         </td>
                                         <td class="px-4 py-2 md:hidden lg:table-cell">
-                                            <span class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">
+                                            <span class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 hidden md:hidden lg:table-cell">
                                                 @ativo.Tipo
                                             </span>
                                         </td>
-                                        <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
+                                        <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white hidden md:hidden lg:table-cell">
                                             @ativo.Quantidade
                                         </td>
-                                        <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white hidden lg:table-cell">
                                             @ativo.TaxaJuro
                                         </td>
-                                        <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white md:hidden lg:table-cell">
+                                        <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white hidden md:hidden lg:table-cell">
                                             @ativo.TipoTaxa
                                         </td>
-                                        <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white hidden lg:table-cell">
                                             @ativo.PrecoCompra
                                         </td>
-                                        <td class="px-4 py-2">
+                                        <td class="px-4 py-2 hidden lg:table-cell">
                                             @ativo.Lucro
                                         </td>
                                     </tr>
