@@ -2,89 +2,73 @@
 @model AtivoPlusFrontend.Pages.Pages_Index
 @{
     ViewData["Title"] = "Index";
-    Layout = "_Layout";
+    Layout = null;
 }
 <!DOCTYPE html>
 <html lang="pt">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Página Complexa com Animações</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Página Complexa com Animações</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body>
-    <main class="p-4 md:ml-64 h-auto pt-20">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-        <div class="flex flex-col justify-between bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 rounded-lg p-4 h-32 md:h-64">
-            <div class="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                Isto é a pagina principal (Geral)
-            </div>
-            <div class="text-2xl font-semibold text-green-500 dark:text-green-400 mb-2">
-                24.987€
-            </div>
-            <div class="text-sm text-gray-500 dark:text-gray-400">
-                Uma descrição para o card
-            </div>
-        </div>  
-        <div class="flex flex-col justify-between bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 rounded-lg p-4 h-32 md:h-64">
-            <div class="text-xl font-bold text-gray-900 dark:text-white mb-2">Vai ser uma resumo</div>
-            <div class="text-2xl font-semibold text-green-500 dark:text-green-400 mb-2">€ 32,45
-                
-            </div>
-            <div class="text-sm text-gray-500 dark:text-gray-400">Ação de petróleo da Petrobras</div>
-        </div>
-        <div class="flex flex-col justify-between bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 rounded-lg p-4 h-32 md:h-64">
-            <div class="text-xl font-bold text-gray-900 dark:text-white mb-2"> De todos os ativos</div>
-            <div class="text-2xl font-semibold text-green-500 dark:text-green-400 mb-2">€ 115,30</div>
-            <div class="text-sm text-gray-500 dark:text-gray-400">Investimento em imóveis comerciais</div>
-        </div>
-        <div class="flex flex-col justify-between bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 rounded-lg p-4 h-32 md:h-64">
-            <div class="text-xl font-bold text-gray-900 dark:text-white mb-2">Criptomoeda: BTC</div>
-            <div class="text-2xl font-semibold text-green-500 dark:text-green-400 mb-2">€ 150.000</div>
-            <div class="text-sm text-gray-500 dark:text-gray-400">Preço atual do Bitcoin</div>
+  <main class="min-h-screen">
+    <section class="bg-gray-50 dark:bg-gray-900">
+      <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:py-0">
+        <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
+          <img class="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg" alt="logo">
+          AtivoPlus    
+        </a>
+        <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+          <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+            <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+              Entre na sua conta
+            </h1>
+            <form class="space-y-4 md:space-y-6" action="#">
+              <div>
+                <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Username</label>
+                <input type="email" name="email" id="email" placeholder="nome@email.com"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-[#2563eb] focus:border-[#2563eb] block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[#3b82f6] dark:focus:border-[#3b82f6]"
+                  required="">
+              </div>
+              <div>
+                <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
+                <input type="password" name="password" id="password" placeholder="••••••••"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-[#2563eb] focus:border-[#2563eb] block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[#3b82f6] dark:focus:border-[#3b82f6]"
+                  required="">
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-start">
+                  <div class="flex items-center h-5">
+                    <input id="remember" aria-describedby="remember" type="checkbox"
+                      class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-[#93c5fd] dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-[#2563eb] dark:ring-offset-gray-800">
+                  </div>
+                  <div class="ml-3 text-sm">
+                    <label for="remember" class="text-gray-500 dark:text-gray-300">Relembrar-me</label>
+                  </div>
+                </div>
+                <a href="#"
+                  class="text-sm font-medium text-[#2563eb] hover:underline dark:text-[#3b82f6]">Esqueci a Senha?</a>
+              </div>
+              <button
+                asp-page="Geral"
+               type="submit"
+                class="w-full text-white bg-[#2563eb] hover:bg-[#1d4ed8] focus:ring-4 focus:outline-none focus:ring-[#93c5fd] font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-[#2563eb] dark:hover:bg-[#1d4ed8] dark:focus:ring-[#1e40af]">
+                Entrar
+              </button>
+              <p class="text-sm font-light text-gray-500 dark:text-gray-400">
+                Não têm conta? <a href="#"
+                  class="font-medium text-[#2563eb] hover:underline dark:text-[#3b82f6]">Registar</a>
+              </p>
+            </form>
+          </div>
         </div>
       </div>
-      <div
-        class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-96 mb-4"
-      ></div>
-      <div class="grid grid-cols-2 gap-4 mb-4">
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-      </div>
-      <div
-        class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-96 mb-4"
-      ></div>
-      <div class="grid grid-cols-2 gap-4">
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-      </div>
-    </main>
-
-
+    </section>
+  </main>
 </body>
 
 </html>

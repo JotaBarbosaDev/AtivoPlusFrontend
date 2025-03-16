@@ -1,0 +1,89 @@
+@page
+@model AtivoPlusFrontend.Pages.Pages_Carteira
+@{
+    ViewData["Title"] = "Carteira";
+    Layout = "_Layout";
+}
+
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Página Complexa com Animações</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+</head>
+<body>
+
+    <main class=" h-auto pt-20 grid lg:grid-cols-2 md:grid-cols-1 sm:gap-8 gap-8 md:gap-4 lg:gap-4 justify-center">
+        
+       @{
+    var carteiras = new[] {
+        new { Nome = "Carteira Alpha", Tipo = "Ações", Percentual = "-3%", Valor = "-567,89€", CorValor = "text-red-700 dark:text-red-400" },
+        new { Nome = "Carteira Beta", Tipo = "Criptomoedas", Percentual = "+5%", Valor = "+1.234,56€", CorValor = "text-green-700 dark:text-green-400" },
+        new { Nome = "Carteira Delta", Tipo = "Imobiliária", Percentual = "+7%", Valor = "+3.456,78€", CorValor = "text-green-700 dark:text-green-400" },
+        new { Nome = "Carteira Epsilon", Tipo = "Renda Fixa", Percentual = "-1%", Valor = "-234,56€", CorValor = "text-red-700 dark:text-red-400" },
+        new { Nome = "Carteira Gamma", Tipo = "Fundos", Percentual = "-2%", Valor = "-789,01€", CorValor = "text-red-700 dark:text-red-400" },
+        new { Nome = "Carteira Zeta", Tipo = "Ações", Percentual = "+6%", Valor = "+4.567,89€", CorValor = "text-green-700 dark:text-green-400" },
+        new { Nome = "Carteira Theta", Tipo = "Fundos", Percentual = "+3%", Valor = "+567,89€", CorValor = "text-green-700 dark:text-green-400" },
+        new { Nome = "Carteira Eta", Tipo = "Criptomoedas", Percentual = "-4%", Valor = "-678,90€", CorValor = "text-red-700 dark:text-red-400" },
+        new { Nome = "Carteira Kappa", Tipo = "Renda Fixa", Percentual = "+9%", Valor = "+5.678,90€", CorValor = "text-green-700 dark:text-green-400" },
+        new { Nome = "Carteira Iota", Tipo = "Imobiliária", Percentual = "-5%", Valor = "-1.234,56€", CorValor = "text-red-700 dark:text-red-400" },
+        new { Nome = "Carteira Xi", Tipo = "Imobiliária", Percentual = "+8%", Valor = "+4.321,09€", CorValor = "text-green-700 dark:text-green-400" },
+        new { Nome = "Carteira Mu", Tipo = "Criptomoedas", Percentual = "+2%", Valor = "+234,56€", CorValor = "text-green-700 dark:text-green-400" },
+        new { Nome = "Carteira Nu", Tipo = "Fundos", Percentual = "-7%", Valor = "-2.345,67€", CorValor = "text-red-700 dark:text-red-400" },
+        new { Nome = "Carteira Lambda", Tipo = "Ações", Percentual = "-6%", Valor = "-890,12€", CorValor = "text-red-700 dark:text-red-400" },
+        new { Nome = "Carteira Omicron", Tipo = "Renda Fixa", Percentual = "-8%", Valor = "-3.210,98€", CorValor = "text-red-700 dark:text-red-400" },
+        new { Nome = "Carteira Pi", Tipo = "Ações", Percentual = "+10%", Valor = "+6.543,21€", CorValor = "text-green-700 dark:text-green-400" },
+        new { Nome = "Carteira Sigma", Tipo = "Fundos", Percentual = "+11%", Valor = "+7.654,32€", CorValor = "text-green-700 dark:text-green-400" },
+        new { Nome = "Carteira Rho", Tipo = "Criptomoedas", Percentual = "-9%", Valor = "-4.567,89€", CorValor = "text-red-700 dark:text-red-400" },
+        new { Nome = "Carteira Upsilon", Tipo = "Renda Fixa", Percentual = "+4%", Valor = "+890,12€", CorValor = "text-green-700 dark:text-green-400" },
+        new { Nome = "Carteira Tau", Tipo = "Imobiliária", Percentual = "-10%", Valor = "-5.678,90€", CorValor = "text-red-700 dark:text-red-400" }
+    };
+}
+
+@foreach (var carteira in carteiras.OrderBy(c => Guid.NewGuid()))
+{
+    <a href="#" class="group flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+        <img class="img w-full rounded-t-lg h-96 ml-4 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" src="https://www.tracado.pt/img/upload/moradia_ld1/gallery/vcr08---vista-piscina.jpg" alt="">
+        <div class="flex flex-col justify-between p-4 leading-normal">
+            <div class="flex">
+                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">@carteira.Nome</h5>
+                <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-1 py-1 rounded-md dark:bg-gray-700 dark:text-gray-400 border border-gray-500 h-6 ml-4 align-center">@carteira.Tipo</span>
+            </div>
+            <div class="flex items-center">
+                @if (carteira.Valor.StartsWith("+"))
+                {
+                    <svg class="w-6 h-6 text-gray-800 dark:text-white group-hover:animate-bounce" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m16 17-4-4-4 4m8-6-4-4-4 4"/>
+                    </svg>
+                }
+                else
+                {
+                    <svg class="w-6 h-6 text-gray-800 dark:text-white group-hover:animate-bounce" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8 7 4 4 4-4m-8 6 4 4 4-4"/>
+                    </svg>
+                }
+                <span class="text-gray-700 dark:text-gray-400 flex">@carteira.Percentual
+                    <p class="@carteira.CorValor ml-4 text-medium group-hover:animate-pulse group-hover:font-semibold">@carteira.Valor</p>
+                </span>
+            </div>
+            <p class="mb-3 mt-3 font-normal text-gray-700 dark:text-gray-400">Movimentações recentes impactaram o desempenho da carteira.</p>
+        </div>
+    </a>
+}
+
+
+    </main>
+</body>
+</html>
+
+
+
+
+
+
+
+

@@ -101,7 +101,7 @@
             type="button"
             data-drawer-toggle="drawer-navigation"
             aria-controls="drawer-navigation"
-            class="p-2 mr-1 text-gray-500 rounded-lg md:hidden hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+            class="p-2 mr-1 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600 hidden"
           >
             <span class="sr-only">Toggle search</span>
             <svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -130,7 +130,7 @@
           </button>
           <!-- Dropdown menu -->
           <div
-            class="hidden overflow-hidden z-50 my-4 max-w-sm text-base list-none bg-white rounded divide-y divide-gray-100 shadow-lg dark:divide-gray-600 dark:bg-gray-700 rounded-xl"
+            class="hidden overflow-hidden z-50 my-4 max-w-sm text-base list-none bg-white rounded divide-y divide-gray-100 shadow-lg dark:divide-gray-600 dark:bg-gray-700 rounded-xl "
             id="notification-dropdown"
           >
             <div
@@ -398,7 +398,7 @@
           <button
             type="button"
             data-dropdown-toggle="apps-dropdown"
-            class="p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+            class="p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600 hidden md:flex"
           >
             <span class="sr-only">View notifications</span>
             <!-- Icon -->
@@ -686,7 +686,7 @@
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/Carteira"
                   class="flex items-center py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                   ><svg
                     class="mr-2 w-5 h-5 text-gray-400"
@@ -794,7 +794,7 @@
         <ul class="space-y-2">
           <li>
             <a
-              asp-page="Index"
+              asp-page="Geral"
               class="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
             >
               <svg
@@ -904,7 +904,7 @@
     
           <li>
             <a
-              href="#"
+              asp-page="Carteira"
               class="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg transition duration-75 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group"
             >
               <svg
@@ -942,6 +942,7 @@
               <span class="ml-3">Ajuda</span>
             </a>
           </li>
+          
         </ul>
       </div>
       
@@ -956,17 +957,17 @@
   </div>
     </header>
 
-    <main class="h-auto">
+    <main class="h-auto md:pl-6 px-6 md:ml-64 sm:ml-0 teste">
         @RenderBody() <!-- Aqui será injetado o conteúdo das páginas Razor -->
     </main>
 
         
 
-<footer class="bg-white rounded-lg shadow-sm m-4 dark:bg-gray-800">
+<footer class="bg-white rounded-lg shadow-sm m-4 ml-7 md:ml-72 dark:bg-gray-800"  id="botao-print">
     <div class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
       <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2025 <a href="https://flowbite.com/" class="hover:underline">AtivoPlus</a>. Todos os direitos reservados.
     </span>
-    <ul class="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 dark:text-gray-400 sm:mt-0">
+    <ul class="flex flex-wrap flex-col sm:flex-row items-center mt-3 text-sm font-medium text-gray-500 dark:text-gray-400 sm:mt-0">
         <li>
             <a href="#" class="hover:underline me-4 md:me-6">Sobre</a>
         </li>
@@ -981,8 +982,7 @@
         </li>
     </ul>
     </div>
-
-    </footer>
+</footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
 
