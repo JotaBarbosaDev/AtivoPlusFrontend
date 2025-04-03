@@ -1,12 +1,12 @@
 @page
-@model AtivoPlus.Pages.MercadoModel
+@model AtivoPlusFrontend.Pages.MercadoModel
 @{
     ViewData["Title"] = "Mercado";
     Layout = "_Layout";
 }
-<!DOCTYPE html>
-<html lang="pt">
 
+<!DOCTYPE html>
+<html lang="pt-pt">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,72 +16,34 @@
     
 </head>
 
-<main class="h-auto pt-20">
-  <h1 class="text-3xl font-bold text-primary-700 mb-6">Mercado</h1>
-
-  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-    <div class="card bg-base-100 shadow-xl border border-primary-200 hover:shadow-2xl transition-all">
-      <div class="card-body">
-        <h2 class="card-title text-primary-600">Apple Inc. (AAPL)</h2>
-        <p class="text-gray-500">Tecnologia • Nasdaq</p>
-        <div class="text-2xl font-bold mt-2 text-green-500">+2.34%</div>
-        <p class="text-sm text-gray-400">Última atualização: há 3 min</p>
-      </div>
-    </div>
-
-    <div class="card bg-base-100 shadow-xl border border-primary-200 hover:shadow-2xl transition-all">
-      <div class="card-body">
-        <h2 class="card-title text-primary-600">Tesla (TSLA)</h2>
-        <p class="text-gray-500">Automóvel • Nasdaq</p>
-        <div class="text-2xl font-bold mt-2 text-red-500">-1.12%</div>
-        <p class="text-sm text-gray-400">Última atualização: há 10 min</p>
-      </div>
-    </div>
-
-    <div class="card bg-base-100 shadow-xl border border-primary-200 hover:shadow-2xl transition-all">
-      <div class="card-body">
-        <h2 class="card-title text-primary-600">Microsoft (MSFT)</h2>
-        <p class="text-gray-500">Tecnologia • Nasdaq</p>
-        <div class="text-2xl font-bold mt-2 text-green-500">+0.78%</div>
-        <p class="text-sm text-gray-400">Última atualização: há 5 min</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="mt-10">
-    <h2 class="text-2xl font-semibold text-primary-700 mb-4">Explorar mais ativos</h2>
-    <div class="overflow-x-auto">
-      <table class="table table-zebra w-full border border-primary-200">
-        <thead class="bg-primary-100 text-primary-700">
-          <tr>
-            <th>Nome</th>
-            <th>Setor</th>
-            <th>Preço</th>
-            <th>Variação</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>NVIDIA (NVDA)</td>
-            <td>Hardware</td>
-            <td>$812.34</td>
-            <td class="text-green-500 font-semibold">+4.12%</td>
-          </tr>
-          <tr>
-            <td>Amazon (AMZN)</td>
-            <td>E-Commerce</td>
-            <td>$150.76</td>
-            <td class="text-red-500 font-semibold">-0.87%</td>
-          </tr>
-          <tr>
-            <td>Meta (META)</td>
-            <td>Redes Sociais</td>
-            <td>$305.44</td>
-            <td class="text-green-500 font-semibold">+1.06%</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+<main class="h-auto pt-20 grid lg:grid-cols-2 md:grid-cols-1 sm:gap-8 gap-8 md:gap-4 lg:gap-4 justify-center">
+    @foreach (var indice in Model.Indices)
+    {
+        <a href="#" class="group flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+            <img class="img w-full rounded-t-lg h-96 ml-4 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" src="https://img.freepik.com/free-vector/stock-market-concept-illustration_114360-7416.jpg" alt="Mercado">
+            <div class="flex flex-col justify-between p-4 leading-normal">
+                <div class="flex items-center mb-2">
+                    <h5 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">@indice.Nome</h5>
+                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-1 rounded-md ml-3 dark:bg-gray-700 dark:text-gray-400 border border-gray-500">@indice.Tipo</span>
+                </div>
+                <div class="flex items-center mb-3">
+                    @if (indice.Variacao.StartsWith("+"))
+                    {
+                        <svg class="w-6 h-6 text-green-500 dark:text-green-400 group-hover:animate-bounce" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m16 17-4-4-4 4m8-6-4-4-4 4" />
+                        </svg>
+                    }
+                    else
+                    {
+                        <svg class="w-6 h-6 text-red-500 dark:text-red-400 group-hover:animate-bounce" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8 7 4 4 4-4m-8 6 4 4 4-4" />
+                        </svg>
+                    }
+                    <span class="ml-2 text-gray-700 dark:text-gray-300">@indice.Variacao</span>
+                    <span class="@indice.CorValor ml-4 font-semibold">@indice.Valor</span>
+                </div>
+                <p class="font-normal text-gray-700 dark:text-gray-400">Atualização do mercado financeiro em tempo real.</p>
+            </div>
+        </a>
+    }
 </main>
-
