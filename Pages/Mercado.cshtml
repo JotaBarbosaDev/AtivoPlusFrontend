@@ -10,40 +10,86 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Página Complexa com Animações</title>
-    <!-- Tailwind CSS -->
+    <title>Mercado Financeiro</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
 </head>
 
-<main class="h-auto pt-20 grid lg:grid-cols-2 md:grid-cols-1 sm:gap-8 gap-8 md:gap-4 lg:gap-4 justify-center">
-    @foreach (var indice in Model.Indices)
-    {
-        <a href="#" class="group flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-            <img class="img w-full rounded-t-lg h-96 ml-4 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" src="https://img.freepik.com/free-vector/stock-market-concept-illustration_114360-7416.jpg" alt="Mercado">
-            <div class="flex flex-col justify-between p-4 leading-normal">
-                <div class="flex items-center mb-2">
-                    <h5 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">@indice.Nome</h5>
-                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-1 rounded-md ml-3 dark:bg-gray-700 dark:text-gray-400 border border-gray-500">@indice.Tipo</span>
+<body class="bg-gray-50 dark:bg-gray-900">
+
+<main class="h-auto pt-20 px-4">
+
+    @functions {
+        void RenderFakeCards(string categoria)
+        {
+            for (int i = 1; i <= 10; i++)
+            {
+                var nome = categoria switch
+                {
+                    "Stocks" => $"Empresa {i} Inc.",
+                    "ETFs" => $"ETF {i} Global",
+                    "Crypto" => $"CriptoCoin {i}",
+                    _ => $"Item {i}"
+                };
+
+                var valor = categoria switch
+                {
+                    "Crypto" => $"{(43000 + i * 100):N2} USD",
+                    "ETFs" => $"{(400 + i):N2} USD",
+                    "Stocks" => $"{(150 + i * 2):N2} USD",
+                    _ => $"{(100 + i):N2} USD"
+                };
+
+                var variacao = i % 2 == 0 ? $"+{(0.5 + i * 0.1):N2}%" : $"-{(0.3 + i * 0.1):N2}%";
+                var corClasse = variacao.StartsWith("+") ? "text-green-500" : "text-red-500";
+
+                <div class="group flex flex-col bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <h5 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">@nome</h5>
+                        <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-1 rounded-md dark:bg-gray-700 dark:text-gray-400 border border-gray-500">@categoria</span>
+                    </div>
+                    <div class="flex items-center mb-3">
+                        @if (variacao.StartsWith("+"))
+                        {
+                            <svg class="w-6 h-6 text-green-500 dark:text-green-400 group-hover:animate-bounce" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m16 17-4-4-4 4m8-6-4-4-4 4" />
+                            </svg>
+                        }
+                        else
+                        {
+                            <svg class="w-6 h-6 text-red-500 dark:text-red-400 group-hover:animate-bounce" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8 7 4 4 4-4m-8 6 4 4 4-4" />
+                            </svg>
+                        }
+                        <span class="ml-2 text-gray-700 dark:text-gray-300">@variacao</span>
+                        <span class="ml-4 font-semibold @corClasse">@valor</span>
+                    </div>
+                    <p class="font-normal text-gray-700 dark:text-gray-400">Atualização do mercado financeiro em tempo real.</p>
                 </div>
-                <div class="flex items-center mb-3">
-                    @if (indice.Variacao.StartsWith("+"))
-                    {
-                        <svg class="w-6 h-6 text-green-500 dark:text-green-400 group-hover:animate-bounce" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m16 17-4-4-4 4m8-6-4-4-4 4" />
-                        </svg>
-                    }
-                    else
-                    {
-                        <svg class="w-6 h-6 text-red-500 dark:text-red-400 group-hover:animate-bounce" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8 7 4 4 4-4m-8 6 4 4 4-4" />
-                        </svg>
-                    }
-                    <span class="ml-2 text-gray-700 dark:text-gray-300">@indice.Variacao</span>
-                    <span class="@indice.CorValor ml-4 font-semibold">@indice.Valor</span>
-                </div>
-                <p class="font-normal text-gray-700 dark:text-gray-400">Atualização do mercado financeiro em tempo real.</p>
-            </div>
-        </a>
+            }
+        }
     }
+
+    <!-- Stocks -->
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">Stocks</h2>
+    <div class="grid lg:grid-cols-2 md:grid-cols-1 gap-6 mb-12">
+        @{ RenderFakeCards("Stocks"); }
+    </div>
+
+    <!-- ETFs -->
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">ETFs</h2>
+    <div class="grid lg:grid-cols-2 md:grid-cols-1 gap-6 mb-12">
+        @{ RenderFakeCards("ETFs"); }
+
+    </div>
+
+    <!-- Crypto -->
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">Crypto</h2>
+    <div class="grid lg:grid-cols-2 md:grid-cols-1 gap-6 mb-12">
+        @{ RenderFakeCards("Crypto"); }
+
+    </div>
+
 </main>
+
+</body>
+</html>
