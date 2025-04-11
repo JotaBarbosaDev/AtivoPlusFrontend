@@ -590,6 +590,7 @@
               </a>
               <a
                 href="#"
+                id="logoutBtn"
                 class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 group"
               >
                 <svg
@@ -1004,6 +1005,32 @@
 </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+    <script>
+      document.getElementById("logoutBtn").addEventListener("click", async (e) => {
+        e.preventDefault();
+        
+        // Função logout
+        async function logout() {
+          try {
+            const response = await fetch('https://es.marquesserver.freeddns.org:10513/api/user/logout', {
+              method: 'POST',
+              credentials: 'include', // inclui cookies de sessão, se necessário
+            });
+
+            if (!response.ok) throw new Error('Erro no logout!');
+            alert('Logout efetuado com sucesso!');
+            // Redirecionar para página de login ou outra após logout
+            window.location.href = '/login'; // Adapte o URL conforme necessário
+          } catch (error) {
+            console.error('Erro:', error);
+            alert('Erro ao fazer logout. Tente novamente.');
+          }
+        }
+
+        // Chamar a função logout quando o evento de clique ocorrer
+        await logout();
+      });
+    </script>
 
 </body>
 
