@@ -1008,27 +1008,30 @@
     <script>
       document.getElementById("logoutBtn").addEventListener("click", async (e) => {
         e.preventDefault();
-        try {
-          const response = await fetch("https://es.marquesserver.freeddns.org:10513/api/user/logout", {
-            method: "POST",
-            credentials: "include"
-          });
+        
+        // Função logout
+        async function logout() {
+          try {
+            const response = await fetch('https://es.marquesserver.freeddns.org:10513/api/user/logout', {
+              method: 'POST',
+              credentials: 'include', // inclui cookies de sessão, se necessário
+            });
 
-          if (!response.ok) throw new Error("Erro ao fazer logout.");
-
-          // Mostra um toast (opcional)
-          showToast("Logout efetuado com sucesso.", "success");
-
-          // Aguarda um pouco e redireciona para a página de login (ou homepage)
-          setTimeout(() => {
-            window.location.href = "/login.html"; // <-- Altera isto conforme a tua estrutura
-          }, 1000);
-        } catch (err) {
-          console.error(err);
-          showToast("Erro ao fazer logout.", "error");
+            if (!response.ok) throw new Error('Erro no logout!');
+            alert('Logout efetuado com sucesso!');
+            // Redirecionar para página de login ou outra após logout
+            window.location.href = '/login'; // Adapte o URL conforme necessário
+          } catch (error) {
+            console.error('Erro:', error);
+            alert('Erro ao fazer logout. Tente novamente.');
+          }
         }
+
+        // Chamar a função logout quando o evento de clique ocorrer
+        await logout();
       });
     </script>
+
 </body>
 
 </html>
