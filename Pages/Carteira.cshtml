@@ -67,7 +67,7 @@
     const container = document.getElementById('carteirasContainer');
 
     try {
-      const response = await fetch("https://es.marquesserver.freeddns.org:10513/api/carteira/ver?userIdFromCarteira=-1", {
+      const response = await fetch("/api/carteira/ver?userIdFromCarteira=-1", {
         credentials: 'include'
       });
 
@@ -82,7 +82,7 @@
         return;
       }
 
-      data.forEach(carteira => {
+      data.forEach(carteira => { 
         const nome = carteira.nome ?? "-";
         const tipo = carteira.tipo ?? "-";
         const percentual = carteira.percentual ?? "-";
