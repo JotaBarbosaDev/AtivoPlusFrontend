@@ -23,7 +23,7 @@ app.MapWhen(
         appBuilder.Run(async context =>
         {
             // Monta o URL de destino
-            var targetUri = "https://es.marquesserver.freeddns.org:10513" + context.Request.Path + context.Request.QueryString;
+            var targetUri = "https://es.maruqes.com:10513" + context.Request.Path + context.Request.QueryString;
 
             using var httpClient = new HttpClient(new HttpClientHandler
             {
@@ -55,7 +55,7 @@ app.MapWhen(
             }
 
             // Força o Host da request para o do servidor remoto
-            requestMessage.Headers.Host = "es.marquesserver.freeddns.org";
+            requestMessage.Headers.Host = "es.maruqes.com";
 
             // Envia a request
             var responseMessage = await httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead, context.RequestAborted);
