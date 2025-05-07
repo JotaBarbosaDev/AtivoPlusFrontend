@@ -1,5 +1,5 @@
 @page
-@model AtivoPlusFrontend.Pages.Pages_Ativos
+@model IndexModel
 @{
     ViewData["Title"] = "Ativos";
     Layout = "_Layout";
@@ -28,6 +28,48 @@
         new { Nome = "CDB Banco do Brasil", Icon = "💵", Carteira = "Carteira Eta", Tipo = "Renda Fixa", Quantidade = 5.0, TaxaJuro = "6.5%", TipoTaxa = "Fixa", PrecoCompra = "€1,000", Lucro = "€150" },
         new { Nome = "CDB Banco do Brasil", Icon = "💵", Carteira = "Carteira Eta", Tipo = "Renda Fixa", Quantidade = 5.0, TaxaJuro = "6.5%", TipoTaxa = "Fixa", PrecoCompra = "€1,000", Lucro = "€150" }
     };
+
+    // Definir mapeamento de ícones para tipo de ativo
+    var tipoIcons = new Dictionary<string, string> 
+    {
+        { "Residencial", "bg-orange-50 text-orange-700" },
+        { "Fundo Imobiliário", "bg-indigo-50 text-indigo-700" },
+        { "Fundo", "bg-indigo-50 text-indigo-700" },
+        { "Ação", "bg-green-50 text-green-700" },
+        { "Criptomoeda", "bg-yellow-50 text-yellow-700" },
+        { "Renda Fixa", "bg-blue-50 text-blue-700" }
+    };
+    
+    // Calcular estatísticas para o resumo
+    var totalAtivos = ativos.Length;
+    var tiposUnicos = ativos.Select(a => a.Tipo).Distinct().Count();
+    var carteirasUnicas = ativos.Select(a => a.Carteira).Distinct().Count();
+    
+    // Calcular saldo total (removendo o símbolo de moeda e convertendo para decimal)
+    decimal saldoTotal = 0;
+    foreach (var ativo in ativos)
+    {
+        string valorStr = ativo.PrecoCompra.Replace("€", "").Replace(",", "");
+        if (decimal.TryParse(valorStr, out decimal valor))
+        {
+            saldoTotal += valor * (decimal)ativo.Quantidade;
+        }
+    }
+    
+    // Calcular lucro total
+    decimal lucroTotal = 0;
+    foreach (var ativo in ativos)
+    {
+        string lucroStr = ativo.Lucro.Replace("€", "").Replace(",", "");
+        if (decimal.TryParse(lucroStr, out decimal lucro))
+        {
+            lucroTotal += lucro;
+        }
+    }
+    
+    // Formatação dos valores para exibição
+    string saldoFormatado = string.Format("€{0:#,0.00}", saldoTotal);
+    string lucroFormatado = string.Format("€{0:#,0.00}", lucroTotal);
 }
 
 <!DOCTYPE html>
@@ -35,10 +77,11 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Página Complexa com Animações</title>
+    <title>@ViewData["Title"] - AtivosPlus</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* Estilo para impressão */
         @@page {
             size: A4 landscape;
             margin: 0;
@@ -63,115 +106,274 @@
                 margin-left: 0px !important;
             }
         }
-    </style>
-</head>
-<body>
-    <main class="h-auto pt-20 px-0">
-        <section style="background: var(--fallback-b1,oklch(var(--b1)/1));">
-            <div class="mx-auto max-w-screen-2xl">
-                <div class="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
-                    <!-- Cabeçalho da tabela -->
-                    <div class="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
-                        <div class="flex items-center flex-1 space-x-4">
-                            <h5>
-                                <span class="text-gray-500">Ativos:</span>
-                                <span class="dark:text-white">@(ativos.Length)</span>
-                            </h5>
-                        </div>
-                        <div id="botao-print" class="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
-                            <button type="button" class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
-                                <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewBox="0 0 20 20"
-                                     xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                    <path clip-rule="evenodd" fill-rule="evenodd"
-                                          d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
-                                </svg>
-                                Adicionar Ativo
-                            </button>
-                            <button type="button" onclick="window.print()"
-                                class="flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                                <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-                                </svg>
-                                Exportar
-                            </button>
-                        </div>
+        
+        /* Adicionando transições suaves */
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+        
+        /* Estilo para os cards/linhas */
+        .ativo-row {
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            border-radius: 0.375rem;
+        }
+        
+        .ativo-row:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            background-color: rgba(243, 244, 246, 0.6);
+        }
+        
+        /* Estilo para badges */
+        .badge {
+            font-weight: 500;
+            border-radius: 0.25rem;
+            letter-spacing: 0.025em;
+        }
+        
+        /* Estilo para lucro positivo/negativo */
+        .lucro-positivo {
+            color: #047857;
+        }
+        
+        .lucro-negativo {
+            color: #DC2626;
+        }
+        
+        /* Ícones com fundo */
+        .icon-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background-color: rgba(243, 244, 246, 0.8);
+            margin-right: 12px;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Estilos específicos para a tabela */
+        .tabela-ativos {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .tabela-ativos thead th {
+            padding: 12px 16px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #4b5563;
+            background-color: #f9fafb;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .tabela-ativos tbody tr {
+            cursor: pointer;
+        }
+        
+        .tabela-ativos tbody tr:nth-child(even) {
+            background-color: rgba(249, 250, 251, 0.5);
+        }
+        
+        .tabela-ativos td {
+            padding: 14px 16px;
+            vertical-align: middle;
+        }
+        
+        .tabela-ativos .badge-ativo {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: 0.375rem;
+            white-space: nowrap;
+        }
+        
+        /* Botão de ação na tabela */
+        .btn-acao {
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.2s ease;
+        }
+        
+        .tabela-ativos tr:hover .btn-acao {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Estilos para os cards de estatísticas */
+        .stats-card {
+
+                    <!-- Cards de Ativos (visível em telas menores) -->
+                    <div class="lg:hidden px-4 py-3">
+                        @foreach (var ativo in ativos)
+                        {
+                            <div class="mb-4 p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-all ativo-row" data-modal-target="timeline-modal" data-modal-toggle="timeline-modal">
+                                <div class="flex items-center mb-2">
+                                    <div class="icon-container">
+                                        <span class="text-xl">@ativo.Icon</span>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-900">@ativo.Nome</h3>
+                                </div>
+                                <div class="flex flex-wrap gap-2 mb-2">
+                                    <span class="badge bg-blue-50 text-blue-700 text-xs py-1 px-2">@ativo.Carteira</span>
+                                    <span class="badge @(tipoIcons.ContainsKey(ativo.Tipo) ? tipoIcons[ativo.Tipo] : "bg-gray-50 text-gray-700") text-xs py-1 px-2">@ativo.Tipo</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 mt-3 text-sm">
+                                    <div>
+                                        <p class="text-gray-500">Quantidade</p>
+                                        <p class="font-medium">@ativo.Quantidade</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500">Preço Compra</p>
+                                        <p class="font-medium">@ativo.PrecoCompra</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500">Taxa Juro</p>
+                                        <p class="font-medium">@ativo.TaxaJuro</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500">Lucro</p>
+                                        <p class="font-medium @(ativo.Lucro.Contains("-") ? "lucro-negativo" : "lucro-positivo")">@ativo.Lucro</p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
                     </div>
-                    <!-- Tabela -->
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    
+                    <!-- Tabela (visível em telas maiores) -->
+                    <div class="overflow-x-auto hidden lg:block">
+                        <table class="w-full text-sm text-left tabela-ativos">
+                            <thead>
                                 <tr>
-                                    <th scope="col" class="px-4 py-3 hidden md:table-cell">Ativo</th>
-                                    <th scope="col" class="px-4 py-3 hidden md:hidden lg:table-cell">Carteira</th>
-                                    <th scope="col" class="px-4 py-3 hidden md:hidden lg:table-cell">Tipo</th>
-                                    <th scope="col" class="px-4 py-3 hidden md:hidden lg:table-cell">Quantidade</th>
-                                    <th scope="col" class="px-4 py-3 hidden lg:table-cell">Taxa Juro</th>
-                                    <th scope="col" class="px-4 py-3 hidden md:hidden lg:table-cell">Tipo Taxa</th>
-                                    <th scope="col" class="px-4 py-3 hidden lg:table-cell">Preço Compra</th>
-                                    <th scope="col" class="px-4 py-3 hidden lg:table-cell">Lucro</th>
+                                    <th scope="col" class="rounded-tl-lg">Ativo</th>
+                                    <th scope="col">Carteira</th>
+                                    <th scope="col">Tipo</th>
+                                    <th scope="col">Quantidade</th>
+                                    <th scope="col">Taxa Juro</th>
+                                    <th scope="col">Tipo Taxa</th>
+                                    <th scope="col">Preço Compra</th>
+                                    <th scope="col">Lucro</th>
+                                    <th scope="col" class="rounded-tr-lg">Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach(var ativo in ativos)
+                                @foreach (var ativo in ativos)
                                 {   
-                                    <tr class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700" data-modal-target="timeline-modal" data-modal-toggle="timeline-modal">
-                                        <th scope="row" class="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            <span class="text-2xl mr-3">@ativo.Icon</span>
-                                            @ativo.Nome
-                                        </th>
-                                        <td class="px-4 py-2 md:hidden lg:table-cell">
-                                            <span class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 hidden md:hidden lg:table-cell">
+                                    <tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700" data-modal-target="timeline-modal" data-modal-toggle="timeline-modal">
+                                        <td class="font-medium text-gray-900 dark:text-white">
+                                            <div class="flex items-center">
+                                                <div class="icon-container flex-shrink-0">
+                                                    <span class="text-lg">@ativo.Icon</span>
+                                                </div>
+                                                <div>
+                                                    <span class="font-semibold">@ativo.Nome</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge-ativo bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
                                                 @ativo.Carteira
                                             </span>
                                         </td>
-                                        <td class="px-4 py-2 md:hidden lg:table-cell">
-                                            <span class="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 hidden md:hidden lg:table-cell">
+                                        <td>
+                                            <span class="badge-ativo @(tipoIcons.ContainsKey(ativo.Tipo) ? tipoIcons[ativo.Tipo] : "bg-gray-50 text-gray-700") dark:bg-gray-700 dark:text-gray-300">
                                                 @ativo.Tipo
                                             </span>
                                         </td>
-                                        <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white hidden md:hidden lg:table-cell">
+                                        <td class="font-medium text-gray-900 dark:text-white">
                                             @ativo.Quantidade
                                         </td>
-                                        <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white hidden lg:table-cell">
+                                        <td class="font-medium text-gray-900 dark:text-white">
                                             @ativo.TaxaJuro
                                         </td>
-                                        <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white hidden md:hidden lg:table-cell">
+                                        <td class="font-medium text-gray-900 dark:text-white">
                                             @ativo.TipoTaxa
                                         </td>
-                                        <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white hidden lg:table-cell">
+                                        <td class="font-medium text-gray-900 dark:text-white">
                                             @ativo.PrecoCompra
                                         </td>
-                                        <td class="px-4 py-2 hidden lg:table-cell">
-                                            @ativo.Lucro
+                                        <td class="font-medium @(ativo.Lucro.Contains("-") ? "lucro-negativo" : "lucro-positivo")">
+                                            <span class="flex items-center">
+                                                @if (ativo.Lucro.Contains("-"))
+                                                {
+                                                    <svg class="w-4 h-4 mr-1 lucro-negativo" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                                                    </svg>
+                                                }
+                                                else
+                                                {
+                                                    <svg class="w-4 h-4 mr-1 lucro-positivo" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                                                    </svg>
+                                                }
+                                                @ativo.Lucro
+                                            </span>
+                                        </td>
+                                        <td class="relative">
+                                            <div class="flex space-x-2 justify-end">
+                                                <button class="p-1.5 bg-blue-50 rounded-lg text-blue-600 hover:bg-blue-100 btn-acao" title="Visualizar">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                    </svg>
+                                                </button>
+                                                <button class="p-1.5 bg-gray-50 rounded-lg text-gray-600 hover:bg-gray-100 btn-acao" title="Editar">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
-                                    
                                 }
                             </tbody>
                         </table>
                     </div>
+                    
                     <!-- Navegação da Tabela -->
-                    <nav class="flex items-center justify-between p-4" aria-label="Table navigation">
-                        <span class="text-sm text-gray-500 dark:text-gray-400">Mostrando @(ativos.Length) de @(ativos.Length)</span>
+                    <nav class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between p-4 border-t border-gray-200 dark:border-gray-700" aria-label="Table navigation">
+                        <div class="text-sm text-gray-500 dark:text-gray-400">
+                            Mostrando <span class="font-medium text-gray-900 dark:text-white">@(ativos.Length)</span> de <span class="font-medium text-gray-900 dark:text-white">@(ativos.Length)</span> ativos
+                        </div>
+                        
+                        <div class="inline-flex items-center">
+                            <button disabled class="px-3 py-1 border border-gray-300 rounded-l-lg bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white transition-all">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                </svg>
+                                <span class="sr-only">Anterior</span>
+                            </button>
+                            <button class="px-3 py-1 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 dark:border-gray-700 dark:bg-gray-700 dark:text-white transition-all">1</button>
+                            <button disabled class="px-3 py-1 border border-gray-300 rounded-r-lg bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white transition-all">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                </svg>
+                                <span class="sr-only">Próximo</span>
+                            </button>
+                        </div>
                     </nav>
                 </div>
             </div>
         </section>
 
-    <!-- #Modal  -->
-    <!-- Main modal -->
-<div id="timeline-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-    <div class="relative p-4 w-full max-w-md max-h-full">
-        <!-- Modal content -->
-        <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+    <!-- Modal de detalhes do ativo -->
+    <div id="timeline-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative p-4 w-full max-w-md max-h-full">
+            <!-- Modal content -->
+            <div class="relative bg-white rounded-lg shadow-lg dark:bg-gray-800">
                 <!-- Modal header -->
-                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
-                    <h3 class="flex text-lg font-semibold text-gray-900 dark:text-white">
-                        Casa em Lisboa <p class="text-red-400 ml-4">-28.550€</p>
+                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-700">
+                    <h3 class="flex items-center text-lg font-semibold text-gray-900 dark:text-white">
+                        <span class="icon-container mr-3 dark:bg-gray-700">🏠</span>
+                        Casa em Lisboa 
+                        <span class="text-red-500 ml-3 font-medium">-28.550€</span>
                     </h3>
-                    <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="timeline-modal">
+                    <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-700 dark:hover:text-white" data-modal-toggle="timeline-modal">
                         <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                         </svg>
@@ -180,79 +382,65 @@
                 </div>
                 <!-- Modal body -->
                 <div class="p-4 md:p-5">
-                    <ol class="relative border-s border-gray-200 dark:border-gray-600 ms-3.5 mb-4 md:mb-5">                  
-                        <li class="mb-10 ms-8">
-                            <span class="absolute flex items-center justify-center w-6 h-6 bg-gray-100 rounded-full -start-3.5 ring-8 ring-white dark:ring-gray-700 dark:bg-gray-600">
-                                <svg class="w-2.5 h-2.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path fill="currentColor" d="M6 1a1 1 0 0 0-2 0h2ZM4 4a1 1 0 0 0 2 0H4Zm7-3a1 1 0 1 0-2 0h2ZM9 4a1 1 0 1 0 2 0H9Zm7-3a1 1 0 1 0-2 0h2Zm-2 3a1 1 0 1 0 2 0h-2ZM1 6a1 1 0 0 0 0 2V6Zm18 2a1 1 0 1 0 0-2v2ZM5 11v-1H4v1h1Zm0 .01H4v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM10 11v-1H9v1h1Zm0 .01H9v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM10 15v-1H9v1h1Zm0 .01H9v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM15 15v-1h-1v1h1Zm0 .01h-1v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM15 11v-1h-1v1h1Zm0 .01h-1v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM5 15v-1H4v1h1Zm0 .01H4v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM2 4h16V2H2v2Zm16 0h2a2 2 0 0 0-2-2v2Zm0 0v14h2V4h-2Zm0 14v2a2 2 0 0 0 2-2h-2Zm0 0H2v2h16v-2ZM2 18H0a2 2 0 0 0 2 2v-2Zm0 0V4H0v14h2ZM2 4V2a2 2 0 0 0-2 2h2Zm2-3v3h2V1H4Zm5 0v3h2V1H9Zm5 0v3h2V1h-2ZM1 8h18V6H1v2Zm3 3v.01h2V11H4Zm1 1.01h.01v-2H5v2Zm1.01-1V11h-2v.01h2Zm-1-1.01H5v2h.01v-2ZM9 11v.01h2V11H9Zm1 1.01h.01v-2H10v2Zm1.01-1V11h-2v.01h2Zm-1-1.01H10v2h.01v-2ZM9 15v.01h2V15H9Zm1 1.01h.01v-2H10v2Zm1.01-1V15h-2v.01h2Zm-1-1.01H10v2h.01v-2ZM14 15v.01h2V15h-2Zm1 1.01h.01v-2H15v2Zm1.01-1V15h-2v.01h2Zm-1-1.01H15v2h.01v-2ZM14 11v.01h2V11h-2Zm1 1.01h.01v-2H15v2Zm1.01-1V11h-2v.01h2Zm-1-1.01H15v2h.01v-2ZM4 15v.01h2V15H4Zm1 1.01h.01v-2H5v2Zm1.01-1V15h-2v.01h2Zm-1-1.01H5v2h.01v-2Z"/></svg>
-                            </span>
-                            <h3 class="flex items-start mb-1 text-lg font-semibold text-gray-900 dark:text-white">Renda 650€ <span class="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-sm dark:bg-green-900 dark:text-green-300 ms-3">Abr. 2025</span><span class="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-sm dark:bg-blue-900 dark:text-blue-300 ms-3">Último</span></h3>
-                            <time class="block mb-3 text-sm font-normal leading-none text-gray-500 dark:text-gray-400">3 Abril 2025</time>
-                            <button type="button" class="py-2 px-3 inline-flex items-center text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.6 16.733c.234.269.548.456.895.534a1.4 1.4 0 0 0 1.75-.762c.172-.615-.446-1.287-1.242-1.481-.796-.194-1.41-.861-1.241-1.481a1.4 1.4 0 0 1 1.75-.762c.343.077.654.26.888.524m-1.358 4.017v.617m0-5.939v.725M4 15v4m3-6v6M6 8.5 10.5 5 14 7.5 18 4m0 0h-3.5M18 4v3m2 8a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z"/>
+                    <ol class="relative border-s border-gray-200 dark:border-gray-700 ms-3.5 mb-4 md:mb-5">                  
+                        <li class="mb-6 ms-8">
+                            <span class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -start-3.5 ring-8 ring-white dark:ring-gray-800 dark:bg-blue-900">
+                                <svg class="w-2.5 h-2.5 text-blue-800 dark:text-blue-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                    <path fill="currentColor" d="M6 1a1 1 0 0 0-2 0h2ZM4 4a1 1 0 0 0 2 0H4Zm7-3a1 1 0 1 0-2 0h2ZM9 4a1 1 0 1 0 2 0H9Zm7-3a1 1 0 1 0-2 0h2Zm-2 3a1 1 0 1 0 2 0h-2ZM1 6a1 1 0 0 0 0 2V6Zm18 2a1 1 0 1 0 0-2v2Z"/>
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 4h16M4 1v3m5-3v3m5-3v3M2 8h16M2 12h16M2 16h16"/>
                                 </svg>
-
-                                Familia Marques
+                            </span>
+                            <h3 class="flex flex-wrap items-center gap-2 mb-1 text-lg font-semibold text-gray-900 dark:text-white">
+                                Renda 650€ 
+                                <span class="bg-green-100 text-green-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">Abr. 2025</span>
+                                <span class="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">Último</span>
+                            </h3>
+                            <time class="block mb-2 text-sm font-normal leading-none text-gray-500 dark:text-gray-400">3 Abril 2025</time>
+                            <button type="button" class="py-2 px-3 inline-flex items-center text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 transition-all">
+                                <svg class="w-4 h-4 mr-2 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.6 16.733c.234.269.548.456.895.534a1.4 1.4 0 0 0 1.75-.762c.172-.615-.446-1.287-1.242-1.481-.796-.194-1.41-.861-1.241-1.481a1.4 1.4 0 0 1 1.75-.762c.343.077.654.26.888.524m-1.358 4.017v.617m0-5.939v.725"/>
+                                </svg>
+                                Família Marques
                             </button>
                         </li>
-                        <li class="mb-10 ms-8">
-                            <span class="absolute flex items-center justify-center w-6 h-6 bg-gray-100 rounded-full -start-3.5 ring-8 ring-white dark:ring-gray-700 dark:bg-gray-600">
-                                <svg class="w-2.5 h-2.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path fill="currentColor" d="M6 1a1 1 0 0 0-2 0h2ZM4 4a1 1 0 0 0 2 0H4Zm7-3a1 1 0 1 0-2 0h2ZM9 4a1 1 0 1 0 2 0H9Zm7-3a1 1 0 1 0-2 0h2Zm-2 3a1 1 0 1 0 2 0h-2ZM1 6a1 1 0 0 0 0 2V6Zm18 2a1 1 0 1 0 0-2v2ZM5 11v-1H4v1h1Zm0 .01H4v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM10 11v-1H9v1h1Zm0 .01H9v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM10 15v-1H9v1h1Zm0 .01H9v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM15 15v-1h-1v1h1Zm0 .01h-1v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM15 11v-1h-1v1h1Zm0 .01h-1v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM5 15v-1H4v1h1Zm0 .01H4v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM2 4h16V2H2v2Zm16 0h2a2 2 0 0 0-2-2v2Zm0 0v14h2V4h-2Zm0 14v2a2 2 0 0 0 2-2h-2Zm0 0H2v2h16v-2ZM2 18H0a2 2 0 0 0 2 2v-2Zm0 0V4H0v14h2ZM2 4V2a2 2 0 0 0-2 2h2Zm2-3v3h2V1H4Zm5 0v3h2V1H9Zm5 0v3h2V1h-2ZM1 8h18V6H1v2Zm3 3v.01h2V11H4Zm1 1.01h.01v-2H5v2Zm1.01-1V11h-2v.01h2Zm-1-1.01H5v2h.01v-2ZM9 11v.01h2V11H9Zm1 1.01h.01v-2H10v2Zm1.01-1V11h-2v.01h2Zm-1-1.01H10v2h.01v-2ZM9 15v.01h2V15H9Zm1 1.01h.01v-2H10v2Zm1.01-1V15h-2v.01h2Zm-1-1.01H10v2h.01v-2ZM14 15v.01h2V15h-2Zm1 1.01h.01v-2H15v2Zm1.01-1V15h-2v.01h2Zm-1-1.01H15v2h.01v-2ZM14 11v.01h2V11h-2Zm1 1.01h.01v-2H15v2Zm1.01-1V11h-2v.01h2Zm-1-1.01H15v2h.01v-2ZM4 15v.01h2V15H4Zm1 1.01h.01v-2H5v2Zm1.01-1V15h-2v.01h2Zm-1-1.01H5v2h.01v-2Z"/></svg>
-                            </span>
-                            <h3 class="flex items-start mb-1 text-lg font-semibold text-gray-900 dark:text-white">Pintura 5.500€<span class="bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-sm dark:bg-red-900 dark:text-red-300 ms-3">Despesa</span></h3>
-                            <time class="block mb-3 text-sm font-normal leading-none text-gray-500 dark:text-gray-400">25 Março 2025</time>
-                            <button type="button" class="py-2 px-3 inline-flex items-center text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.6 16.733c.234.269.548.456.895.534a1.4 1.4 0 0 0 1.75-.762c.172-.615-.446-1.287-1.242-1.481-.796-.194-1.41-.861-1.241-1.481a1.4 1.4 0 0 1 1.75-.762c.343.077.654.26.888.524m-1.358 4.017v.617m0-5.939v.725M4 15v4m3-6v6M6 8.5 10.5 5 14 7.5 18 4m0 0h-3.5M18 4v3m2 8a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z"/>
+                        <li class="mb-6 ms-8">
+                            <span class="absolute flex items-center justify-center w-6 h-6 bg-red-100 rounded-full -start-3.5 ring-8 ring-white dark:ring-gray-800 dark:bg-red-900">
+                                <svg class="w-2.5 h-2.5 text-red-800 dark:text-red-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14v4m-4-4v4M6 3v4m4-4v4m4-4v4M4 7h12M3 11h14"></path>
                                 </svg>
-
-                                Familia Marques
-                            </button>
-                        </li>
-                        <li class="mb-10 ms-8">
-                            <span class="absolute flex items-center justify-center w-6 h-6 bg-gray-100 rounded-full -start-3.5 ring-8 ring-white dark:ring-gray-700 dark:bg-gray-600">
-                                <svg class="w-2.5 h-2.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path fill="currentColor" d="M6 1a1 1 0 0 0-2 0h2ZM4 4a1 1 0 0 0 2 0H4Zm7-3a1 1 0 1 0-2 0h2ZM9 4a1 1 0 1 0 2 0H9Zm7-3a1 1 0 1 0-2 0h2Zm-2 3a1 1 0 1 0 2 0h-2ZM1 6a1 1 0 0 0 0 2V6Zm18 2a1 1 0 1 0 0-2v2ZM5 11v-1H4v1h1Zm0 .01H4v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM10 11v-1H9v1h1Zm0 .01H9v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM10 15v-1H9v1h1Zm0 .01H9v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM15 15v-1h-1v1h1Zm0 .01h-1v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM15 11v-1h-1v1h1Zm0 .01h-1v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM5 15v-1H4v1h1Zm0 .01H4v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM2 4h16V2H2v2Zm16 0h2a2 2 0 0 0-2-2v2Zm0 0v14h2V4h-2Zm0 14v2a2 2 0 0 0 2-2h-2Zm0 0H2v2h16v-2ZM2 18H0a2 2 0 0 0 2 2v-2Zm0 0V4H0v14h2ZM2 4V2a2 2 0 0 0-2 2h2Zm2-3v3h2V1H4Zm5 0v3h2V1H9Zm5 0v3h2V1h-2ZM1 8h18V6H1v2Zm3 3v.01h2V11H4Zm1 1.01h.01v-2H5v2Zm1.01-1V11h-2v.01h2Zm-1-1.01H5v2h.01v-2ZM9 11v.01h2V11H9Zm1 1.01h.01v-2H10v2Zm1.01-1V11h-2v.01h2Zm-1-1.01H10v2h.01v-2ZM9 15v.01h2V15H9Zm1 1.01h.01v-2H10v2Zm1.01-1V15h-2v.01h2Zm-1-1.01H10v2h.01v-2ZM14 15v.01h2V15h-2Zm1 1.01h.01v-2H15v2Zm1.01-1V15h-2v.01h2Zm-1-1.01H15v2h.01v-2ZM14 11v.01h2V11h-2Zm1 1.01h.01v-2H15v2Zm1.01-1V11h-2v.01h2Zm-1-1.01H15v2h.01v-2ZM4 15v.01h2V15H4Zm1 1.01h.01v-2H5v2Zm1.01-1V15h-2v.01h2Zm-1-1.01H5v2h.01v-2Z"/></svg>
                             </span>
-                            <h3 class="flex items-start mb-1 text-lg font-semibold text-gray-900 dark:text-white">Renda 650€ <span class="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-sm dark:bg-green-900 dark:text-green-300 ms-3">Mar. 2025</span></h3>
-                            <time class="block mb-3 text-sm font-normal leading-none text-gray-500 dark:text-gray-400">1 Março 2025</time>
-                            <button type="button" class="py-2 px-3 inline-flex items-center text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.6 16.733c.234.269.548.456.895.534a1.4 1.4 0 0 0 1.75-.762c.172-.615-.446-1.287-1.242-1.481-.796-.194-1.41-.861-1.241-1.481a1.4 1.4 0 0 1 1.75-.762c.343.077.654.26.888.524m-1.358 4.017v.617m0-5.939v.725M4 15v4m3-6v6M6 8.5 10.5 5 14 7.5 18 4m0 0h-3.5M18 4v3m2 8a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z"/>
+                            <h3 class="flex flex-wrap items-center gap-2 mb-1 text-lg font-semibold text-gray-900 dark:text-white">
+                                Pintura 5.500€
+                                <span class="bg-red-100 text-red-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Despesa</span>
+                            </h3>
+                            <time class="block mb-2 text-sm font-normal leading-none text-gray-500 dark:text-gray-400">25 Março 2025</time>
+                            <button type="button" class="py-2 px-3 inline-flex items-center text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 transition-all">
+                                <svg class="w-4 h-4 mr-2 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.6 16.733c.234.269.548.456.895.534a1.4 1.4 0 0 0 1.75-.762c.172-.615-.446-1.287-1.242-1.481-.796-.194-1.41-.861-1.241-1.481a1.4 1.4 0 0 1 1.75-.762c.343.077.654.26.888.524m-1.358 4.017v.617m0-5.939v.725"/>
                                 </svg>
-
-                                Familia Marques
-                            </button>
-                        </li>
-                        <li class="mb-10 ms-8">
-                            <span class="absolute flex items-center justify-center w-6 h-6 bg-gray-100 rounded-full -start-3.5 ring-8 ring-white dark:ring-gray-700 dark:bg-gray-600">
-                                <svg class="w-2.5 h-2.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path fill="currentColor" d="M6 1a1 1 0 0 0-2 0h2ZM4 4a1 1 0 0 0 2 0H4Zm7-3a1 1 0 1 0-2 0h2ZM9 4a1 1 0 1 0 2 0H9Zm7-3a1 1 0 1 0-2 0h2Zm-2 3a1 1 0 1 0 2 0h-2ZM1 6a1 1 0 0 0 0 2V6Zm18 2a1 1 0 1 0 0-2v2ZM5 11v-1H4v1h1Zm0 .01H4v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM10 11v-1H9v1h1Zm0 .01H9v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM10 15v-1H9v1h1Zm0 .01H9v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM15 15v-1h-1v1h1Zm0 .01h-1v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM15 11v-1h-1v1h1Zm0 .01h-1v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM5 15v-1H4v1h1Zm0 .01H4v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM2 4h16V2H2v2Zm16 0h2a2 2 0 0 0-2-2v2Zm0 0v14h2V4h-2Zm0 14v2a2 2 0 0 0 2-2h-2Zm0 0H2v2h16v-2ZM2 18H0a2 2 0 0 0 2 2v-2Zm0 0V4H0v14h2ZM2 4V2a2 2 0 0 0-2 2h2Zm2-3v3h2V1H4Zm5 0v3h2V1H9Zm5 0v3h2V1h-2ZM1 8h18V6H1v2Zm3 3v.01h2V11H4Zm1 1.01h.01v-2H5v2Zm1.01-1V11h-2v.01h2Zm-1-1.01H5v2h.01v-2ZM9 11v.01h2V11H9Zm1 1.01h.01v-2H10v2Zm1.01-1V11h-2v.01h2Zm-1-1.01H10v2h.01v-2ZM9 15v.01h2V15H9Zm1 1.01h.01v-2H10v2Zm1.01-1V15h-2v.01h2Zm-1-1.01H10v2h.01v-2ZM14 15v.01h2V15h-2Zm1 1.01h.01v-2H15v2Zm1.01-1V15h-2v.01h2Zm-1-1.01H15v2h.01v-2ZM14 11v.01h2V11h-2Zm1 1.01h.01v-2H15v2Zm1.01-1V11h-2v.01h2Zm-1-1.01H15v2h.01v-2ZM4 15v.01h2V15H4Zm1 1.01h.01v-2H5v2Zm1.01-1V15h-2v.01h2Zm-1-1.01H5v2h.01v-2Z"/></svg>
-                            </span>
-                            <h3 class="flex items-start mb-1 text-lg font-semibold text-gray-900 dark:text-white">Renda 650€ <span class="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-sm dark:bg-green-900 dark:text-green-300 ms-3">Fev. 2025</span></h3>
-                            <time class="block mb-3 text-sm font-normal leading-none text-gray-500 dark:text-gray-400">2 Fevereiro 2025</time>
-                            <button type="button" class="py-2 px-3 inline-flex items-center text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.6 16.733c.234.269.548.456.895.534a1.4 1.4 0 0 0 1.75-.762c.172-.615-.446-1.287-1.242-1.481-.796-.194-1.41-.861-1.241-1.481a1.4 1.4 0 0 1 1.75-.762c.343.077.654.26.888.524m-1.358 4.017v.617m0-5.939v.725M4 15v4m3-6v6M6 8.5 10.5 5 14 7.5 18 4m0 0h-3.5M18 4v3m2 8a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z"/>
-                                </svg>
-
-                                Familia Marques
+                                Família Marques
                             </button>
                         </li>
                         <li class="ms-8">
-                            <span class="absolute flex items-center justify-center w-6 h-6 bg-gray-100 rounded-full -start-3.5 ring-8 ring-white dark:ring-gray-700 dark:bg-gray-600">
-                                <svg class="w-2.5 h-2.5 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path fill="currentColor" d="M6 1a1 1 0 0 0-2 0h2ZM4 4a1 1 0 0 0 2 0H4Zm7-3a1 1 0 1 0-2 0h2ZM9 4a1 1 0 1 0 2 0H9Zm7-3a1 1 0 1 0-2 0h2Zm-2 3a1 1 0 1 0 2 0h-2ZM1 6a1 1 0 0 0 0 2V6Zm18 2a1 1 0 1 0 0-2v2ZM5 11v-1H4v1h1Zm0 .01H4v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM10 11v-1H9v1h1Zm0 .01H9v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM10 15v-1H9v1h1Zm0 .01H9v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM15 15v-1h-1v1h1Zm0 .01h-1v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM15 11v-1h-1v1h1Zm0 .01h-1v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM5 15v-1H4v1h1Zm0 .01H4v1h1v-1Zm.01 0v1h1v-1h-1Zm0-.01h1v-1h-1v1ZM2 4h16V2H2v2Zm16 0h2a2 2 0 0 0-2-2v2Zm0 0v14h2V4h-2Zm0 14v2a2 2 0 0 0 2-2h-2Zm0 0H2v2h16v-2ZM2 18H0a2 2 0 0 0 2 2v-2Zm0 0V4H0v14h2ZM2 4V2a2 2 0 0 0-2 2h2Zm2-3v3h2V1H4Zm5 0v3h2V1H9Zm5 0v3h2V1h-2ZM1 8h18V6H1v2Zm3 3v.01h2V11H4Zm1 1.01h.01v-2H5v2Zm1.01-1V11h-2v.01h2Zm-1-1.01H5v2h.01v-2ZM9 11v.01h2V11H9Zm1 1.01h.01v-2H10v2Zm1.01-1V11h-2v.01h2Zm-1-1.01H10v2h.01v-2ZM9 15v.01h2V15H9Zm1 1.01h.01v-2H10v2Zm1.01-1V15h-2v.01h2Zm-1-1.01H10v2h.01v-2ZM14 15v.01h2V15h-2Zm1 1.01h.01v-2H15v2Zm1.01-1V15h-2v.01h2Zm-1-1.01H15v2h.01v-2ZM14 11v.01h2V11h-2Zm1 1.01h.01v-2H15v2Zm1.01-1V11h-2v.01h2Zm-1-1.01H15v2h.01v-2ZM4 15v.01h2V15H4Zm1 1.01h.01v-2H5v2Zm1.01-1V15h-2v.01h2Zm-1-1.01H5v2h.01v-2Z"/></svg>
+                            <span class="absolute flex items-center justify-center w-6 h-6 bg-indigo-100 rounded-full -start-3.5 ring-8 ring-white dark:ring-gray-800 dark:bg-indigo-900">
+                                <svg class="w-2.5 h-2.5 text-indigo-800 dark:text-indigo-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.5 19h9M4 5h12M2 9.5h16M2 14.5h16"/>
+                                </svg>
                             </span>
-                            <h3 class="mb-1 text-lg font-semibold text-gray-900 dark:text-white">Compra 25.000€</h3>
+                            <h3 class="mb-1 text-lg font-semibold text-gray-900 dark:text-white">Compra 350.000€</h3>
                             <time class="block mb-3 text-sm font-normal leading-none text-gray-500 dark:text-gray-400">12 de Janeiro 2025</time>
                         </li>
                     </ol>
-                    <button class="text-white inline-flex w-full justify-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    Ver tudo
+                    <button class="text-white inline-flex w-full justify-center items-center bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition-all">
+                        <svg class="w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7-7v14"/>
+                        </svg>
+                        Ver histórico completo
                     </button>
                 </div>
             </div>
+        </div>
     </div>
-</div>
-    <!-- #Modal -->
 
     </main>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
