@@ -4,7 +4,7 @@ namespace AtivoPlusFrontend.Pages
 {
     public class MercadoModel : PageModel
     {
-        public List<IndiceMercado> Indices { get; set; }
+        public required List<IndiceMercado> Indices { get; set; }
 
         public void OnGet()
         {
@@ -24,11 +24,11 @@ namespace AtivoPlusFrontend.Pages
 
         public class IndiceMercado
         {
-            public string Nome { get; set; }
-            public string Tipo { get; set; }
-            public string Variacao { get; set; }
-            public string Valor { get; set; }
-            public string CorValor { get; set; }
+            public required string Nome { get; set; }
+            public required string Tipo { get; set; }
+            public required string Variacao { get; set; }
+            public required string Valor { get; set; }
+            public required string CorValor { get; set; }
         }
     }
 }
