@@ -13,19 +13,72 @@
     <title>Página Complexa com Animações</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+    <style>
+        .add-carteira-btn {
+            background-color: #10B981; /* Verde esmeralda */
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .add-carteira-btn:hover {
+            transform: scale(1.05);
+            background-color: #059669; /* Verde mais escuro no hover */
+        }
+    </style>
 </head>
 <body>
 
-    <main class=" h-auto pt-20 grid lg:grid-cols-2 md:grid-cols-1 sm:gap-8 gap-8 md:gap-4 lg:gap-4 justify-center">
+    <main class="h-auto pt-20">
+        <!-- Cabeçalho com título e botão de adicionar -->
+        <div class="container mx-auto px-4 mb-6">
+            <div class="flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Minhas Carteiras</h2>
+                <button id="novaCarteiraBtn" class="add-carteira-btn py-2 px-4 rounded-md shadow-md flex items-center font-medium" onclick="abrirModal()">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Nova Carteira
+                </button>
+            </div>
+        </div>
         
-       <div id="carteirasContainer" class="contents"></div>
-    
+        <!-- Grid de carteiras -->
+        <div class="container mx-auto px-4">
+            <div id="carteirasContainer" class="grid lg:grid-cols-2 md:grid-cols-1 sm:gap-8 gap-8 md:gap-4 lg:gap-4 justify-center"></div>
+        </div>
     </main>
+    
+    <!-- Modal para adicionar nova carteira -->
+    <div id="novaCarteiraModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-gray-800">Adicionar Nova Carteira</h2>
+                <button id="fecharModalBtn" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="mb-4">
+                <label for="nomeCarteira" class="block text-gray-700 text-sm font-bold mb-2">Nome da Carteira</label>
+                <input type="text" id="nomeCarteira" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Digite o nome da carteira">
+            </div>
+            <div class="flex justify-end">
+                <button id="cancelarBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded mr-2">
+                    Cancelar
+                </button>
+                <button id="salvarCarteiraBtn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                    Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Container -->
-<div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
 
 <script>
+  // Funções auxiliares
   function showToast(message, type = "info") {
     const toast = document.createElement("div");
 
@@ -62,9 +115,82 @@
       setTimeout(() => toast.remove(), 300);
     }, 3000);
   }
+  
+  // Função para abrir o modal
+  function abrirModal() {
+    const modal = document.getElementById('novaCarteiraModal');
+    const nomeCarteiraInput = document.getElementById('nomeCarteira');
+    modal.classList.remove('hidden');
+    nomeCarteiraInput.value = '';
+    nomeCarteiraInput.focus();
+  }
+
+  // Função para fechar o modal
+  function fecharModal() {
+    const modal = document.getElementById('novaCarteiraModal');
+    modal.classList.add('hidden');
+  }
 
   document.addEventListener('DOMContentLoaded', async () => {
     const container = document.getElementById('carteirasContainer');
+    const fecharModalBtn = document.getElementById('fecharModalBtn');
+    const cancelarBtn = document.getElementById('cancelarBtn');
+    const salvarCarteiraBtn = document.getElementById('salvarCarteiraBtn');
+    const nomeCarteiraInput = document.getElementById('nomeCarteira');
+    const modal = document.getElementById('novaCarteiraModal');
+    
+    // Event listeners para o modal
+    fecharModalBtn.addEventListener('click', fecharModal);
+    cancelarBtn.addEventListener('click', fecharModal);
+    
+    // Fechar modal ao clicar fora dele
+    window.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        fecharModal();
+      }
+    });
+
+    // Salvar nova carteira (corrigindo o userId)
+    salvarCarteiraBtn.addEventListener('click', async () => {
+      const nome = nomeCarteiraInput.value.trim();
+      
+      if (!nome) {
+        showToast("O nome da carteira é obrigatório.", "warning");
+        return;
+      }
+
+      
+      
+      try {
+        let userId = -1;
+        
+        
+        const response = await fetch("/api/carteira/adicionar", {
+          method: "PUT",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({ 
+            userId: userId, 
+            nome: nome 
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error("Erro ao criar carteira.");
+        }
+        
+        showToast("Carteira criada com sucesso!", "success");
+        fecharModal();
+        
+        // Recarregar a lista de carteiras
+        window.location.reload();
+      } catch (error) {
+        console.error(error);
+        showToast("Erro ao criar carteira.", "error");
+      }
+    });
 
     try {
       const response = await fetch("/api/carteira/ver?userIdFromCarteira=-1", {
@@ -127,9 +253,10 @@
       showToast("Erro ao carregar carteiras.", "error");
     }
   });
+
+      
+      
 </script>
-
-
 
 </body>
 </html>
