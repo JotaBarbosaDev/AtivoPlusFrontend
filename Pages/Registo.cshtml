@@ -1,8 +1,8 @@
 @page
 @model AtivoPlusFrontend.Pages.Pages_Registo
 @{
-    ViewData["Title"] = "Registo";
-    Layout = null;
+  ViewData["Title"] = "Registo";
+  Layout = null;
 }
 <!DOCTYPE html>
 <html lang="pt">
@@ -20,32 +20,36 @@
       <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto min-h-screen lg:py-0">
         <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
           <img class="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg" alt="logo">
-          AtivoPlus    
+          AtivoPlus
         </a>
-        <div class="w-full bg-white rounded-lg shadow dark:border sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+        <div
+          class="w-full bg-white rounded-lg shadow dark:border sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               Cria a tua conta
             </h1>
             <form id="registoForm" class="space-y-4 md:space-y-6">
               <div>
-                <label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Username</label>
+                <label for="username"
+                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Username</label>
                 <input type="text" name="username" id="username" placeholder="O teu nome de utilizador"
                   class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-[#2563eb] focus:border-[#2563eb] block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[#3b82f6] dark:focus:border-[#3b82f6]"
                   required>
               </div>
-                <div>
-                    <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                    <input type="password" name="password" id="password" placeholder="••••••••"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-[#2563eb] focus:border-[#2563eb] block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[#3b82f6] dark:focus:border-[#3b82f6]"
-                    required>
-                </div>
-                <div>
-                    <label for="passwordConfirm" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirmação de Password</label>
-                    <input type="password" name="passwordConfirm" id="passwordConfirm" placeholder="••••••••"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-[#2563eb] focus:border-[#2563eb] block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[#3b82f6] dark:focus:border-[#3b82f6]"
-                    required>
-                </div>
+              <div>
+                <label for="password"
+                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
+                <input type="password" name="password" id="password" placeholder="••••••••"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-[#2563eb] focus:border-[#2563eb] block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[#3b82f6] dark:focus:border-[#3b82f6]"
+                  required>
+              </div>
+              <div>
+                <label for="passwordConfirm"
+                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirmação de Password</label>
+                <input type="password" name="passwordConfirm" id="passwordConfirm" placeholder="••••••••"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-[#2563eb] focus:border-[#2563eb] block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[#3b82f6] dark:focus:border-[#3b82f6]"
+                  required>
+              </div>
               <div>
                 <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
                 <input type="email" name="email" id="email" placeholder="nome@email.com"
@@ -53,7 +57,8 @@
                   required>
               </div>
               <div>
-                <label for="telefone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Telefone</label>
+                <label for="telefone"
+                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Telefone</label>
                 <input type="text" name="telefone" id="telefone" placeholder="912345678"
                   class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-[#2563eb] focus:border-[#2563eb] block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[#3b82f6] dark:focus:border-[#3b82f6]"
                   required>
@@ -76,8 +81,7 @@
                   class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-[#2563eb] focus:border-[#2563eb] block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[#3b82f6] dark:focus:border-[#3b82f6]"
                   required>
               </div>
-              <button
-                type="submit"
+              <button type="submit"
                 class="w-full text-white bg-[#2563eb] hover:bg-[#1d4ed8] focus:ring-4 focus:outline-none focus:ring-[#93c5fd] font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-[#2563eb] dark:hover:bg-[#1d4ed8] dark:focus:ring-[#1e40af]">
                 Criar Conta
               </button>
@@ -151,7 +155,7 @@
       };
 
       try {
-        const response = await fetch('https://es.marquesserver.freeddns.org:10513/api/user/adicionar', {
+        const response = await fetch('/api/user/adicionar', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -161,7 +165,7 @@
 
         if (response.ok) {
           try {
-            const response2 = await fetch('https://es.marquesserver.freeddns.org:10513/api/userinfo/setInfo', {
+            const response2 = await fetch('/api/userinfo/setInfo', {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json'
