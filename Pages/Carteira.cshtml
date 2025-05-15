@@ -13,19 +13,312 @@
     <title>Página Complexa com Animações</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+    <style>
+        .add-carteira-btn {
+            background-color: #10B981; /* Verde esmeralda */
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .add-carteira-btn:hover {
+            transform: scale(1.05);
+            background-color: #059669; /* Verde mais escuro no hover */
+        }
+        
+        .carteira-card {
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .carteira-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .valor-positivo {
+            color: #10B981;
+        }
+        
+        .valor-negativo {
+            color: #EF4444;
+        }
+        
+        .card-image {
+            transition: transform 0.5s ease;
+        }
+        
+        .carteira-card:hover .card-image {
+            transform: scale(1.05);
+        }
+        
+        .stats-badge {
+            transition: all 0.2s ease;
+        }
+        
+        .carteira-card:hover .stats-badge {
+            background-color: #3B82F6;
+            color: white;
+        }
+
+        .modal-transition {
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        
+        .modal-enter {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        
+        .modal-enter-active {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .modal-exit {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .modal-exit-active {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        
+        .tab-active {
+            border-bottom: 2px solid #3B82F6;
+            color: #3B82F6;
+        }
+    </style>
 </head>
 <body>
 
-    <main class=" h-auto pt-20 grid lg:grid-cols-2 md:grid-cols-1 sm:gap-8 gap-8 md:gap-4 lg:gap-4 justify-center">
+    <main class="h-auto pt-20">
+        <!-- Cabeçalho com título e botão de adicionar -->
+        <div class="container mx-auto px-4 mb-6">
+            <div class="flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Minhas Carteiras</h2>
+                <button id="novaCarteiraBtn" class="add-carteira-btn py-2 px-4 rounded-md shadow-md flex items-center font-medium" onclick="abrirModal()">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Nova Carteira
+                </button>
+            </div>
+        </div>
         
-       <div id="carteirasContainer" class="contents"></div>
-    
+        <!-- Grid de carteiras -->
+        <div class="container mx-auto px-4">
+            <div id="carteirasContainer" class="grid lg:grid-cols-2 xl:grid-cols-3 md:grid-cols-1 gap-6"></div>
+        </div>
     </main>
+    
+    <!-- Modal para adicionar nova carteira -->
+    <div id="novaCarteiraModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md dark:bg-gray-800">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-gray-800 dark:text-white">Adicionar Nova Carteira</h2>
+                <button id="fecharModalBtn" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="mb-4">
+                <label for="nomeCarteira" class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-300">Nome da Carteira</label>
+                <input type="text" id="nomeCarteira" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Digite o nome da carteira">
+            </div>
+            <div class="flex justify-end">
+                <button id="cancelarBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded mr-2 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200">
+                    Cancelar
+                </button>
+                <button id="salvarCarteiraBtn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                    Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para detalhes da carteira -->
+    <div id="detalhesCarteiraModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden modal-transition">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+            <!-- Cabeçalho do modal -->
+            <div class="bg-gradient-to-r from-blue-500 to-purple-500 p-4 flex justify-between items-center">
+                <h3 class="text-xl font-bold text-white flex items-center">
+                    <span id="modalCarteiraNome">Detalhes da Carteira</span>
+                    <button id="editarNomeBtn" class="ml-2 text-white/80 hover:text-white">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                        </svg>
+                    </button>
+                </h3>
+                <div class="flex items-center">
+                    <button id="apagarCarteiraBtn" class="text-white/80 hover:text-white mr-3">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                    <button id="fecharDetalhesBtn" class="text-white/80 hover:text-white">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Editar nome (inicialmente oculto) -->
+            <div id="editarNomeContainer" class="px-6 py-3 border-b border-gray-200 dark:border-gray-700 hidden">
+                <div class="flex items-center">
+                    <div class="flex-1 mr-2">
+                        <input type="text" id="novoNomeCarteira" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Novo nome da carteira">
+                    </div>
+                    <button id="salvarNomeBtn" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded">
+                        Salvar
+                    </button>
+                    <button id="cancelarEditarNomeBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded ml-2 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Tabs para navegação -->
+            <div class="px-6 pt-3 pb-0 border-b border-gray-200 dark:border-gray-700 flex">
+                <button id="tabVisaoGeral" class="px-4 py-2 font-medium tab-active">
+                    Visão Geral
+                </button>
+                <button id="tabAtivos" class="px-4 py-2 font-medium text-gray-600 dark:text-gray-400">
+                    Ativos
+                </button>
+            </div>
+            
+            <!-- Conteúdo da aba Visão Geral -->
+            <div id="conteudoVisaoGeral" class="p-6 overflow-y-auto flex-1">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Resumo da carteira -->
+                    <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-4">
+                        <h4 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Resumo</h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-300">Valor Total:</span>
+                                <span id="resumoValorTotal" class="font-bold">€0,00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-300">Retorno Total:</span>
+                                <span id="resumoRetornoTotal" class="font-bold">€0,00 (0%)</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-300">Número de Ativos:</span>
+                                <span id="resumoNumAtivos" class="font-bold">0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-300">Data de Criação:</span>
+                                <span id="resumoDataCriacao" class="font-bold">08/05/2025</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Gráfico de distribuição (placeholder) -->
+                    <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-4 flex flex-col items-center justify-center">
+                        <h4 class="text-lg font-semibold text-gray-800 dark:text-white mb-4 self-start">Distribuição</h4>
+                        <div class="text-center text-gray-500 dark:text-gray-400 py-8">
+                            <svg class="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            <p>Adicione ativos à sua carteira para visualizar a distribuição</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Desempenho ao longo do tempo (placeholder) -->
+                    <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-4 col-span-1 md:col-span-2 flex flex-col items-center justify-center">
+                        <h4 class="text-lg font-semibold text-gray-800 dark:text-white mb-4 self-start">Desempenho</h4>
+                        <div class="text-center text-gray-500 dark:text-gray-400 py-8">
+                            <svg class="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+                            </svg>
+                            <p>O histórico de desempenho aparecerá aqui quando houver dados suficientes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Conteúdo da aba Ativos -->
+            <div id="conteudoAtivos" class="p-6 overflow-y-auto flex-1 hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="text-lg font-semibold text-gray-800 dark:text-white">Ativos na Carteira</h4>
+                    <button id="adicionarAtivoBtn" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Adicionar Ativo
+                    </button>
+                </div>
+                
+                <div id="semAtivosMsg" class="bg-blue-50 dark:bg-blue-900/30 p-6 rounded-lg text-center">
+                    <svg class="w-12 h-12 mx-auto text-blue-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <h5 class="text-lg font-medium text-gray-800 dark:text-white mb-2">Nenhum ativo encontrado</h5>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">Esta carteira ainda não possui nenhum ativo. Adicione ativos para começar a acompanhar seu desempenho.</p>
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded inline-flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Adicionar Primeiro Ativo
+                    </button>
+                </div>
+                
+                <div id="listaAtivos" class="hidden">
+                    <div class="bg-white dark:bg-gray-700 shadow overflow-hidden rounded-lg">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
+                            <thead class="bg-gray-50 dark:bg-gray-800">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Ativo</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Quantidade</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Preço</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Valor</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Variação</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaAtivos" class="bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-600">
+                                <!-- Aqui serão inseridos os ativos dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Rodapé do modal -->
+            <div class="bg-gray-100 dark:bg-gray-800 px-6 py-3 flex justify-end">
+                <button id="fecharDetalhesModalBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200">
+                    Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de confirmação para apagar carteira -->
+    <div id="confirmarApagarModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden modal-transition">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md">
+            <div class="mb-4">
+                <h3 class="text-lg font-bold text-gray-800 dark:text-white">Confirmar exclusão</h3>
+                <p class="text-gray-600 dark:text-gray-400 mt-2">Tem certeza que deseja apagar esta carteira? Esta ação não pode ser desfeita.</p>
+            </div>
+            <div class="flex justify-end space-x-2">
+                <button id="cancelarApagarBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200">
+                    Cancelar
+                </button>
+                <button id="confirmarApagarBtn" class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded">
+                    Apagar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Container -->
-<div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
 
 <script>
+  // Funções auxiliares
   function showToast(message, type = "info") {
     const toast = document.createElement("div");
 
@@ -62,9 +355,216 @@
       setTimeout(() => toast.remove(), 300);
     }, 3000);
   }
+  
+  // Função para abrir o modal
+  function abrirModal() {
+    const modal = document.getElementById('novaCarteiraModal');
+    const nomeCarteiraInput = document.getElementById('nomeCarteira');
+    modal.classList.remove('hidden');
+    nomeCarteiraInput.value = '';
+    nomeCarteiraInput.focus();
+  }
+
+  // Função para fechar o modal
+  function fecharModal() {
+    const modal = document.getElementById('novaCarteiraModal');
+    modal.classList.add('hidden');
+  }
+
+  // Função para abrir o modal de detalhes da carteira
+  function abrirModalDetalhes(carteiraId, nome, tipo, percentual, valor) {
+    // Armazenar o ID da carteira atual para uso em operações
+    window.carteiraAtualId = carteiraId;
+    
+    // Atualizar o título do modal com o nome da carteira
+    document.getElementById('modalCarteiraNome').textContent = nome;
+    
+    // Preencher os dados do resumo
+    document.getElementById('resumoValorTotal').textContent = valor || '€0,00';
+    document.getElementById('resumoRetornoTotal').textContent = percentual || '0%';
+    document.getElementById('resumoNumAtivos').textContent = '0'; // Assumindo que inicialmente não há ativos
+    document.getElementById('resumoDataCriacao').textContent = '08/05/2025'; // Data atual como exemplo
+    
+    // Mostrar o modal
+    const modal = document.getElementById('detalhesCarteiraModal');
+    modal.classList.remove('hidden');
+    // Adicionar animação de entrada
+    modal.classList.add('modal-enter');
+    setTimeout(() => {
+      modal.classList.remove('modal-enter');
+      modal.classList.add('modal-enter-active');
+    }, 10);
+  }
+  
+  // Função para fechar o modal de detalhes
+  function fecharModalDetalhes() {
+    const modal = document.getElementById('detalhesCarteiraModal');
+    // Adicionar animação de saída
+    modal.classList.remove('modal-enter-active');
+    modal.classList.add('modal-exit');
+    setTimeout(() => {
+      modal.classList.remove('modal-exit');
+      modal.classList.add('modal-exit-active');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        modal.classList.remove('modal-exit-active');
+        // Resetar o estado do modal
+        document.getElementById('editarNomeContainer').classList.add('hidden');
+        document.getElementById('tabVisaoGeral').click(); // Voltar para a aba de visão geral
+      }, 300);
+    }, 10);
+  }
+  
+  // Função para mostrar o formulário de edição de nome
+  function mostrarEditarNome() {
+    const nomeAtual = document.getElementById('modalCarteiraNome').textContent;
+    document.getElementById('novoNomeCarteira').value = nomeAtual;
+    document.getElementById('editarNomeContainer').classList.remove('hidden');
+  }
+  
+  // Função para esconder o formulário de edição de nome
+  function esconderEditarNome() {
+    document.getElementById('editarNomeContainer').classList.add('hidden');
+  }
+  
+  // Função para salvar o novo nome da carteira
+  async function salvarNovoNome() {
+    const novoNome = document.getElementById('novoNomeCarteira').value.trim();
+    
+    if (!novoNome) {
+      showToast("O nome da carteira é obrigatório.", "warning");
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/carteira/alterarNome`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ 
+          carteiraId: window.carteiraAtualId,
+          nome: novoNome 
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error("Erro ao atualizar carteira.");
+      }
+      
+      // Atualizar o nome no modal
+      document.getElementById('modalCarteiraNome').textContent = novoNome;
+      
+      // Ocultar o formulário de edição
+      esconderEditarNome();
+      
+      showToast("Nome da carteira atualizado com sucesso!", "success");
+      
+      // Recarregar a lista de carteiras para refletir a mudança
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+      showToast("Erro ao atualizar nome da carteira.", "error");
+    }
+  }
+  
+  // Função para mostrar o modal de confirmação de exclusão
+  function mostrarConfirmacaoApagar() {
+    document.getElementById('confirmarApagarModal').classList.remove('hidden');
+  }
+  
+  // Função para esconder o modal de confirmação de exclusão
+  function esconderConfirmacaoApagar() {
+    document.getElementById('confirmarApagarModal').classList.add('hidden');
+  }
+  
+  // Função para apagar a carteira
+  async function apagarCarteira() {
+    try {
+      const response = await fetch(`/api/carteira/apagar?carteiraId=${window.carteiraAtualId}`, {
+        method: "DELETE",
+        credentials: 'include'
+      });
+      
+      if (!response.ok) {
+        throw new Error("Erro ao apagar carteira.");
+      }
+      
+      showToast("Carteira apagada com sucesso!", "success");
+      
+      // Fechar os modais
+      esconderConfirmacaoApagar();
+      fecharModalDetalhes();
+      
+      // Recarregar a página para atualizar a lista
+      window.location.reload();
+    } catch (error) {
+      console.error(error);
+      showToast("Erro ao apagar carteira.", "error");
+    }
+  }
 
   document.addEventListener('DOMContentLoaded', async () => {
     const container = document.getElementById('carteirasContainer');
+    const fecharModalBtn = document.getElementById('fecharModalBtn');
+    const cancelarBtn = document.getElementById('cancelarBtn');
+    const salvarCarteiraBtn = document.getElementById('salvarCarteiraBtn');
+    const nomeCarteiraInput = document.getElementById('nomeCarteira');
+    const modal = document.getElementById('novaCarteiraModal');
+    
+    // Event listeners para o modal
+    fecharModalBtn.addEventListener('click', fecharModal);
+    cancelarBtn.addEventListener('click', fecharModal);
+    
+    // Fechar modal ao clicar fora dele
+    window.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        fecharModal();
+      }
+    });
+
+    // Salvar nova carteira (corrigindo o userId)
+    salvarCarteiraBtn.addEventListener('click', async () => {
+      const nome = nomeCarteiraInput.value.trim();
+      
+      if (!nome) {
+        showToast("O nome da carteira é obrigatório.", "warning");
+        return;
+      }
+
+      
+      
+      try {
+        let userId = -1;
+        
+        
+        const response = await fetch("/api/carteira/adicionar", {
+          method: "PUT",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({ 
+            userId: userId, 
+            nome: nome 
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error("Erro ao criar carteira.");
+        }
+        
+        showToast("Carteira criada com sucesso!", "success");
+        fecharModal();
+        
+        // Recarregar a lista de carteiras
+        window.location.reload();
+      } catch (error) {
+        console.error(error);
+        showToast("Erro ao criar carteira.", "error");
+      }
+    });
 
     try {
       const response = await fetch("/api/carteira/ver?userIdFromCarteira=-1", {
@@ -83,42 +583,121 @@
       }
 
       data.forEach(carteira => { 
-        const nome = carteira.nome ?? "-";
-        const tipo = carteira.tipo ?? "-";
-        const percentual = carteira.percentual ?? "-";
-        const valor = carteira.valor ?? "-";
+        const nome = carteira.nome ?? "Nova Carteira";
+        const tipo = carteira.tipo ?? "Mista";
+        const percentual = carteira.percentual ?? "0%";
+        const valor = carteira.valor ?? "€0";
+        const isPositive = !valor.startsWith('-');
+        
+        // Gera uma cor aleatória para o gradiente do card
+        const gradients = [
+          'from-blue-500 to-purple-500',
+          'from-green-500 to-teal-500',
+          'from-yellow-500 to-orange-500',
+          'from-purple-500 to-pink-500',
+          'from-red-500 to-pink-500',
+          'from-indigo-500 to-blue-500'
+        ];
+        const gradient = gradients[Math.floor(Math.random() * gradients.length)];
+        
+        // Escolhe um ícone baseado no tipo de carteira
+        const getIconByType = (type) => {
+          switch(type.toLowerCase()) {
+            case 'imobiliária': return '🏠';
+            case 'ações': return '📈';
+            case 'cripto': return '🪙';
+            case 'mista': return '💰';
+            case 'renda fixa': return '💼';
+            default: return '📊';
+          }
+        };
+        const icon = getIconByType(tipo);
+        
+        // Escolhe uma imagem aleatória para a carteira
+        const images = [
+          "https://www.tracado.pt/img/upload/moradia_ld1/gallery/vcr08---vista-piscina.jpg",
+          "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1951&q=80",
+          "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
+          "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
+        ];
+        const imageUrl = images[Math.floor(Math.random() * images.length)];
 
-        const corValor = valor.startsWith('+') ? 'text-green-700 dark:text-green-400' :
-                         valor.startsWith('-') ? 'text-red-700 dark:text-red-400' : 'text-gray-500';
+        // Status badges diferentes baseados no desempenho
+        const statusBadge = isPositive ? 
+            `<span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full dark:bg-green-900 dark:text-green-300 ml-2">Em alta</span>` : 
+            `<span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full dark:bg-red-900 dark:text-red-300 ml-2">Em queda</span>`;
 
-        const svgUp = `
-          <svg class="w-6 h-6 text-gray-800 dark:text-white group-hover:animate-bounce" fill="none" viewBox="0 0 24 24">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m16 17-4-4-4 4m8-6-4-4-4 4"/>
-          </svg>`;
-        const svgDown = `
-          <svg class="w-6 h-6 text-gray-800 dark:text-white group-hover:animate-bounce" fill="none" viewBox="0 0 24 24">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8 7 4 4 4-4m-8 6 4 4 4-4"/>
-          </svg>`;
+        // Arrow SVG baseado no valor positivo ou negativo
+        const arrowSvg = isPositive ?
+            `<svg class="w-5 h-5 text-green-500 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+            </svg>` :
+            `<svg class="w-5 h-5 text-red-500 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>`;
+
+        // Modificar o botão "Ver detalhes" para chamar a função abrirModalDetalhes com os dados da carteira
+        const verDetalhesBtn = `
+          <button class="ver-detalhes-btn text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium flex items-center">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+              </svg>
+              Ver detalhes
+          </button>
+        `;
 
         const card = `
-          <a href="#" class="group flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-            <img class="img w-full rounded-t-lg h-96 ml-4 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" src="https://www.tracado.pt/img/upload/moradia_ld1/gallery/vcr08---vista-piscina.jpg" alt="">
-            <div class="flex flex-col justify-between p-4 leading-normal">
-              <div class="flex">
-                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">${nome}</h5>
-                <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-1 py-1 rounded-md dark:bg-gray-700 dark:text-gray-400 border border-gray-500 h-6 ml-4">${tipo}</span>
-              </div>
-              <div class="flex items-center">
-                ${valor.startsWith('+') ? svgUp : svgDown}
-                <span class="text-gray-700 dark:text-gray-400 flex">${percentual}
-                  <p class="${corValor} ml-4 text-medium group-hover:animate-pulse group-hover:font-semibold">${valor}</p>
-                </span>
-              </div>
+        <div class="carteira-card group bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden hover:shadow-lg" data-carteira-id="${carteira.id}">
+            <div class="relative overflow-hidden h-40">
+                <div class="absolute inset-0 bg-gradient-to-br ${gradient} opacity-75"></div>
+                <img class="card-image absolute inset-0 object-cover w-full h-full mix-blend-overlay opacity-90" src="${imageUrl}" alt="${nome}">
+                <div class="relative z-10 flex items-center justify-between p-4">
+                    <span class="text-4xl">${icon}</span>
+                    <span class="stats-badge bg-white/90 dark:bg-gray-800/90 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-md dark:text-gray-300 border border-gray-200 dark:border-gray-700">${tipo}</span>
+                </div>
+                <div class="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 class="text-xl font-bold text-white dark:text-white drop-shadow-md">${nome}</h3>
+                </div>
             </div>
-          </a>
+            
+            <div class="p-5">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center">
+                        ${arrowSvg}
+                        <span class="ml-1 text-sm text-gray-600 dark:text-gray-400">${percentual}</span>
+                        ${statusBadge}
+                    </div>
+                    <span class="text-xl font-bold ${isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}">${valor}</span>
+                </div>
+                
+                <div class="mt-4 flex justify-between items-center">
+                    ${verDetalhesBtn}
+                    <div class="text-xs text-gray-500 dark:text-gray-400">Atualizado: hoje</div>
+                </div>
+            </div>
+        </div>
         `;
 
         container.insertAdjacentHTML('beforeend', card);
+      });
+
+      // Adicionar event listeners para todos os botões "Ver detalhes"
+      document.querySelectorAll('.ver-detalhes-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          // Buscar o elemento pai mais próximo com a classe carteira-card
+          const carteiraCard = e.currentTarget.closest('.carteira-card');
+          const carteiraId = carteiraCard.dataset.carteiraId;
+          
+          // Obter os dados da carteira
+          const nome = carteiraCard.querySelector('h3').textContent;
+          const tipo = carteiraCard.querySelector('.stats-badge').textContent;
+          const percentual = carteiraCard.querySelector('.text-sm.text-gray-600').textContent;
+          const valor = carteiraCard.querySelector('.text-xl.font-bold').textContent;
+          
+          // Abrir o modal de detalhes
+          abrirModalDetalhes(carteiraId, nome, tipo, percentual, valor);
+        });
       });
 
       showToast("Carteiras carregadas com sucesso!", "success");
@@ -126,10 +705,49 @@
       console.error(error);
       showToast("Erro ao carregar carteiras.", "error");
     }
+
+    // Event listeners para tabs do modal de detalhes
+    const tabVisaoGeral = document.getElementById('tabVisaoGeral');
+    const tabAtivos = document.getElementById('tabAtivos');
+    const conteudoVisaoGeral = document.getElementById('conteudoVisaoGeral');
+    const conteudoAtivos = document.getElementById('conteudoAtivos');
+    
+    tabVisaoGeral.addEventListener('click', () => {
+      // Ativar a tab de visão geral
+      tabVisaoGeral.classList.add('tab-active');
+      tabAtivos.classList.remove('tab-active');
+      
+      // Mostrar o conteúdo da visão geral
+      conteudoVisaoGeral.classList.remove('hidden');
+      conteudoAtivos.classList.add('hidden');
+    });
+    
+    tabAtivos.addEventListener('click', () => {
+      // Ativar a tab de ativos
+      tabAtivos.classList.add('tab-active');
+      tabVisaoGeral.classList.remove('tab-active');
+      
+      // Mostrar o conteúdo de ativos
+      conteudoAtivos.classList.remove('hidden');
+      conteudoVisaoGeral.classList.add('hidden');
+    });
+    
+    // Event listeners para o modal de detalhes
+    document.getElementById('fecharDetalhesBtn').addEventListener('click', fecharModalDetalhes);
+    document.getElementById('fecharDetalhesModalBtn').addEventListener('click', fecharModalDetalhes);
+    
+    // Event listeners para edição de nome
+    document.getElementById('editarNomeBtn').addEventListener('click', mostrarEditarNome);
+    document.getElementById('cancelarEditarNomeBtn').addEventListener('click', esconderEditarNome);
+    document.getElementById('salvarNomeBtn').addEventListener('click', salvarNovoNome);
+    
+    // Event listeners para apagar carteira
+    document.getElementById('apagarCarteiraBtn').addEventListener('click', mostrarConfirmacaoApagar);
+    document.getElementById('cancelarApagarBtn').addEventListener('click', esconderConfirmacaoApagar);
+    document.getElementById('confirmarApagarBtn').addEventListener('click', apagarCarteira);
   });
+
 </script>
-
-
 
 </body>
 </html>

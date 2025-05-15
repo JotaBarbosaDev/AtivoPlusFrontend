@@ -18,7 +18,7 @@
 </head>
 
 <body>
-    <main class="h-auto pt-20 ">
+    <main class="h-auto pt-20 px-4">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
         <div class="flex flex-col justify-between bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 rounded-lg p-4 h-32 md:h-64">
             <div class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
@@ -28,64 +28,400 @@
                 24.987€
             </div>
             <div class="text-sm text-gray-500 dark:text-gray-400">
-                Uma descrição para o card
+                +12,3% desde o último mês
             </div>
         </div>  
         <div class="flex flex-col justify-between bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 rounded-lg p-4 h-32 md:h-64">
-            <div class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Um resumo</div>
-            <div class="text-2xl font-semibold text-green-500 dark:text-green-400 mb-2">€ 32,45
-                
-            </div>
-            <div class="text-sm text-gray-500 dark:text-gray-400">Ação de petróleo da Petrobras</div>
+            <div class="text-4xl font-bold text-gray-900 dark:text-white mb-2">PETR4</div>
+            <div class="text-2xl font-semibold text-green-500 dark:text-green-400 mb-2">€ 32,45</div>
+            <div class="text-sm text-gray-500 dark:text-gray-400">+2,8% últimas 24h</div>
         </div>
         <div class="flex flex-col justify-between bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 rounded-lg p-4 h-32 md:h-64">
-            <div class="text-4xl font-bold text-gray-900 dark:text-white mb-2"> Ativos</div>
-            <div class="text-2xl font-semibold text-green-500 dark:text-green-400 mb-2">€ 115,30</div>
-            <div class="text-sm text-gray-500 dark:text-gray-400">Investimento em imóveis comerciais</div>
+            <div class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Total Ativos</div>
+            <div class="text-2xl font-semibold text-green-500 dark:text-green-400 mb-2">€ 583.750</div>
+            <div class="text-sm text-gray-500 dark:text-gray-400">21 ativos em 3 carteiras</div>
         </div>
         <div class="flex flex-col justify-between bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 rounded-lg p-4 h-32 md:h-64">
             <div class="text-4xl font-bold text-gray-900 dark:text-white mb-2">BTC</div>
             <div class="text-2xl font-semibold text-green-500 dark:text-green-400 mb-2">€ 150.000</div>
-            <div class="text-sm text-gray-500 dark:text-gray-400">Preço atual do Bitcoin</div>
+            <div class="text-sm text-gray-500 dark:text-gray-400">+7,4% na última semana</div>
         </div>
       </div>
-      <div
-        class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-96 mb-4"
-      ></div>
-      <div class="grid grid-cols-2 gap-4 mb-4">
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
+
+      <!-- Sumário de Riscos e Performance dos Ativos -->
+      <div class="border-2 border-gray-300 dark:border-gray-600 rounded-lg p-4 mb-4 bg-white dark:bg-gray-800">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Análise de Risco da Carteira</h2>
+            <div class="text-sm text-gray-500 dark:text-gray-400">Atualizado em: 8 de maio de 2025</div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Diversificação -->
+            <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Diversificação</h3>
+                <div class="flex items-center">
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mr-2">
+                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: 78%"></div>
+                    </div>
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">78%</span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">Boa distribuição entre diferentes classes de ativos</p>
+            </div>
+            
+            <!-- Exposição ao Risco -->
+            <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Exposição ao Risco</h3>
+                <div class="flex items-center">
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mr-2">
+                        <div class="bg-yellow-400 h-2.5 rounded-full" style="width: 45%"></div>
+                    </div>
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">45%</span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">Nível moderado de exposição a ativos de alto risco</p>
+            </div>
+            
+            <!-- Índice Sharpe -->
+            <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Índice Sharpe</h3>
+                <div class="text-center">
+                    <span class="text-3xl font-bold text-gray-900 dark:text-white">1.42</span>
+                    <div class="flex justify-center mt-2">
+                        <svg class="w-5 h-5 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                        </svg>
+                        <span class="text-sm font-medium text-green-500 ml-1">+0.3 desde o mês anterior</span>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">Boa relação risco/retorno</p>
+            </div>
+        </div>
       </div>
-      <div
-        class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-96 mb-4"
-      ></div>
-      <div class="grid grid-cols-2 gap-4">
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"
-        ></div>
+
+      <!-- Gráfico de Distribuição de Ativos por Categoria -->
+      <div class="border-2 border-gray-300 dark:border-gray-600 rounded-lg h-96 mb-4 p-4 bg-white dark:bg-gray-800">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Distribuição de Ativos por Categoria</h2>
+        <div class="w-full h-full" id="distribuicaoAtivosChart"></div>
+      </div>
+
+      <!-- Gráficos de Performance e Ativos Recentes -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="border-2 border-gray-300 dark:border-gray-600 rounded-lg h-72 p-4 bg-white dark:bg-gray-800">
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Performance Mensal</h2>
+            <div class="w-full h-[calc(100%-2rem)]" id="performanceChart"></div>
+        </div>
+        <div class="border-2 border-gray-300 dark:border-gray-600 rounded-lg h-72 p-4 bg-white dark:bg-gray-800">
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Top 5 Ativos</h2>
+            <div class="space-y-2 mt-4">
+                <div class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div class="flex items-center">
+                        <span class="text-xl mr-2">🪙</span>
+                        <span class="font-medium">BTC</span>
+                    </div>
+                    <div class="text-green-500">+€20.000</div>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div class="flex items-center">
+                        <span class="text-xl mr-2">🏠</span>
+                        <span class="font-medium">Casa em Porto</span>
+                    </div>
+                    <div class="text-green-500">+€18.000</div>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div class="flex items-center">
+                        <span class="text-xl mr-2">🏢</span>
+                        <span class="font-medium">Apartamento no Algarve</span>
+                    </div>
+                    <div class="text-green-500">+€12.000</div>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div class="flex items-center">
+                        <span class="text-xl mr-2">🪙</span>
+                        <span class="font-medium">ETH</span>
+                    </div>
+                    <div class="text-green-500">+€5.000</div>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div class="flex items-center">
+                        <span class="text-xl mr-2">🏦</span>
+                        <span class="font-medium">KNRI11</span>
+                    </div>
+                    <div class="text-green-500">+€3.200</div>
+                </div>
+            </div>
+        </div>
+        <div class="border-2 border-gray-300 dark:border-gray-600 rounded-lg h-72 p-4 bg-white dark:bg-gray-800">
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Transações Recentes</h2>
+            <div class="space-y-2 mt-4 overflow-y-auto max-h-[calc(100%-2rem)]">
+                <div class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div>
+                        <div class="font-medium">Renda Casa em Lisboa</div>
+                        <div class="text-xs text-gray-500">3 Abril 2025</div>
+                    </div>
+                    <div class="text-green-500">+€650</div>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div>
+                        <div class="font-medium">Pintura Casa em Lisboa</div>
+                        <div class="text-xs text-gray-500">25 Março 2025</div>
+                    </div>
+                    <div class="text-red-500">-€5.500</div>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div>
+                        <div class="font-medium">Renda Casa em Lisboa</div>
+                        <div class="text-xs text-gray-500">1 Março 2025</div>
+                    </div>
+                    <div class="text-green-500">+€650</div>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div>
+                        <div class="font-medium">Renda Casa em Lisboa</div>
+                        <div class="text-xs text-gray-500">2 Fevereiro 2025</div>
+                    </div>
+                    <div class="text-green-500">+€650</div>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div>
+                        <div class="font-medium">Compra ETH</div>
+                        <div class="text-xs text-gray-500">15 Janeiro 2025</div>
+                    </div>
+                    <div class="text-red-500">-€2.500</div>
+                </div>
+            </div>
+        </div>
+        <div class="border-2 border-gray-300 dark:border-gray-600 rounded-lg h-72 p-4 bg-white dark:bg-gray-800">
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Rendimento por Carteira</h2>
+            <div class="w-full h-[calc(100%-2rem)]" id="carteirasChart"></div>
+        </div>
+      </div>
+
+      <!-- Análise de Rentabilidade por Tipo de Ativo -->
+      <div class="border-2 border-gray-300 dark:border-gray-600 rounded-lg p-4 mb-4 bg-white dark:bg-gray-800">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Rentabilidade por Tipo de Ativo</h2>
+            <div class="text-sm text-gray-500 dark:text-gray-400">Atualizado em: 8 de maio de 2025</div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <!-- Imóveis -->
+            <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                <div class="flex justify-between items-center">
+                    <span class="text-xl mr-2">🏠</span>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Imóveis</h3>
+                </div>
+                <div class="mt-3 text-2xl font-bold text-green-500">+5.2%</div>
+                <div class="flex items-center mt-2">
+                    <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                        <div class="bg-green-500 h-2 rounded-full" style="width: 62%"></div>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">ROI anualizado</p>
+            </div>
+            
+            <!-- Ações -->
+            <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                <div class="flex justify-between items-center">
+                    <span class="text-xl mr-2">📈</span>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Ações</h3>
+                </div>
+                <div class="mt-3 text-2xl font-bold text-green-500">+8.7%</div>
+                <div class="flex items-center mt-2">
+                    <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                        <div class="bg-green-500 h-2 rounded-full" style="width: 78%"></div>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">ROI anualizado</p>
+            </div>
+            
+            <!-- Criptomoedas -->
+            <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                <div class="flex justify-between items-center">
+                    <span class="text-xl mr-2">🪙</span>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Criptomoedas</h3>
+                </div>
+                <div class="mt-3 text-2xl font-bold text-green-500">+18.4%</div>
+                <div class="flex items-center mt-2">
+                    <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                        <div class="bg-green-500 h-2 rounded-full" style="width: 95%"></div>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">ROI anualizado</p>
+            </div>
+            
+            <!-- Fundos -->
+            <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                <div class="flex justify-between items-center">
+                    <span class="text-xl mr-2">🏦</span>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Fundos</h3>
+                </div>
+                <div class="mt-3 text-2xl font-bold text-green-500">+4.2%</div>
+                <div class="flex items-center mt-2">
+                    <div class="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                        <div class="bg-green-500 h-2 rounded-full" style="width: 55%"></div>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">ROI anualizado</p>
+            </div>
+        </div>
+      </div>
+
+      <!-- Acompanhamento de Mercado -->
+      <div class="border-2 border-gray-300 dark:border-gray-600 rounded-lg p-4 mb-4 bg-white dark:bg-gray-800">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Acompanhamento de Mercado</h2>
+            <div class="text-sm text-gray-500 dark:text-gray-400">Atualizado em: 8 de maio de 2025, 12:45</div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="group flex flex-col bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <h5 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">Bitcoin</h5>
+                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-1 rounded-md dark:bg-gray-700 dark:text-gray-400 border border-gray-500">Crypto</span>
+                </div>
+                <div class="flex items-center mb-3">
+                    <svg class="w-6 h-6 text-green-500 dark:text-green-400 group-hover:animate-bounce" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m16 17-4-4-4 4m8-6-4-4-4 4" />
+                    </svg>
+                    <span class="ml-2 text-gray-700 dark:text-gray-300">+4.8%</span>
+                    <span class="ml-4 font-semibold text-green-500">43.800 USD</span>
+                </div>
+                <p class="font-normal text-gray-700 dark:text-gray-400">Forte tendência de alta nas últimas 24 horas.</p>
+            </div>
+            <div class="group flex flex-col bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <h5 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">PETR4</h5>
+                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-1 rounded-md dark:bg-gray-700 dark:text-gray-400 border border-gray-500">Stocks</span>
+                </div>
+                <div class="flex items-center mb-3">
+                    <svg class="w-6 h-6 text-green-500 dark:text-green-400 group-hover:animate-bounce" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m16 17-4-4-4 4m8-6-4-4-4 4" />
+                    </svg>
+                    <span class="ml-2 text-gray-700 dark:text-gray-300">+2.8%</span>
+                    <span class="ml-4 font-semibold text-green-500">32,45 EUR</span>
+                </div>
+                <p class="font-normal text-gray-700 dark:text-gray-400">Ação se recuperando após queda do mês passado.</p>
+            </div>
+            <div class="group flex flex-col bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <h5 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">KNRI11</h5>
+                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-1 rounded-md dark:bg-gray-700 dark:text-gray-400 border border-gray-500">ETFs</span>
+                </div>
+                <div class="flex items-center mb-3">
+                    <svg class="w-6 h-6 text-red-500 dark:text-red-400 group-hover:animate-bounce" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8 7 4 4 4-4m-8 6 4 4 4-4" />
+                    </svg>
+                    <span class="ml-2 text-gray-700 dark:text-gray-300">-0.7%</span>
+                    <span class="ml-4 font-semibold text-red-500">115,30 EUR</span>
+                </div>
+                <p class="font-normal text-gray-700 dark:text-gray-400">Pequena queda após dividendos distribuídos no mês.</p>
+            </div>
+        </div>
+      </div>
+
+      <!-- Resumo Financeiro e Projeções -->
+      <div class="border-2 border-gray-300 dark:border-gray-600 rounded-lg p-4 mb-4 bg-white dark:bg-gray-800">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Resumo Financeiro e Projeções</h2>
+            <div class="text-sm text-gray-500 dark:text-gray-400">Projeções para 2025-2026</div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- KPIs Financeiros -->
+            <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">KPIs Financeiros</h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">ROI Total</span>
+                            <span class="text-sm font-medium text-green-500">+8.4%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
+                            <div class="bg-blue-600 h-1.5 rounded-full" style="width: 84%"></div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Cashflow Mensal</span>
+                            <span class="text-sm font-medium text-green-500">+€2.450</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
+                            <div class="bg-green-500 h-1.5 rounded-full" style="width: 68%"></div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Liquidez</span>
+                            <span class="text-sm font-medium text-yellow-500">72%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
+                            <div class="bg-yellow-500 h-1.5 rounded-full" style="width: 72%"></div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Crescimento Patrimonial</span>
+                            <span class="text-sm font-medium text-green-500">+12.7%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
+                            <div class="bg-purple-500 h-1.5 rounded-full" style="width: 92%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Metas e Projeções -->
+            <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Metas e Projeções</h3>
+                
+                <div class="space-y-3">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="flex items-center justify-center w-8 h-8 rounded-full bg-green-100 dark:bg-green-800">
+                                <svg class="w-4 h-4 text-green-500 dark:text-green-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="text-sm font-medium text-gray-900 dark:text-white">Patrimônio € 1 Milhão</h4>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Progresso: 58.4% • Previsão: Dez/2026</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-800">
+                                <svg class="w-4 h-4 text-blue-500 dark:text-blue-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="text-sm font-medium text-gray-900 dark:text-white">Renda Passiva € 5.000/mês</h4>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Progresso: 49% • Previsão: Mar/2027</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="flex items-center justify-center w-8 h-8 rounded-full bg-yellow-100 dark:bg-yellow-800">
+                                <svg class="w-4 h-4 text-yellow-500 dark:text-yellow-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="text-sm font-medium text-gray-900 dark:text-white">Diversificação Internacional</h4>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Progresso: 35% • Meta: 50% até Jul/2026</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
       </div>
     </main>
-
-
 </body>
-
 </html>
