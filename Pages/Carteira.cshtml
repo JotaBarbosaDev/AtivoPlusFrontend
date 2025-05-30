@@ -5,200 +5,626 @@
     Layout = "_Layout";
 }
 
-<!DOCTYPE html>
-<html lang="pt-pt">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Página Complexa com Animações</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .add-carteira-btn {
-            background-color: #10B981; /* Verde esmeralda */
-            color: white;
-            transition: all 0.3s ease;
-        }
-        
-        .add-carteira-btn:hover {
-            transform: scale(1.05);
-            background-color: #059669; /* Verde mais escuro no hover */
-        }
-        
-        .carteira-card {
-            transition: all 0.3s ease;
-            overflow: hidden;
-        }
-        
-        .carteira-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        
-        .valor-positivo {
-            color: #10B981;
-        }
-        
-        .valor-negativo {
-            color: #EF4444;
-        }
-        
-        .card-image {
-            transition: transform 0.5s ease;
-        }
-        
-        .carteira-card:hover .card-image {
-            transform: scale(1.05);
-        }
-        
-        .stats-badge {
-            transition: all 0.2s ease;
-        }
-        
-        .carteira-card:hover .stats-badge {
-            background-color: #3B82F6;
-            color: white;
-        }
-
-        .modal-transition {
-            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-        }
-        
-        .modal-enter {
-            opacity: 0;
-            transform: scale(0.95);
-        }
-        
-        .modal-enter-active {
-            opacity: 1;
-            transform: scale(1);
-        }
-        
-        .modal-exit {
-            opacity: 1;
-            transform: scale(1);
-        }
-        
-        .modal-exit-active {
-            opacity: 0;
-            transform: scale(0.95);
-        }
-        
-        .tab-active {
-            border-bottom: 2px solid #3B82F6;
-            color: #3B82F6;
-        }
-    </style>
-</head>
-<body>
-
-    <main class="h-auto pt-20">
-        <!-- Cabeçalho com título e botão de adicionar -->
-        <div class="container mx-auto px-4 mb-6">
-            <div class="flex justify-between items-center">
-                <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Minhas Carteiras</h2>
-                <button id="novaCarteiraBtn" class="add-carteira-btn py-2 px-4 rounded-md shadow-md flex items-center font-medium" onclick="abrirModal()">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                    </svg>
-                    Nova Carteira
-                </button>
-            </div>
-        </div>
-        
-        <!-- Grid de carteiras -->
-        <div class="container mx-auto px-4">
-            <div id="carteirasContainer" class="grid lg:grid-cols-2 xl:grid-cols-3 md:grid-cols-1 gap-6"></div>
-        </div>
-    </main>
+<div class="min-h-screen bg-gray-950 pt-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     
-    <!-- Modal para adicionar nova carteira -->
-    <div id="novaCarteiraModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-md dark:bg-gray-800">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold text-gray-800 dark:text-white">Adicionar Nova Carteira</h2>
-                <button id="fecharModalBtn" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
-            <div class="mb-4">
-                <label for="nomeCarteira" class="block text-gray-700 text-sm font-bold mb-2 dark:text-gray-300">Nome da Carteira</label>
-                <input type="text" id="nomeCarteira" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Digite o nome da carteira">
-            </div>
-            <div class="flex justify-end">
-                <button id="cancelarBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded mr-2 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200">
-                    Cancelar
-                </button>
-                <button id="salvarCarteiraBtn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                    Salvar
-                </button>
-            </div>
-        </div>
+    <!-- Header Section -->
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-primary-400 to-blue-400 bg-clip-text text-transparent mb-2">
+          Minhas Carteiras
+        </h1>
+        <p class="text-gray-400">Gerencie e acompanhe o desempenho das suas carteiras de investimento</p>
+      </div>
+      <button id="novaCarteiraBtn" 
+        class="bg-gradient-to-r from-primary-600 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-primary-700 hover:to-blue-700 focus:ring-4 focus:ring-primary-500/25 transition-all duration-200 transform hover:scale-105 active:scale-95 flex items-center gap-2 font-semibold shadow-lg">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+        </svg>
+        Nova Carteira
+      </button>
     </div>
 
-    <!-- Modal para detalhes da carteira -->
-    <div id="detalhesCarteiraModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden modal-transition">
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
-            <!-- Cabeçalho do modal -->
-            <div class="bg-gradient-to-r from-blue-500 to-purple-500 p-4 flex justify-between items-center">
-                <h3 class="text-xl font-bold text-white flex items-center">
-                    <span id="modalCarteiraNome">Detalhes da Carteira</span>
-                    <button id="editarNomeBtn" class="ml-2 text-white/80 hover:text-white">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
-                        </svg>
-                    </button>
-                </h3>
-                <div class="flex items-center">
-                    <button id="apagarCarteiraBtn" class="text-white/80 hover:text-white mr-3">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                        </svg>
-                    </button>
-                    <button id="fecharDetalhesBtn" class="text-white/80 hover:text-white">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
+    <!-- Portfolio Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-white">Total Investido</h3>
+            <p class="text-gray-400 text-sm">Todas as carteiras</p>
+          </div>
+          <div class="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="totalInvestido" class="text-2xl font-bold text-white">€0,00</span>
+        </div>
+      </div>
+
+      <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-white">Retorno Total</h3>
+            <p class="text-gray-400 text-sm">Ganhos/Perdas</p>
+          </div>
+          <div class="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+            </svg>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="retornoTotal" class="text-2xl font-bold text-green-400">+€0,00</span>
+          <span id="percentualTotal" class="text-green-400 text-sm">+0%</span>
+        </div>
+      </div>
+
+      <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-white">Carteiras Ativas</h3>
+            <p class="text-gray-400 text-sm">Total criadas</p>
+          </div>
+          <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+            </svg>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="totalCarteiras" class="text-2xl font-bold text-white">0</span>
+          <span class="text-blue-400 text-sm">carteiras</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Portfolios Grid -->
+    <div id="carteirasContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Portfolios will be loaded here -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="text-center py-16 hidden">
+      <div class="w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-12 h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-gray-400 mb-2">Nenhuma carteira encontrada</h3>
+      <p class="text-gray-500 mb-6">Crie sua primeira carteira para começar a investir</p>
+      <button onclick="abrirModal()" 
+        class="bg-gradient-to-r from-primary-600 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-primary-700 hover:to-blue-700 transition-all duration-200">
+        Criar Primeira Carteira
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal Nova Carteira -->
+  <div id="novaCarteiraModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-50 hidden">
+    <div class="bg-gray-900/95 backdrop-blur-xl border border-gray-800 rounded-2xl p-8 shadow-2xl w-full max-w-md mx-4 transform transition-all duration-300">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-white">Nova Carteira</h2>
+        <button id="fecharModalBtn" class="text-gray-400 hover:text-white transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      
+      <form id="formNovaCarteira" class="space-y-6">
+        <div>
+          <label for="nomeCarteira" class="block text-sm font-medium text-gray-300 mb-2">
+            Nome da Carteira
+          </label>
+          <input type="text" id="nomeCarteira" required
+            class="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
+            placeholder="Ex: Carteira Conservadora">
+        </div>
+        
+        <div class="flex gap-3 pt-4">
+          <button type="button" id="cancelarBtn" 
+            class="flex-1 py-3 bg-gray-800 text-gray-300 rounded-xl hover:bg-gray-700 transition-colors duration-200">
+            Cancelar
+          </button>
+          <button type="submit" 
+            class="flex-1 py-3 bg-gradient-to-r from-primary-600 to-blue-600 text-white rounded-xl hover:from-primary-700 hover:to-blue-700 transition-all duration-200">
+            Criar Carteira
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Detalhes da Carteira -->
+  <div id="detalhesCarteiraModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-50 hidden">
+    <div class="bg-gray-900/95 backdrop-blur-xl border border-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-hidden">
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-primary-600 to-blue-600 p-6 flex justify-between items-center">
+        <div class="flex items-center gap-4">
+          <h3 id="modalCarteiraNome" class="text-2xl font-bold text-white">Detalhes da Carteira</h3>
+          <button id="editarNomeBtn" class="text-white/80 hover:text-white transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="apagarCarteiraBtn" class="text-white/80 hover:text-white transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+          </button>
+          <button id="fecharDetalhesBtn" class="text-white/80 hover:text-white transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Edit Name Form -->
+      <div id="editarNomeContainer" class="px-6 py-4 border-b border-gray-800 hidden">
+        <div class="flex items-center gap-3">
+          <input type="text" id="novoNomeCarteira" 
+            class="flex-1 px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+            placeholder="Novo nome da carteira">
+          <button id="salvarNomeBtn" 
+            class="px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors">
+            Salvar
+          </button>
+          <button id="cancelarEditarNomeBtn" 
+            class="px-4 py-2 bg-gray-700 text-gray-300 rounded-xl hover:bg-gray-600 transition-colors">
+            Cancelar
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="px-6 pt-4 border-b border-gray-800 flex">
+        <button id="tabVisaoGeral" class="px-4 py-2 font-medium text-primary-400 border-b-2 border-primary-400">
+          Visão Geral
+        </button>
+        <button id="tabAtivos" class="px-4 py-2 font-medium text-gray-400 hover:text-white transition-colors">
+          Ativos
+        </button>
+      </div>
+
+      <!-- Content -->
+      <div class="p-6 overflow-y-auto max-h-96">
+        <!-- Visão Geral Tab -->
+        <div id="conteudoVisaoGeral">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-gray-800/50 rounded-xl p-6">
+              <h4 class="text-lg font-semibold text-white mb-4">Resumo Financeiro</h4>
+              <div class="space-y-4">
+                <div class="flex justify-between">
+                  <span class="text-gray-400">Valor Total:</span>
+                  <span id="resumoValorTotal" class="text-white font-semibold">€0,00</span>
                 </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-400">Retorno Total:</span>
+                  <span id="resumoRetornoTotal" class="text-green-400 font-semibold">0%</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-400">Número de Ativos:</span>
+                  <span id="resumoNumAtivos" class="text-white font-semibold">0</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-400">Data de Criação:</span>
+                  <span id="resumoDataCriacao" class="text-white font-semibold">-</span>
+                </div>
+              </div>
             </div>
-            
-            <!-- Editar nome (inicialmente oculto) -->
-            <div id="editarNomeContainer" class="px-6 py-3 border-b border-gray-200 dark:border-gray-700 hidden">
-                <div class="flex items-center">
-                    <div class="flex-1 mr-2">
-                        <input type="text" id="novoNomeCarteira" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Novo nome da carteira">
+
+            <div class="bg-gray-800/50 rounded-xl p-6">
+              <h4 class="text-lg font-semibold text-white mb-4">Distribuição por Tipo</h4>
+              <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-400">Ações</span>
+                  <div class="flex items-center gap-2">
+                    <div class="w-16 bg-gray-700 rounded-full h-2">
+                      <div class="bg-blue-500 h-2 rounded-full" style="width: 60%"></div>
                     </div>
-                    <button id="salvarNomeBtn" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded">
-                        Salvar
-                    </button>
-                    <button id="cancelarEditarNomeBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded ml-2 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200">
-                        Cancelar
-                    </button>
+                    <span class="text-white text-sm">60%</span>
+                  </div>
                 </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-400">ETFs</span>
+                  <div class="flex items-center gap-2">
+                    <div class="w-16 bg-gray-700 rounded-full h-2">
+                      <div class="bg-green-500 h-2 rounded-full" style="width: 30%"></div>
+                    </div>
+                    <span class="text-white text-sm">30%</span>
+                  </div>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-400">Crypto</span>
+                  <div class="flex items-center gap-2">
+                    <div class="w-16 bg-gray-700 rounded-full h-2">
+                      <div class="bg-yellow-500 h-2 rounded-full" style="width: 10%"></div>
+                    </div>
+                    <span class="text-white text-sm">10%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ativos Tab -->
+        <div id="conteudoAtivos" class="hidden">
+          <div class="text-center py-8">
+            <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+            </div>
+            <p class="text-gray-400">Nenhum ativo encontrado nesta carteira</p>
+            <p class="text-gray-500 text-sm mt-2">Vá para a página de Ativos para adicionar investimentos</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Confirmação Apagar -->
+  <div id="confirmarApagarModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-50 hidden">
+    <div class="bg-gray-900/95 backdrop-blur-xl border border-gray-800 rounded-2xl p-8 shadow-2xl w-full max-w-md mx-4">
+      <div class="text-center">
+        <div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">Confirmar Exclusão</h3>
+        <p class="text-gray-400 mb-6">Tem certeza que deseja apagar esta carteira? Esta ação não pode ser desfeita.</p>
+        
+        <div class="flex gap-3">
+          <button id="cancelarApagarBtn" 
+            class="flex-1 py-3 bg-gray-800 text-gray-300 rounded-xl hover:bg-gray-700 transition-colors">
+            Cancelar
+          </button>
+          <button id="confirmarApagarBtn" 
+            class="flex-1 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors">
+            Apagar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
+</div>
+
+<script>
+let carteiraAtualId = null;
+
+// Toast notification function
+function showToast(message, type = "info") {
+  const toast = document.createElement("div");
+  let iconSVG, bgClass;
+  
+  switch (type) {
+    case "success":
+      bgClass = "bg-green-500/10 border-green-500/20";
+      iconSVG = `<svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414L8.414 15l-4.121-4.121a1 1 0 111.414-1.414L8.414 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+      </svg>`;
+      break;
+    case "error":
+      bgClass = "bg-red-500/10 border-red-500/20";
+      iconSVG = `<svg class="w-5 h-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>`;
+      break;
+    default:
+      bgClass = "bg-primary-500/10 border-primary-500/20";
+      iconSVG = `<svg class="w-5 h-5 text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>`;
+  }
+
+  toast.className = `flex items-center p-4 space-x-3 ${bgClass} border backdrop-blur-xl rounded-xl shadow-lg text-white animate-slide-up`;
+  toast.innerHTML = `${iconSVG}<div class="text-sm font-medium">${message}</div>`;
+
+  document.getElementById("toast-container").appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add("opacity-0", "transition-opacity", "duration-300");
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+// Modal functions
+function abrirModal() {
+  const modal = document.getElementById('novaCarteiraModal');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+  document.getElementById('nomeCarteira').focus();
+}
+
+function fecharModal() {
+  const modal = document.getElementById('novaCarteiraModal');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+  document.getElementById('formNovaCarteira').reset();
+}
+
+function abrirModalDetalhes(carteiraId, nome, tipo, percentual, valor) {
+  carteiraAtualId = carteiraId;
+  
+  document.getElementById('modalCarteiraNome').textContent = nome;
+  document.getElementById('resumoValorTotal').textContent = valor || '€0,00';
+  document.getElementById('resumoRetornoTotal').textContent = percentual || '0%';
+  document.getElementById('resumoNumAtivos').textContent = '0';
+  document.getElementById('resumoDataCriacao').textContent = new Date().toLocaleDateString('pt-PT');
+  
+  const modal = document.getElementById('detalhesCarteiraModal');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+
+function fecharModalDetalhes() {
+  const modal = document.getElementById('detalhesCarteiraModal');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+  esconderEditarNome();
+}
+
+function mostrarEditarNome() {
+  document.getElementById('editarNomeContainer').classList.remove('hidden');
+  const nomeAtual = document.getElementById('modalCarteiraNome').textContent;
+  document.getElementById('novoNomeCarteira').value = nomeAtual;
+  document.getElementById('novoNomeCarteira').focus();
+}
+
+function esconderEditarNome() {
+  document.getElementById('editarNomeContainer').classList.add('hidden');
+  document.getElementById('novoNomeCarteira').value = '';
+}
+
+async function salvarNovoNome() {
+  const novoNome = document.getElementById('novoNomeCarteira').value.trim();
+  if (!novoNome) {
+    showToast("Por favor, insira um nome válido.", "error");
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/carteira/atualizar', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        id: carteiraAtualId,
+        nome: novoNome
+      })
+    });
+
+    if (!response.ok) throw new Error("Erro ao atualizar carteira.");
+
+    document.getElementById('modalCarteiraNome').textContent = novoNome;
+    esconderEditarNome();
+    showToast("Nome da carteira atualizado com sucesso!", "success");
+    carregarCarteiras();
+  } catch (error) {
+    console.error(error);
+    showToast("Erro ao atualizar nome da carteira.", "error");
+  }
+}
+
+function mostrarConfirmacaoApagar() {
+  const modal = document.getElementById('confirmarApagarModal');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+
+function esconderConfirmacaoApagar() {
+  const modal = document.getElementById('confirmarApagarModal');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+}
+
+async function apagarCarteira() {
+  try {
+    const response = await fetch(`/api/carteira/apagar?carteiraId=${carteiraAtualId}`, {
+      method: "DELETE",
+      credentials: 'include'
+    });
+
+    if (!response.ok) throw new Error("Erro ao apagar carteira.");
+
+    showToast("Carteira apagada com sucesso!", "success");
+    esconderConfirmacaoApagar();
+    fecharModalDetalhes();
+    carregarCarteiras();
+  } catch (error) {
+    console.error(error);
+    showToast("Erro ao apagar carteira.", "error");
+  }
+}
+
+async function carregarCarteiras() {
+  try {
+    const response = await fetch("/api/carteira/ver?userIdFromCarteira=-1", {
+      credentials: 'include'
+    });
+
+    if (!response.ok) throw new Error("Erro ao carregar carteiras.");
+
+    const data = await response.json();
+    const container = document.getElementById('carteirasContainer');
+    const emptyState = document.getElementById('emptyState');
+    
+    container.innerHTML = '';
+
+    if (!Array.isArray(data) || data.length === 0) {
+      emptyState.classList.remove('hidden');
+      document.getElementById('totalCarteiras').textContent = '0';
+      return;
+    }
+
+    emptyState.classList.add('hidden');
+    document.getElementById('totalCarteiras').textContent = data.length;
+
+    const gradients = [
+      'from-blue-500 to-purple-500',
+      'from-green-500 to-teal-500',
+      'from-yellow-500 to-orange-500',
+      'from-purple-500 to-pink-500',
+      'from-red-500 to-pink-500',
+      'from-indigo-500 to-blue-500'
+    ];
+
+    const icons = ['💼', '📊', '💰', '📈', '🏦', '💎'];
+
+    data.forEach((carteira, index) => {
+      const nome = carteira.nome || "Nova Carteira";
+      const tipo = carteira.tipo || "Mista";
+      const percentual = carteira.percentual || "0%";
+      const valor = carteira.valor || "€0,00";
+      const isPositive = !percentual.startsWith('-');
+      
+      const gradient = gradients[index % gradients.length];
+      const icon = icons[index % icons.length];
+
+      const card = `
+        <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl overflow-hidden hover:border-primary-500/30 transition-all duration-300 group cursor-pointer">
+          <div class="relative h-32 bg-gradient-to-br ${gradient} p-6">
+            <div class="absolute top-4 right-4">
+              <span class="text-2xl">${icon}</span>
+            </div>
+            <div class="absolute bottom-4 left-6">
+              <h3 class="text-xl font-bold text-white">${nome}</h3>
+              <span class="text-white/80 text-sm">${tipo}</span>
+            </div>
+          </div>
+          
+          <div class="p-6">
+            <div class="flex justify-between items-center mb-4">
+              <div class="text-2xl font-bold text-white">${valor}</div>
+              <div class="flex items-center gap-1">
+                <svg class="w-4 h-4 ${isPositive ? 'text-green-400' : 'text-red-400'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${isPositive ? 'M7 11l5-5m0 0l5 5m-5-5v12' : 'M17 13l-5 5m0 0l-5-5m5 5V6'}"/>
+                </svg>
+                <span class="${isPositive ? 'text-green-400' : 'text-red-400'} font-semibold">${percentual}</span>
+              </div>
             </div>
             
-            <!-- Tabs para navegação -->
-            <div class="px-6 pt-3 pb-0 border-b border-gray-200 dark:border-gray-700 flex">
-                <button id="tabVisaoGeral" class="px-4 py-2 font-medium tab-active">
-                    Visão Geral
-                </button>
-                <button id="tabAtivos" class="px-4 py-2 font-medium text-gray-600 dark:text-gray-400">
-                    Ativos
-                </button>
-            </div>
-            
-            <!-- Conteúdo da aba Visão Geral -->
-            <div id="conteudoVisaoGeral" class="p-6 overflow-y-auto flex-1">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Resumo da carteira -->
-                    <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-4">
-                        <h4 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Resumo</h4>
-                        <div class="space-y-3">
-                            <div class="flex justify-between">
-                                <span class="text-gray-600 dark:text-gray-300">Valor Total:</span>
+            <button onclick="abrirModalDetalhes('${carteira.id}', '${nome}', '${tipo}', '${percentual}', '${valor}')"
+              class="w-full py-2 bg-primary-600/20 hover:bg-primary-600/30 text-primary-400 rounded-lg transition-colors duration-200 text-sm font-medium">
+              Ver Detalhes
+            </button>
+          </div>
+        </div>
+      `;
+
+      container.insertAdjacentHTML('beforeend', card);
+    });
+
+    showToast("Carteiras carregadas com sucesso!", "success");
+  } catch (error) {
+    console.error(error);
+    showToast("Erro ao carregar carteiras.", "error");
+  }
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+  // Load portfolios on page load
+  carregarCarteiras();
+
+  // Modal event listeners
+  document.getElementById('novaCarteiraBtn').addEventListener('click', abrirModal);
+  document.getElementById('fecharModalBtn').addEventListener('click', fecharModal);
+  document.getElementById('cancelarBtn').addEventListener('click', fecharModal);
+
+  // Form submission
+  document.getElementById('formNovaCarteira').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const nome = document.getElementById('nomeCarteira').value.trim();
+    if (!nome) {
+      showToast("Por favor, insira um nome para a carteira.", "error");
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/carteira/adicionar', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          id: -1,
+          userId: -1,
+          nome: nome,
+          tipo: "Mista",
+          percentual: "0%",
+          valor: "€0,00"
+        })
+      });
+
+      if (!response.ok) throw new Error("Erro ao criar carteira.");
+
+      showToast("Carteira criada com sucesso!", "success");
+      fecharModal();
+      carregarCarteiras();
+    } catch (error) {
+      console.error(error);
+      showToast("Erro ao criar carteira.", "error");
+    }
+  });
+
+  // Details modal event listeners
+  document.getElementById('fecharDetalhesBtn').addEventListener('click', fecharModalDetalhes);
+  document.getElementById('editarNomeBtn').addEventListener('click', mostrarEditarNome);
+  document.getElementById('cancelarEditarNomeBtn').addEventListener('click', esconderEditarNome);
+  document.getElementById('salvarNomeBtn').addEventListener('click', salvarNovoNome);
+  document.getElementById('apagarCarteiraBtn').addEventListener('click', mostrarConfirmacaoApagar);
+
+  // Delete confirmation modal
+  document.getElementById('cancelarApagarBtn').addEventListener('click', esconderConfirmacaoApagar);
+  document.getElementById('confirmarApagarBtn').addEventListener('click', apagarCarteira);
+
+  // Tab switching
+  document.getElementById('tabVisaoGeral').addEventListener('click', function() {
+    document.getElementById('tabVisaoGeral').classList.add('text-primary-400', 'border-b-2', 'border-primary-400');
+    document.getElementById('tabVisaoGeral').classList.remove('text-gray-400');
+    document.getElementById('tabAtivos').classList.add('text-gray-400');
+    document.getElementById('tabAtivos').classList.remove('text-primary-400', 'border-b-2', 'border-primary-400');
+    
+    document.getElementById('conteudoVisaoGeral').classList.remove('hidden');
+    document.getElementById('conteudoAtivos').classList.add('hidden');
+  });
+
+  document.getElementById('tabAtivos').addEventListener('click', function() {
+    document.getElementById('tabAtivos').classList.add('text-primary-400', 'border-b-2', 'border-primary-400');
+    document.getElementById('tabAtivos').classList.remove('text-gray-400');
+    document.getElementById('tabVisaoGeral').classList.add('text-gray-400');
+    document.getElementById('tabVisaoGeral').classList.remove('text-primary-400', 'border-b-2', 'border-primary-400');
+    
+    document.getElementById('conteudoAtivos').classList.remove('hidden');
+    document.getElementById('conteudoVisaoGeral').classList.add('hidden');
+  });
+
+  // Close modals when clicking outside
+  document.getElementById('novaCarteiraModal').addEventListener('click', function(e) {
+    if (e.target === this) fecharModal();
+  });
+
+  document.getElementById('detalhesCarteiraModal').addEventListener('click', function(e) {
+    if (e.target === this) fecharModalDetalhes();
+  });
+
+  document.getElementById('confirmarApagarModal').addEventListener('click', function(e) {
+    if (e.target === this) esconderConfirmacaoApagar();
+  });
+});
+</script>
                                 <span id="resumoValorTotal" class="font-bold">€0,00</span>
                             </div>
                             <div class="flex justify-between">
@@ -297,17 +723,17 @@
     </div>
     
     <!-- Modal de confirmação para apagar carteira -->
-    <div id="confirmarApagarModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden modal-transition">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md">
-            <div class="mb-4">
-                <h3 class="text-lg font-bold text-gray-800 dark:text-white">Confirmar exclusão</h3>
-                <p class="text-gray-600 dark:text-gray-400 mt-2">Tem certeza que deseja apagar esta carteira? Esta ação não pode ser desfeita.</p>
+    <div id="confirmarApagarModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-50 hidden">
+        <div class="bg-gray-900/95 backdrop-blur-xl border border-gray-800 rounded-2xl p-8 shadow-2xl w-full max-w-md mx-4">
+            <div class="mb-6">
+                <h3 class="text-xl font-bold text-white mb-2">Confirmar Exclusão</h3>
+                <p class="text-gray-400">Tem certeza que deseja apagar esta carteira? Esta ação não pode ser desfeita.</p>
             </div>
-            <div class="flex justify-end space-x-2">
-                <button id="cancelarApagarBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200">
+            <div class="flex gap-3">
+                <button id="cancelarApagarBtn" class="flex-1 py-3 bg-gray-800 text-gray-300 rounded-xl hover:bg-gray-700 transition-colors duration-200">
                     Cancelar
                 </button>
-                <button id="confirmarApagarBtn" class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded">
+                <button id="confirmarApagarBtn" class="flex-1 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors duration-200">
                     Apagar
                 </button>
             </div>

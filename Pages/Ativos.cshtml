@@ -72,377 +72,747 @@
     string lucroFormatado = string.Format("€{0:#,0.00}", lucroTotal);
 }
 
-<!DOCTYPE html>
-<html lang="pt-pt">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - AtivosPlus</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Estilo para impressão */
-        @@page {
-            size: A4 landscape;
-            margin: 0;
-        }
-        @@media print {
-            nav, header, #botao-print {
-                display: none !important;
-            }
-            [class*="md:hidden"],
-            [class*="lg:hidden"] {
-                display: table-cell !important;
-            }
-            .overflow-x-auto {
-                overflow: visible !important;
-            }
-            table {
-                width: 100% !important;
-                table-layout: auto !important;
-                font-size: 0.8rem;
-            }
-            .teste {
-                margin-left: 0px !important;
-            }
-        }
+<div class="px-6 py-8 space-y-8 animate-fade-in">
+    <!-- Header -->
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+        <div>
+            <h1 class="text-3xl font-bold text-white">Meus Ativos</h1>
+            <p class="text-gray-400 mt-1">Gerencie e acompanhe todos os seus investimentos</p>
+        </div>
         
-        /* Adicionando transições suaves */
-        .transition-all {
-            transition: all 0.3s ease;
-        }
-        
-        /* Estilo para os cards/linhas */
-        .ativo-row {
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-            border-radius: 0.375rem;
-        }
-        
-        .ativo-row:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            background-color: rgba(243, 244, 246, 0.6);
-        }
-        
-        /* Estilo para badges */
-        .badge {
-            font-weight: 500;
-            border-radius: 0.25rem;
-            letter-spacing: 0.025em;
-        }
-        
-        /* Estilo para lucro positivo/negativo */
-        .lucro-positivo {
-            color: #047857;
-        }
-        
-        .lucro-negativo {
-            color: #DC2626;
-        }
-        
-        /* Ícones com fundo */
-        .icon-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            background-color: rgba(243, 244, 246, 0.8);
-            margin-right: 12px;
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-        }
-        
-        /* Estilos específicos para a tabela */
-        .tabela-ativos {
-            border-collapse: separate;
-            border-spacing: 0;
-        }
-        
-        .tabela-ativos thead th {
-            padding: 12px 16px;
-            font-weight: 600;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #4b5563;
-            background-color: #f9fafb;
-            border-bottom: 2px solid #e5e7eb;
-        }
-        
-        .tabela-ativos tbody tr {
-            cursor: pointer;
-        }
-        
-        .tabela-ativos tbody tr:nth-child(even) {
-            background-color: rgba(249, 250, 251, 0.5);
-        }
-        
-        .tabela-ativos td {
-            padding: 14px 16px;
-            vertical-align: middle;
-        }
-        
-        .tabela-ativos .badge-ativo {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.25rem 0.75rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-            border-radius: 0.375rem;
-            white-space: nowrap;
-        }
-        
-        /* Botão de ação na tabela */
-        .btn-acao {
-            visibility: hidden;
-            opacity: 0;
-            transition: all 0.2s ease;
-        }
-        
-        .tabela-ativos tr:hover .btn-acao {
-            visibility: visible;
-            opacity: 1;
-        }
-        
-        /* Estilos para os cards de estatísticas */
-        .stats-card {
+        <div class="flex items-center space-x-3">
+            <button onclick="exportarPDF()" class="inline-flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-lg transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                Exportar PDF
+            </button>
+            <button onclick="abrirModalNovoAtivo()" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-medium rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Novo Ativo
+            </button>
+        </div>
+    </div>
 
-                    <!-- Cards de Ativos (visível em telas menores) -->
-                    <div class="lg:hidden px-4 py-3">
-                        @foreach (var ativo in ativos)
-                        {
-                            <div class="mb-4 p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-all ativo-row" data-modal-target="timeline-modal" data-modal-toggle="timeline-modal">
-                                <div class="flex items-center mb-2">
-                                    <div class="icon-container">
-                                        <span class="text-xl">@ativo.Icon</span>
-                                    </div>
-                                    <h3 class="text-lg font-semibold text-gray-900">@ativo.Nome</h3>
-                                </div>
-                                <div class="flex flex-wrap gap-2 mb-2">
-                                    <span class="badge bg-blue-50 text-blue-700 text-xs py-1 px-2">@ativo.Carteira</span>
-                                    <span class="badge @(tipoIcons.ContainsKey(ativo.Tipo) ? tipoIcons[ativo.Tipo] : "bg-gray-50 text-gray-700") text-xs py-1 px-2">@ativo.Tipo</span>
-                                </div>
-                                <div class="grid grid-cols-2 gap-2 mt-3 text-sm">
-                                    <div>
-                                        <p class="text-gray-500">Quantidade</p>
-                                        <p class="font-medium">@ativo.Quantidade</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-gray-500">Preço Compra</p>
-                                        <p class="font-medium">@ativo.PrecoCompra</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-gray-500">Taxa Juro</p>
-                                        <p class="font-medium">@ativo.TaxaJuro</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-gray-500">Lucro</p>
-                                        <p class="font-medium @(ativo.Lucro.Contains("-") ? "lucro-negativo" : "lucro-positivo")">@ativo.Lucro</p>
-                                    </div>
-                                </div>
-                            </div>
-                        }
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Total Assets -->
+        <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 card-hover">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-400 text-sm font-medium">Total de Ativos</p>
+                    <p class="text-2xl font-bold text-white mt-1">@totalAtivos</p>
+                    <div class="flex items-center mt-2">
+                        <span class="text-gray-300 text-sm">@tiposUnicos tipos diferentes</span>
                     </div>
-                    
-                    <!-- Tabela (visível em telas maiores) -->
-                    <div class="overflow-x-auto hidden lg:block">
-                        <table class="w-full text-sm text-left tabela-ativos">
-                            <thead>
-                                <tr>
-                                    <th scope="col" class="rounded-tl-lg">Ativo</th>
-                                    <th scope="col">Carteira</th>
-                                    <th scope="col">Tipo</th>
-                                    <th scope="col">Quantidade</th>
-                                    <th scope="col">Taxa Juro</th>
-                                    <th scope="col">Tipo Taxa</th>
-                                    <th scope="col">Preço Compra</th>
-                                    <th scope="col">Lucro</th>
-                                    <th scope="col" class="rounded-tr-lg">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var ativo in ativos)
-                                {   
-                                    <tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700" data-modal-target="timeline-modal" data-modal-toggle="timeline-modal">
-                                        <td class="font-medium text-gray-900 dark:text-white">
-                                            <div class="flex items-center">
-                                                <div class="icon-container flex-shrink-0">
-                                                    <span class="text-lg">@ativo.Icon</span>
-                                                </div>
-                                                <div>
-                                                    <span class="font-semibold">@ativo.Nome</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="badge-ativo bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                                                @ativo.Carteira
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span class="badge-ativo @(tipoIcons.ContainsKey(ativo.Tipo) ? tipoIcons[ativo.Tipo] : "bg-gray-50 text-gray-700") dark:bg-gray-700 dark:text-gray-300">
-                                                @ativo.Tipo
-                                            </span>
-                                        </td>
-                                        <td class="font-medium text-gray-900 dark:text-white">
-                                            @ativo.Quantidade
-                                        </td>
-                                        <td class="font-medium text-gray-900 dark:text-white">
-                                            @ativo.TaxaJuro
-                                        </td>
-                                        <td class="font-medium text-gray-900 dark:text-white">
-                                            @ativo.TipoTaxa
-                                        </td>
-                                        <td class="font-medium text-gray-900 dark:text-white">
-                                            @ativo.PrecoCompra
-                                        </td>
-                                        <td class="font-medium @(ativo.Lucro.Contains("-") ? "lucro-negativo" : "lucro-positivo")">
-                                            <span class="flex items-center">
-                                                @if (ativo.Lucro.Contains("-"))
-                                                {
-                                                    <svg class="w-4 h-4 mr-1 lucro-negativo" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-                                                    </svg>
-                                                }
-                                                else
-                                                {
-                                                    <svg class="w-4 h-4 mr-1 lucro-positivo" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                                                    </svg>
-                                                }
-                                                @ativo.Lucro
-                                            </span>
-                                        </td>
-                                        <td class="relative">
-                                            <div class="flex space-x-2 justify-end">
-                                                <button class="p-1.5 bg-blue-50 rounded-lg text-blue-600 hover:bg-blue-100 btn-acao" title="Visualizar">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                                    </svg>
-                                                </button>
-                                                <button class="p-1.5 bg-gray-50 rounded-lg text-gray-600 hover:bg-gray-100 btn-acao" title="Editar">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <!-- Navegação da Tabela -->
-                    <nav class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between p-4 border-t border-gray-200 dark:border-gray-700" aria-label="Table navigation">
-                        <div class="text-sm text-gray-500 dark:text-gray-400">
-                            Mostrando <span class="font-medium text-gray-900 dark:text-white">@(ativos.Length)</span> de <span class="font-medium text-gray-900 dark:text-white">@(ativos.Length)</span> ativos
-                        </div>
-                        
-                        <div class="inline-flex items-center">
-                            <button disabled class="px-3 py-1 border border-gray-300 rounded-l-lg bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white transition-all">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                                </svg>
-                                <span class="sr-only">Anterior</span>
-                            </button>
-                            <button class="px-3 py-1 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 dark:border-gray-700 dark:bg-gray-700 dark:text-white transition-all">1</button>
-                            <button disabled class="px-3 py-1 border border-gray-300 rounded-r-lg bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white transition-all">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                </svg>
-                                <span class="sr-only">Próximo</span>
-                            </button>
-                        </div>
-                    </nav>
+                </div>
+                <div class="w-12 h-12 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
                 </div>
             </div>
-        </section>
+        </div>
 
-    <!-- Modal de detalhes do ativo -->
-    <div id="timeline-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-        <div class="relative p-4 w-full max-w-md max-h-full">
-            <!-- Modal content -->
-            <div class="relative bg-white rounded-lg shadow-lg dark:bg-gray-800">
-                <!-- Modal header -->
-                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-700">
-                    <h3 class="flex items-center text-lg font-semibold text-gray-900 dark:text-white">
-                        <span class="icon-container mr-3 dark:bg-gray-700">🏠</span>
-                        Casa em Lisboa 
-                        <span class="text-red-500 ml-3 font-medium">-28.550€</span>
-                    </h3>
-                    <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-700 dark:hover:text-white" data-modal-toggle="timeline-modal">
-                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                        </svg>
-                        <span class="sr-only">Fechar modal</span>
-                    </button>
+        <!-- Total Value -->
+        <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 card-hover">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-400 text-sm font-medium">Valor Total Investido</p>
+                    <p class="text-2xl font-bold text-white mt-1">@saldoFormatado</p>
+                    <div class="flex items-center mt-2">
+                        <span class="text-gray-300 text-sm">Em @carteirasUnicas carteiras</span>
+                    </div>
                 </div>
-                <!-- Modal body -->
-                <div class="p-4 md:p-5">
-                    <ol class="relative border-s border-gray-200 dark:border-gray-700 ms-3.5 mb-4 md:mb-5">                  
-                        <li class="mb-6 ms-8">
-                            <span class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -start-3.5 ring-8 ring-white dark:ring-gray-800 dark:bg-blue-900">
-                                <svg class="w-2.5 h-2.5 text-blue-800 dark:text-blue-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path fill="currentColor" d="M6 1a1 1 0 0 0-2 0h2ZM4 4a1 1 0 0 0 2 0H4Zm7-3a1 1 0 1 0-2 0h2ZM9 4a1 1 0 1 0 2 0H9Zm7-3a1 1 0 1 0-2 0h2Zm-2 3a1 1 0 1 0 2 0h-2ZM1 6a1 1 0 0 0 0 2V6Zm18 2a1 1 0 1 0 0-2v2Z"/>
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 4h16M4 1v3m5-3v3m5-3v3M2 8h16M2 12h16M2 16h16"/>
-                                </svg>
-                            </span>
-                            <h3 class="flex flex-wrap items-center gap-2 mb-1 text-lg font-semibold text-gray-900 dark:text-white">
-                                Renda 650€ 
-                                <span class="bg-green-100 text-green-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">Abr. 2025</span>
-                                <span class="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">Último</span>
-                            </h3>
-                            <time class="block mb-2 text-sm font-normal leading-none text-gray-500 dark:text-gray-400">3 Abril 2025</time>
-                            <button type="button" class="py-2 px-3 inline-flex items-center text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 transition-all">
-                                <svg class="w-4 h-4 mr-2 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.6 16.733c.234.269.548.456.895.534a1.4 1.4 0 0 0 1.75-.762c.172-.615-.446-1.287-1.242-1.481-.796-.194-1.41-.861-1.241-1.481a1.4 1.4 0 0 1 1.75-.762c.343.077.654.26.888.524m-1.358 4.017v.617m0-5.939v.725"/>
-                                </svg>
-                                Família Marques
-                            </button>
-                        </li>
-                        <li class="mb-6 ms-8">
-                            <span class="absolute flex items-center justify-center w-6 h-6 bg-red-100 rounded-full -start-3.5 ring-8 ring-white dark:ring-gray-800 dark:bg-red-900">
-                                <svg class="w-2.5 h-2.5 text-red-800 dark:text-red-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14v4m-4-4v4M6 3v4m4-4v4m4-4v4M4 7h12M3 11h14"></path>
-                                </svg>
-                            </span>
-                            <h3 class="flex flex-wrap items-center gap-2 mb-1 text-lg font-semibold text-gray-900 dark:text-white">
-                                Pintura 5.500€
-                                <span class="bg-red-100 text-red-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Despesa</span>
-                            </h3>
-                            <time class="block mb-2 text-sm font-normal leading-none text-gray-500 dark:text-gray-400">25 Março 2025</time>
-                            <button type="button" class="py-2 px-3 inline-flex items-center text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 transition-all">
-                                <svg class="w-4 h-4 mr-2 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.6 16.733c.234.269.548.456.895.534a1.4 1.4 0 0 0 1.75-.762c.172-.615-.446-1.287-1.242-1.481-.796-.194-1.41-.861-1.241-1.481a1.4 1.4 0 0 1 1.75-.762c.343.077.654.26.888.524m-1.358 4.017v.617m0-5.939v.725"/>
-                                </svg>
-                                Família Marques
-                            </button>
-                        </li>
-                        <li class="ms-8">
-                            <span class="absolute flex items-center justify-center w-6 h-6 bg-indigo-100 rounded-full -start-3.5 ring-8 ring-white dark:ring-gray-800 dark:bg-indigo-900">
-                                <svg class="w-2.5 h-2.5 text-indigo-800 dark:text-indigo-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.5 19h9M4 5h12M2 9.5h16M2 14.5h16"/>
-                                </svg>
-                            </span>
-                            <h3 class="mb-1 text-lg font-semibold text-gray-900 dark:text-white">Compra 350.000€</h3>
-                            <time class="block mb-3 text-sm font-normal leading-none text-gray-500 dark:text-gray-400">12 de Janeiro 2025</time>
-                        </li>
-                    </ol>
-                    <button class="text-white inline-flex w-full justify-center items-center bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition-all">
-                        <svg class="w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7-7v14"/>
-                        </svg>
-                        Ver histórico completo
-                    </button>
+                <div class="w-12 h-12 bg-gradient-to-br from-green-500/20 to-green-600/20 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Profit -->
+        <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 card-hover">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-400 text-sm font-medium">Lucro/Prejuízo Total</p>
+                    <p class="text-2xl font-bold @(lucroTotal >= 0 ? "text-green-400" : "text-red-400") mt-1">@lucroFormatado</p>
+                    <div class="flex items-center mt-2">
+                        @if (lucroTotal >= 0)
+                        {
+                            <svg class="w-4 h-4 text-green-400 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                            </svg>
+                            <span class="text-green-400 text-sm">Lucro</span>
+                        }
+                        else
+                        {
+                            <svg class="w-4 h-4 text-red-400 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                            </svg>
+                            <span class="text-red-400 text-sm">Prejuízo</span>
+                        }
+                    </div>
+                </div>
+                <div class="w-12 h-12 bg-gradient-to-br from-@(lucroTotal >= 0 ? "green" : "red")-500/20 to-@(lucroTotal >= 0 ? "green" : "red")-600/20 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-@(lucroTotal >= 0 ? "green" : "red")-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Asset Distribution -->
+        <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 card-hover">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-400 text-sm font-medium">Distribuição</p>
+                    <p class="text-2xl font-bold text-white mt-1">@tiposUnicos</p>
+                    <div class="flex items-center mt-2">
+                        <span class="text-gray-300 text-sm">Tipos de ativo</span>
+                    </div>
+                </div>
+                <div class="w-12 h-12 bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
+                    </svg>
                 </div>
             </div>
         </div>
     </div>
 
-    </main>
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
-</head>
-</html>
+    <!-- Filters and Search -->
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 bg-gray-900/30 backdrop-blur-sm border border-gray-800 rounded-xl p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+            <!-- Search -->
+            <div class="relative">
+                <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <input type="text" id="searchInput" placeholder="Buscar ativos..." 
+                       class="pl-10 pr-4 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent w-64 transition-colors">
+            </div>
+
+            <!-- Type Filter -->
+            <select id="tipoFilter" class="px-4 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors">
+                <option value="">Todos os tipos</option>
+                <option value="Residencial">🏠 Residencial</option>
+                <option value="Fundo Imobiliário">🏦 Fundo Imobiliário</option>
+                <option value="Ação">📈 Ações</option>
+                <option value="Criptomoeda">🪙 Criptomoedas</option>
+                <option value="Renda Fixa">💵 Renda Fixa</option>
+                <option value="Fundo">💼 Fundos</option>
+            </select>
+
+            <!-- Portfolio Filter -->
+            <select id="carteiraFilter" class="px-4 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors">
+                <option value="">Todas as carteiras</option>
+                @foreach (var carteira in ativos.Select(a => a.Carteira).Distinct())
+                {
+                    <option value="@carteira">@carteira</option>
+                }
+            </select>
+        </div>
+
+        <!-- View Options -->
+        <div class="flex items-center space-x-2">
+            <button id="viewGrid" class="p-2 bg-primary-600 text-white rounded-lg transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                </svg>
+            </button>
+            <button id="viewTable" class="p-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0V8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Assets Grid View -->
+    <div id="assetsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        @foreach (var ativo in ativos)
+        {
+            var lucroValor = decimal.Parse(ativo.Lucro.Replace("€", "").Replace(",", ""));
+            var lucroPositivo = lucroValor >= 0;
+            
+            <div class="asset-card bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 card-hover cursor-pointer" 
+                 data-nome="@ativo.Nome" 
+                 data-tipo="@ativo.Tipo" 
+                 data-carteira="@ativo.Carteira"
+                 onclick="abrirDetalhesAtivo('@ativo.Nome', '@ativo.Tipo', '@ativo.Carteira', '@ativo.Quantidade', '@ativo.PrecoCompra', '@ativo.Lucro', '@ativo.TaxaJuro', '@ativo.TipoTaxa')">
+                
+                <!-- Asset Header -->
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg flex items-center justify-center text-xl">
+                            @ativo.Icon
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-white text-lg truncate">@ativo.Nome</h3>
+                            <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-@(ativo.Tipo == "Residencial" ? "orange" : ativo.Tipo == "Ação" ? "green" : ativo.Tipo == "Criptomoeda" ? "yellow" : ativo.Tipo == "Fundo Imobiliário" || ativo.Tipo == "Fundo" ? "indigo" : "blue")-500/20 text-@(ativo.Tipo == "Residencial" ? "orange" : ativo.Tipo == "Ação" ? "green" : ativo.Tipo == "Criptomoeda" ? "yellow" : ativo.Tipo == "Fundo Imobiliário" || ativo.Tipo == "Fundo" ? "indigo" : "blue")-300">
+                                @ativo.Tipo
+                            </span>
+                        </div>
+                    </div>
+                    <button class="text-gray-400 hover:text-white transition-colors" onclick="event.stopPropagation(); abrirMenuAcoes('@ativo.Nome')">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Asset Details -->
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400 text-sm">Carteira</span>
+                        <span class="text-gray-300 text-sm font-medium">@ativo.Carteira</span>
+                    </div>
+                    
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400 text-sm">Quantidade</span>
+                        <span class="text-gray-300 text-sm font-medium">@ativo.Quantidade.ToString("N2")</span>
+                    </div>
+                    
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400 text-sm">Preço de Compra</span>
+                        <span class="text-gray-300 text-sm font-medium">@ativo.PrecoCompra</span>
+                    </div>
+                    
+                    @if (ativo.TaxaJuro != "N/A")
+                    {
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-400 text-sm">Taxa de Juros</span>
+                            <span class="text-gray-300 text-sm font-medium">@ativo.TaxaJuro (@ativo.TipoTaxa)</span>
+                        </div>
+                    }
+                </div>
+
+                <!-- Profit/Loss -->
+                <div class="mt-4 pt-4 border-t border-gray-700">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400 text-sm">Lucro/Prejuízo</span>
+                        <div class="flex items-center">
+                            @if (lucroPositivo)
+                            {
+                                <svg class="w-4 h-4 text-green-400 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                                </svg>
+                                <span class="text-green-400 font-semibold">@ativo.Lucro</span>
+                            }
+                            else
+                            {
+                                <svg class="w-4 h-4 text-red-400 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                                </svg>
+                                <span class="text-red-400 font-semibold">@ativo.Lucro</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Assets Table View -->
+    <div id="assetsTable" class="hidden bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-700">
+                <thead class="bg-gray-800">
+                    <tr>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Ativo</th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tipo</th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Carteira</th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Quantidade</th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Preço</th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Taxa</th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Lucro/Prejuízo</th>
+                        <th scope="col" class="relative px-6 py-4"><span class="sr-only">Ações</span></th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-700">
+                    @foreach (var ativo in ativos)
+                    {
+                        var lucroValor = decimal.Parse(ativo.Lucro.Replace("€", "").Replace(",", ""));
+                        var lucroPositivo = lucroValor >= 0;
+                        
+                        <tr class="asset-row hover:bg-gray-800/50 transition-colors cursor-pointer" 
+                            data-nome="@ativo.Nome" 
+                            data-tipo="@ativo.Tipo" 
+                            data-carteira="@ativo.Carteira"
+                            onclick="abrirDetalhesAtivo('@ativo.Nome', '@ativo.Tipo', '@ativo.Carteira', '@ativo.Quantidade', '@ativo.PrecoCompra', '@ativo.Lucro', '@ativo.TaxaJuro', '@ativo.TipoTaxa')">
+                            
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg flex items-center justify-center text-lg mr-3">
+                                        @ativo.Icon
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-medium text-white">@ativo.Nome</div>
+                                    </div>
+                                </div>
+                            </td>
+                            
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-@(ativo.Tipo == "Residencial" ? "orange" : ativo.Tipo == "Ação" ? "green" : ativo.Tipo == "Criptomoeda" ? "yellow" : ativo.Tipo == "Fundo Imobiliário" || ativo.Tipo == "Fundo" ? "indigo" : "blue")-500/20 text-@(ativo.Tipo == "Residencial" ? "orange" : ativo.Tipo == "Ação" ? "green" : ativo.Tipo == "Criptomoeda" ? "yellow" : ativo.Tipo == "Fundo Imobiliário" || ativo.Tipo == "Fundo" ? "indigo" : "blue")-300">
+                                    @ativo.Tipo
+                                </span>
+                            </td>
+                            
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">@ativo.Carteira</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">@ativo.Quantidade.ToString("N2")</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">@ativo.PrecoCompra</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                                @if (ativo.TaxaJuro != "N/A")
+                                {
+                                    <span>@ativo.TaxaJuro</span>
+                                    <span class="text-gray-400 block text-xs">(@ativo.TipoTaxa)</span>
+                                }
+                                else
+                                {
+                                    <span class="text-gray-500">N/A</span>
+                                }
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <div class="flex items-center">
+                                    @if (lucroPositivo)
+                                    {
+                                        <svg class="w-4 h-4 text-green-400 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                                        </svg>
+                                        <span class="text-green-400 font-medium">@ativo.Lucro</span>
+                                    }
+                                    else
+                                    {
+                                        <svg class="w-4 h-4 text-red-400 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                                        </svg>
+                                        <span class="text-red-400 font-medium">@ativo.Lucro</span>
+                                    }
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <button class="text-gray-400 hover:text-white transition-colors" onclick="event.stopPropagation(); abrirMenuAcoes('@ativo.Nome')">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- New Asset Modal -->
+<div id="modalNovoAtivo" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden modal-container">
+    <div class="bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-hidden modal-dialog">
+        <div class="bg-gradient-to-r from-primary-600 to-primary-700 p-6">
+            <div class="flex items-center justify-between">
+                <h3 class="text-xl font-bold text-white">Adicionar Novo Ativo</h3>
+                <button onclick="fecharModalNovoAtivo()" class="text-white/80 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+            <form id="formNovoAtivo" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Nome do Ativo</label>
+                        <input type="text" id="nomeAtivo" class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500" placeholder="Ex: Casa em Lisboa">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Tipo de Ativo</label>
+                        <select id="tipoAtivo" class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                            <option value="">Selecione o tipo</option>
+                            <option value="Residencial">🏠 Residencial</option>
+                            <option value="Fundo Imobiliário">🏦 Fundo Imobiliário</option>
+                            <option value="Ação">📈 Ação</option>
+                            <option value="Criptomoeda">🪙 Criptomoeda</option>
+                            <option value="Renda Fixa">💵 Renda Fixa</option>
+                            <option value="Fundo">💼 Fundo</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Carteira</label>
+                        <select id="carteiraAtivo" class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                            <option value="">Selecione a carteira</option>
+                            <option value="Carteira Alpha">Carteira Alpha</option>
+                            <option value="Carteira Beta">Carteira Beta</option>
+                            <option value="Carteira Eta">Carteira Eta</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Quantidade</label>
+                        <input type="number" id="quantidadeAtivo" step="0.01" class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500" placeholder="1.00">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Preço de Compra (€)</label>
+                        <input type="number" id="precoCompra" step="0.01" class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500" placeholder="100.00">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Taxa de Juros (%)</label>
+                        <input type="number" id="taxaJuros" step="0.1" class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500" placeholder="3.5">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Tipo de Taxa</label>
+                        <select id="tipoTaxa" class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                            <option value="N/A">N/A</option>
+                            <option value="Fixa">Fixa</option>
+                            <option value="Variável">Variável</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Lucro/Prejuízo Atual (€)</label>
+                        <input type="number" id="lucroAtual" step="0.01" class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500" placeholder="0.00">
+                    </div>
+                </div>
+                
+                <div class="flex space-x-4 pt-4">
+                    <button type="button" onclick="fecharModalNovoAtivo()" class="flex-1 px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-lg transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="flex-1 px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-medium rounded-lg transition-all">
+                        Adicionar Ativo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Asset Details Modal -->
+<div id="modalDetalhesAtivo" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden modal-container">
+    <div class="bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-hidden modal-dialog">
+        <div class="bg-gradient-to-r from-primary-600 to-primary-700 p-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div id="modalAtivoIcon" class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-xl">🏠</div>
+                    <div>
+                        <h3 id="modalAtivoNome" class="text-xl font-bold text-white">Casa em Lisboa</h3>
+                        <p id="modalAtivoTipo" class="text-white/80">Residencial</p>
+                    </div>
+                </div>
+                <button onclick="fecharModalDetalhesAtivo()" class="text-white/80 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <div class="p-6">
+            <!-- Asset Summary -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                    <p class="text-gray-400 text-sm">Carteira</p>
+                    <p id="modalAtivoCarteira" class="text-white font-semibold">Carteira Alpha</p>
+                </div>
+                <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                    <p class="text-gray-400 text-sm">Quantidade</p>
+                    <p id="modalAtivoQuantidade" class="text-white font-semibold">1.00</p>
+                </div>
+                <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                    <p class="text-gray-400 text-sm">Preço de Compra</p>
+                    <p id="modalAtivoPreco" class="text-white font-semibold">€350,000</p>
+                </div>
+                <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                    <p class="text-gray-400 text-sm">Lucro/Prejuízo</p>
+                    <p id="modalAtivoLucro" class="font-semibold">€-28,550</p>
+                </div>
+            </div>
+            
+            <!-- Performance Chart -->
+            <div class="bg-gray-800/30 border border-gray-700 rounded-lg p-6 mb-6">
+                <h4 class="text-lg font-semibold text-white mb-4">Histórico de Performance</h4>
+                <div class="h-64 flex items-center justify-center text-gray-400">
+                    <div class="text-center">
+                        <svg class="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+                        </svg>
+                        <p>Gráfico de performance será exibido aqui</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="flex space-x-3">
+                <button class="flex-1 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
+                    Editar Ativo
+                </button>
+                <button class="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors">
+                    Ver Histórico
+                </button>
+                <button class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
+                    Excluir
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
+
+<script>
+// View toggle functionality
+let currentView = 'grid';
+
+document.getElementById('viewGrid').addEventListener('click', function() {
+    currentView = 'grid';
+    document.getElementById('assetsGrid').classList.remove('hidden');
+    document.getElementById('assetsTable').classList.add('hidden');
+    
+    this.classList.add('bg-primary-600', 'text-white');
+    this.classList.remove('bg-gray-700', 'text-gray-300');
+    document.getElementById('viewTable').classList.remove('bg-primary-600', 'text-white');
+    document.getElementById('viewTable').classList.add('bg-gray-700', 'text-gray-300');
+});
+
+document.getElementById('viewTable').addEventListener('click', function() {
+    currentView = 'table';
+    document.getElementById('assetsTable').classList.remove('hidden');
+    document.getElementById('assetsGrid').classList.add('hidden');
+    
+    this.classList.add('bg-primary-600', 'text-white');
+    this.classList.remove('bg-gray-700', 'text-gray-300');
+    document.getElementById('viewGrid').classList.remove('bg-primary-600', 'text-white');
+    document.getElementById('viewGrid').classList.add('bg-gray-700', 'text-gray-300');
+});
+
+// Search and filter functionality
+function filterAssets() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const tipoFilter = document.getElementById('tipoFilter').value;
+    const carteiraFilter = document.getElementById('carteiraFilter').value;
+    
+    const cards = document.querySelectorAll('.asset-card');
+    const rows = document.querySelectorAll('.asset-row');
+    
+    cards.forEach(card => {
+        const nome = card.dataset.nome.toLowerCase();
+        const tipo = card.dataset.tipo;
+        const carteira = card.dataset.carteira;
+        
+        const matchesSearch = nome.includes(searchTerm);
+        const matchesTipo = !tipoFilter || tipo === tipoFilter;
+        const matchesCarteira = !carteiraFilter || carteira === carteiraFilter;
+        
+        if (matchesSearch && matchesTipo && matchesCarteira) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    
+    rows.forEach(row => {
+        const nome = row.dataset.nome.toLowerCase();
+        const tipo = row.dataset.tipo;
+        const carteira = row.dataset.carteira;
+        
+        const matchesSearch = nome.includes(searchTerm);
+        const matchesTipo = !tipoFilter || tipo === tipoFilter;
+        const matchesCarteira = !carteiraFilter || carteira === carteiraFilter;
+        
+        if (matchesSearch && matchesTipo && matchesCarteira) {
+            row.style.display = 'table-row';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+document.getElementById('searchInput').addEventListener('input', filterAssets);
+document.getElementById('tipoFilter').addEventListener('change', filterAssets);
+document.getElementById('carteiraFilter').addEventListener('change', filterAssets);
+
+// Modal functions
+function abrirModalNovoAtivo() {
+    document.getElementById('modalNovoAtivo').classList.remove('hidden');
+}
+
+function fecharModalNovoAtivo() {
+    document.getElementById('modalNovoAtivo').classList.add('hidden');
+    document.getElementById('formNovoAtivo').reset();
+}
+
+function abrirDetalhesAtivo(nome, tipo, carteira, quantidade, preco, lucro, taxa, tipoTaxa) {
+    document.getElementById('modalAtivoNome').textContent = nome;
+    document.getElementById('modalAtivoTipo').textContent = tipo;
+    document.getElementById('modalAtivoCarteira').textContent = carteira;
+    document.getElementById('modalAtivoQuantidade').textContent = quantidade;
+    document.getElementById('modalAtivoPreco').textContent = preco;
+    document.getElementById('modalAtivoLucro').textContent = lucro;
+    
+    const lucroElement = document.getElementById('modalAtivoLucro');
+    if (lucro.includes('-')) {
+        lucroElement.className = 'font-semibold text-red-400';
+    } else {
+        lucroElement.className = 'font-semibold text-green-400';
+    }
+    
+    document.getElementById('modalDetalhesAtivo').classList.remove('hidden');
+}
+
+function fecharModalDetalhesAtivo() {
+    document.getElementById('modalDetalhesAtivo').classList.add('hidden');
+}
+
+function abrirMenuAcoes(nomeAtivo) {
+    // Implementar menu de ações
+    showToast(`Ações para ${nomeAtivo}`, 'info');
+}
+
+// Export functionality
+function exportarPDF() {
+    showToast('Exportando para PDF...', 'info');
+    // Implementar exportação PDF
+}
+
+// Form submission
+document.getElementById('formNovoAtivo').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const nomeAtivo = document.getElementById('nomeAtivo').value;
+    if (!nomeAtivo) {
+        showToast('Por favor, preencha o nome do ativo', 'error');
+        return;
+    }
+    
+    // Implementar lógica de adição de ativo
+    showToast(`Ativo "${nomeAtivo}" adicionado com sucesso!`, 'success');
+    fecharModalNovoAtivo();
+});
+
+// Toast notification function
+function showToast(message, type = "info") {
+    const toast = document.createElement("div");
+    const toastId = 'toast-' + Date.now();
+    toast.id = toastId;
+
+    let iconSVG, iconColor;
+    if (type === "success") {
+        iconColor = "text-green-400";
+        iconSVG = `<svg class="w-5 h-5 ${iconColor}" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 10 2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>`;
+    } else if (type === "error") {
+        iconColor = "text-red-400";
+        iconSVG = `<svg class="w-5 h-5 ${iconColor}" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>`;
+    } else {
+        iconColor = "text-blue-400";
+        iconSVG = `<svg class="w-5 h-5 ${iconColor}" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>`;
+    }
+
+    toast.className = "flex items-center w-full max-w-xs p-4 space-x-4 text-gray-300 bg-gray-800 border border-gray-700 rounded-lg shadow-lg animate-slide-up";
+    toast.innerHTML = `
+        ${iconSVG}
+        <div class="text-sm font-normal">${message}</div>
+        <button type="button" class="ml-auto -mx-1.5 -my-1.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 inline-flex h-8 w-8" onclick="this.parentElement.remove()">
+            <span class="sr-only">Fechar</span>
+            <svg class="w-3 h-3" fill="none" viewBox="0 0 14 14">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+            </svg>
+        </button>
+    `;
+
+    const container = document.getElementById("toast-container");
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add("opacity-0", "transition-opacity", "duration-300");
+        setTimeout(() => toast.remove(), 300);
+    }, 4000);
+}
+
+// Close modals on escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        fecharModalNovoAtivo();
+        fecharModalDetalhesAtivo();
+    }
+});
+
+// Close modals on background click
+document.getElementById('modalNovoAtivo').addEventListener('click', function(e) {
+    if (e.target === this) {
+        fecharModalNovoAtivo();
+    }
+});
+
+document.getElementById('modalDetalhesAtivo').addEventListener('click', function(e) {
+    if (e.target === this) {
+        fecharModalDetalhesAtivo();
+    }
+});
+</script>
+
+<style>
+.card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.modal-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-container.hidden {
+    display: none;
+}
+
+.modal-dialog {
+    position: relative;
+    margin: auto;
+}
+
+.animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+}
+
+@@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+@@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>

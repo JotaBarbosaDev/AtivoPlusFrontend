@@ -5,23 +5,99 @@
     Layout = "_Layout";
 }
 
-<!DOCTYPE html>
-<html lang="pt-pt">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mercado Financeiro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
+<div class="min-h-screen bg-gray-950 pt-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Header Section -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold bg-gradient-to-r from-primary-400 to-blue-400 bg-clip-text text-transparent mb-4">
+        Mercado Financeiro
+      </h1>
+      <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+        Acompanha os mercados em tempo real e descobre oportunidades de investimento
+      </p>
+    </div>
 
-<body class="bg-gray-50 dark:bg-gray-900">
+    <!-- Market Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-white">Mercado Global</h3>
+            <p class="text-gray-400 text-sm">Índices Principais</p>
+          </div>
+          <div class="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+            </svg>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-2xl font-bold text-white">+2.3%</span>
+          <span class="text-green-400 text-sm">↗ Em alta</span>
+        </div>
+      </div>
 
-<main class="h-auto pt-20 px-4">
+      <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-white">Volatilidade</h3>
+            <p class="text-gray-400 text-sm">Últimas 24h</p>
+          </div>
+          <div class="w-12 h-12 bg-yellow-500/10 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/>
+            </svg>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-2xl font-bold text-white">15.2</span>
+          <span class="text-yellow-400 text-sm">Moderada</span>
+        </div>
+      </div>
+
+      <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-white">Volume</h3>
+            <p class="text-gray-400 text-sm">Transações Hoje</p>
+          </div>
+          <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-2xl font-bold text-white">€2.4B</span>
+          <span class="text-blue-400 text-sm">↗ +8.5%</span>
+        </div>
+      </div>
+    </div>
 
     @functions {
-        void RenderFakeCards(string categoria)
+        void RenderMarketSection(string categoria, string icon, string description)
         {
-            for (int i = 1; i <= 10; i++)
+            <div class="mb-16">
+              <div class="flex items-center gap-4 mb-8">
+                <div class="w-16 h-16 bg-gradient-to-r from-primary-600 to-blue-600 rounded-2xl flex items-center justify-center">
+                  @Html.Raw(icon)
+                </div>
+                <div>
+                  <h2 class="text-3xl font-bold text-white">@categoria</h2>
+                  <p class="text-gray-400">@description</p>
+                </div>
+              </div>
+              
+              <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                @{ RenderAssetCards(categoria); }
+              </div>
+            </div>
+        }
+        
+        void RenderAssetCards(string categoria)
+        {
+            for (int i = 1; i <= 6; i++)
             {
                 var nome = categoria switch
                 {
@@ -29,6 +105,14 @@
                     "ETFs" => $"ETF {i} Global",
                     "Crypto" => $"CriptoCoin {i}",
                     _ => $"Item {i}"
+                };
+
+                var simbolo = categoria switch
+                {
+                    "Stocks" => $"EMP{i}",
+                    "ETFs" => $"ETF{i}",
+                    "Crypto" => $"CC{i}",
+                    _ => $"IT{i}"
                 };
 
                 var valor = categoria switch
@@ -40,56 +124,75 @@
                 };
 
                 var variacao = i % 2 == 0 ? $"+{(0.5 + i * 0.1):N2}%" : $"-{(0.3 + i * 0.1):N2}%";
-                var corClasse = variacao.StartsWith("+") ? "text-green-500" : "text-red-500";
+                var isPositive = variacao.StartsWith("+");
+                var corClasse = isPositive ? "text-green-400" : "text-red-400";
+                var bgColor = isPositive ? "bg-green-500/10" : "bg-red-500/10";
+                var borderColor = isPositive ? "border-green-500/20" : "border-red-500/20";
 
-                <div class="group flex flex-col bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 p-6">
-                    <div class="flex items-center justify-between mb-2">
-                        <h5 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">@nome</h5>
-                        <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2 py-1 rounded-md dark:bg-gray-700 dark:text-gray-400 border border-gray-500">@categoria</span>
+                <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6 hover:border-primary-500/30 transition-all duration-300 group cursor-pointer">
+                  <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-12 h-12 bg-gradient-to-r from-primary-600/20 to-blue-600/20 rounded-xl flex items-center justify-center">
+                        <span class="text-primary-400 font-bold text-sm">@simbolo</span>
+                      </div>
+                      <div>
+                        <h3 class="text-lg font-semibold text-white group-hover:text-primary-400 transition-colors">@nome</h3>
+                        <p class="text-gray-400 text-sm">@simbolo</p>
+                      </div>
                     </div>
-                    <div class="flex items-center mb-3">
-                        @if (variacao.StartsWith("+"))
+                    <span class="@bgColor @borderColor border px-2 py-1 rounded-lg text-xs font-medium text-gray-300">@categoria</span>
+                  </div>
+
+                  <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                      <span class="text-gray-400">Preço Atual</span>
+                      <span class="text-white font-bold text-lg">@valor</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                      <span class="text-gray-400">Variação 24h</span>
+                      <div class="flex items-center gap-2">
+                        @if (isPositive)
                         {
-                            <svg class="w-6 h-6 text-green-500 dark:text-green-400 group-hover:animate-bounce" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m16 17-4-4-4 4m8-6-4-4-4 4" />
-                            </svg>
+                          <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/>
+                          </svg>
                         }
                         else
                         {
-                            <svg class="w-6 h-6 text-red-500 dark:text-red-400 group-hover:animate-bounce" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8 7 4 4 4-4m-8 6 4 4 4-4" />
-                            </svg>
+                          <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/>
+                          </svg>
                         }
-                        <span class="ml-2 text-gray-700 dark:text-gray-300">@variacao</span>
-                        <span class="ml-4 font-semibold @corClasse">@valor</span>
+                        <span class="@corClasse font-semibold">@variacao</span>
+                      </div>
                     </div>
-                    <p class="font-normal text-gray-700 dark:text-gray-400">Atualização do mercado financeiro em tempo real.</p>
+
+                    <div class="pt-4 border-t border-gray-800">
+                      <button class="w-full py-2 bg-primary-600/20 hover:bg-primary-600/30 text-primary-400 rounded-lg transition-colors duration-200 text-sm font-medium">
+                        Ver Detalhes
+                      </button>
+                    </div>
+                  </div>
                 </div>
             }
         }
     }
 
-    <!-- Stocks -->
-    <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">Stocks</h2>
-    <div class="grid lg:grid-cols-2 md:grid-cols-1 gap-6 mb-12">
-        @{ RenderFakeCards("Stocks"); }
-    </div>
+    <!-- Market Sections -->
+    @{
+        RenderMarketSection("Stocks", 
+            "<svg class='w-8 h-8 text-white' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'/></svg>",
+            "Ações de empresas cotadas em bolsa");
+        
+        RenderMarketSection("ETFs", 
+            "<svg class='w-8 h-8 text-white' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'/></svg>",
+            "Fundos negociados em bolsa diversificados");
+        
+        RenderMarketSection("Crypto", 
+            "<svg class='w-8 h-8 text-white' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z'/></svg>",
+            "Criptomoedas e ativos digitais");
+    }
 
-    <!-- ETFs -->
-    <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">ETFs</h2>
-    <div class="grid lg:grid-cols-2 md:grid-cols-1 gap-6 mb-12">
-        @{ RenderFakeCards("ETFs"); }
-
-    </div>
-
-    <!-- Crypto -->
-    <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">Crypto</h2>
-    <div class="grid lg:grid-cols-2 md:grid-cols-1 gap-6 mb-12">
-        @{ RenderFakeCards("Crypto"); }
-
-    </div>
-
-</main>
-
-</body>
-</html>
+  </div>
+</div>
