@@ -148,15 +148,58 @@
                         </svg>
                         Dashboard
                     </a>
-                    <a href="/Ativos"
-                        class="px-4 py-2 rounded-lg text-sm font-medium transition-colors @(Context.Request.Path.Value.Contains("/Ativos") ? "bg-primary-600 text-white" : "text-gray-300 hover:text-white hover:bg-gray-800")">
-                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
-                            </path>
-                        </svg>
-                        Ativos
-                    </a>
+
+                    <!-- Asset Types Dropdown -->
+                    <div class="relative group">
+                        <button
+                            class="px-4 py-2 rounded-lg text-sm font-medium transition-colors text-gray-300 hover:text-white hover:bg-gray-800 flex items-center">
+                            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                                </path>
+                            </svg>
+                            Ativos
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div
+                            class="absolute left-0 mt-2 w-64 glass-effect rounded-lg shadow-lg border border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                            <div class="py-2">
+                                <a href="/FundosInvestimento"
+                                    class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 transition-colors">
+                                    <svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                    </svg>
+                                    Fundos de Investimento
+                                </a>
+                                <a href="/ImovelArrendado"
+                                    class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 transition-colors">
+                                    <svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                                        </path>
+                                    </svg>
+                                    Imóveis Arrendados
+                                </a>
+                                <a href="/DepositoPrazo"
+                                    class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 transition-colors">
+                                    <svg class="w-4 h-4 inline mr-3" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1">
+                                        </path>
+                                    </svg>
+                                    Depósitos a Prazo
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
                     <a href="/Carteira"
                         class="px-4 py-2 rounded-lg text-sm font-medium transition-colors @(Context.Request.Path.Value.Contains("/Carteira") ? "bg-primary-600 text-white" : "text-gray-300 hover:text-white hover:bg-gray-800")">
                         <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -222,10 +265,24 @@
                         class="px-4 py-2 rounded-lg text-sm font-medium transition-colors @(Context.Request.Path.Value.Contains("/Geral") ? "bg-primary-600 text-white" : "text-gray-300 hover:text-white hover:bg-gray-800")">
                         Dashboard
                     </a>
-                    <a href="/Ativos"
-                        class="px-4 py-2 rounded-lg text-sm font-medium transition-colors @(Context.Request.Path.Value.Contains("/Ativos") ? "bg-primary-600 text-white" : "text-gray-300 hover:text-white hover:bg-gray-800")">
+
+                    <!-- Mobile Asset Types -->
+                    <div class="px-4 py-2 text-sm font-medium text-gray-400">
                         Ativos
+                    </div>
+                    <a href="/FundosInvestimento"
+                        class="px-6 py-2 rounded-lg text-sm font-medium transition-colors @(Context.Request.Path.Value.Contains("/FundosInvestimento") ? "bg-primary-600 text-white" : "text-gray-300 hover:text-white hover:bg-gray-800")">
+                        Fundos de Investimento
                     </a>
+                    <a href="/ImovelArrendado"
+                        class="px-6 py-2 rounded-lg text-sm font-medium transition-colors @(Context.Request.Path.Value.Contains("/ImovelArrendado") ? "bg-primary-600 text-white" : "text-gray-300 hover:text-white hover:bg-gray-800")">
+                        Imóveis Arrendados
+                    </a>
+                    <a href="/DepositoPrazo"
+                        class="px-6 py-2 rounded-lg text-sm font-medium transition-colors @(Context.Request.Path.Value.Contains("/DepositoPrazo") ? "bg-primary-600 text-white" : "text-gray-300 hover:text-white hover:bg-gray-800")">
+                        Depósitos a Prazo
+                    </a>
+
                     <a href="/Carteira"
                         class="px-4 py-2 rounded-lg text-sm font-medium transition-colors @(Context.Request.Path.Value.Contains("/Carteira") ? "bg-primary-600 text-white" : "text-gray-300 hover:text-white hover:bg-gray-800")">
                         Carteiras

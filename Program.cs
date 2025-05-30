@@ -22,16 +22,21 @@ app.MapWhen(
     {
         appBuilder.Run(async context =>
         {
-            // Monta o URL de destino
-            var targetUri = "https://es.maruqes.com:10513" + context.Request.Path + context.Request.QueryString;
+            context.Request.Headers.Remove("Origin");
 
+            Console.WriteLine($"Interceptando request para: {context.Request.Path}");
+            var targetUri = "https://es.maruqes.com:10513"
+                            + context.Request.Path
+                            + context.Request.QueryString;
             using var httpClient = new HttpClient(new HttpClientHandler
             {
-                AllowAutoRedirect = false // tal como maxRedirects: 0
+                AllowAutoRedirect = false
             });
 
-            // Criação da mensagem de request para o servidor remoto
-            var requestMessage = new HttpRequestMessage(new HttpMethod(context.Request.Method), targetUri);
+            var requestMessage = new HttpRequestMessage(
+                new HttpMethod(context.Request.Method),
+                targetUri
+            );
 
             // Copia o conteúdo da request (se houver)
             if (context.Request.ContentLength.HasValue && context.Request.ContentLength.Value > 0)

@@ -1,0 +1,398 @@
+@page
+@model AtivoPlusFrontend.Pages.Pages_ImovelArrendado
+@{
+  ViewData["Title"] = "Imóveis Arrendados";
+  Layout = "_Layout";
+}
+
+<div class="min-h-screen bg-gray-950 pt-20 pb-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Header Section -->
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-primary-400 to-blue-400 bg-clip-text text-transparent mb-2">
+          Imóveis Arrendados
+        </h1>
+        <p class="text-gray-400">Gerencie sua carteira de propriedades e rendimentos de arrendamento</p>
+      </div>
+      <button id="novoImovelBtn"
+        class="bg-gradient-to-r from-primary-600 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-primary-700 hover:to-blue-700 focus:ring-4 focus:ring-primary-500/25 transition-all duration-200 transform hover:scale-105 active:scale-95 flex items-center gap-2 font-semibold shadow-lg">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+        Adicionar Imóvel
+      </button>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-white">Valor Total</h3>
+            <p class="text-gray-400 text-sm">Propriedades</p>
+          </div>
+          <div class="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-2xl font-bold text-white">€450.000,00</span>
+        </div>
+      </div>
+
+      <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-white">Renda Mensal</h3>
+            <p class="text-gray-400 text-sm">Arrendamento</p>
+          </div>
+          <div class="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-2xl font-bold text-green-400">€2.400,00</span>
+        </div>
+      </div>
+
+      <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-white">Renda Anual</h3>
+            <p class="text-gray-400 text-sm">Estimada</p>
+          </div>
+          <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-2xl font-bold text-blue-400">€28.800,00</span>
+        </div>
+      </div>
+
+      <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-white">Propriedades</h3>
+            <p class="text-gray-400 text-sm">Total</p>
+          </div>
+          <div class="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-2xl font-bold text-purple-400">3</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Properties Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      
+      <!-- Property 1 - Apartamento Lisboa -->
+      <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6 hover:border-primary-500/50 transition-all duration-200">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center">
+              <svg class="w-6 h-6 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-white">Apartamento T2</h3>
+              <p class="text-gray-400 text-sm">Lisboa, Avenidas Novas</p>
+            </div>
+          </div>
+          <button class="text-gray-400 hover:text-white transition-colors" onclick="abrirDetalhesImovel('imovel1')">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">Valor do Imóvel:</span>
+            <span class="text-white font-semibold">€200.000,00</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">Renda Mensal:</span>
+            <span class="text-green-400 font-semibold">€1.200,00</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">Yield Anual:</span>
+            <span class="text-blue-400 font-semibold">7.2%</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">Área:</span>
+            <span class="text-white font-semibold">85 m²</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">Inquilino:</span>
+            <span class="text-white font-semibold">José Silva</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">Fim do Contrato:</span>
+            <span class="text-yellow-400 font-semibold">31/12/2024</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Property 2 - Casa Porto -->
+      <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6 hover:border-primary-500/50 transition-all duration-200">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
+              <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-white">Casa T3</h3>
+              <p class="text-gray-400 text-sm">Porto, Cedofeita</p>
+            </div>
+          </div>
+          <button class="text-gray-400 hover:text-white transition-colors" onclick="abrirDetalhesImovel('imovel2')">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">Valor do Imóvel:</span>
+            <span class="text-white font-semibold">€180.000,00</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">Renda Mensal:</span>
+            <span class="text-green-400 font-semibold">€900,00</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">Yield Anual:</span>
+            <span class="text-blue-400 font-semibold">6.0%</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">Área:</span>
+            <span class="text-white font-semibold">120 m²</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">Inquilino:</span>
+            <span class="text-white font-semibold">Maria Santos</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">Fim do Contrato:</span>
+            <span class="text-green-400 font-semibold">15/06/2025</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Property 3 - Estúdio Coimbra -->
+      <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6 hover:border-primary-500/50 transition-all duration-200">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center">
+              <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-white">Estúdio</h3>
+              <p class="text-gray-400 text-sm">Coimbra, Baixa</p>
+            </div>
+          </div>
+          <button class="text-gray-400 hover:text-white transition-colors" onclick="abrirDetalhesImovel('imovel3')">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">Valor do Imóvel:</span>
+            <span class="text-white font-semibold">€70.000,00</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">Renda Mensal:</span>
+            <span class="text-green-400 font-semibold">€300,00</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">Yield Anual:</span>
+            <span class="text-blue-400 font-semibold">5.1%</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">Área:</span>
+            <span class="text-white font-semibold">35 m²</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">Inquilino:</span>
+            <span class="text-white font-semibold">Ana Costa</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400">Fim do Contrato:</span>
+            <span class="text-green-400 font-semibold">20/08/2025</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal Adicionar Imóvel -->
+  <div id="novoImovelModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-50 hidden">
+    <div class="bg-gray-900/95 backdrop-blur-xl border border-gray-800 rounded-2xl shadow-2xl w-full max-w-md mx-4">
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold text-white">Adicionar Imóvel</h2>
+          <button onclick="fecharModalNovoImovel()" class="text-gray-400 hover:text-white transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <form class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Tipo de Imóvel</label>
+            <select class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+              <option value="">Selecione o tipo</option>
+              <option value="apartamento">Apartamento</option>
+              <option value="casa">Casa</option>
+              <option value="estudio">Estúdio</option>
+              <option value="loja">Loja</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Endereço</label>
+            <input type="text" placeholder="Rua, Cidade, Código Postal"
+              class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">Área (m²)</label>
+              <input type="number" placeholder="85"
+                class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">Quartos</label>
+              <input type="number" placeholder="2"
+                class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Valor do Imóvel (€)</label>
+            <input type="number" placeholder="200000"
+              class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Renda Mensal (€)</label>
+            <input type="number" placeholder="1200"
+              class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Nome do Inquilino</label>
+            <input type="text" placeholder="José Silva"
+              class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Fim do Contrato</label>
+            <input type="date"
+              class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+          </div>
+
+          <button type="submit"
+            class="w-full bg-gradient-to-r from-primary-600 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-primary-700 hover:to-blue-700 focus:ring-4 focus:ring-primary-500/25 transition-all duration-200 transform hover:scale-105 active:scale-95 font-semibold">
+            Adicionar Imóvel
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed top-4 right-4 bg-green-600 text-white px-6 py-4 rounded-xl shadow-lg transform translate-x-full transition-transform duration-300 z-50 hidden">
+    <div class="flex items-center gap-3">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+      <span>Imóvel adicionado com sucesso!</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Modal handlers
+    document.getElementById('novoImovelBtn').addEventListener('click', abrirModalNovoImovel);
+  });
+
+  function abrirModalNovoImovel() {
+    const modal = document.getElementById('novoImovelModal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function fecharModalNovoImovel() {
+    const modal = document.getElementById('novoImovelModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  function abrirDetalhesImovel(imovelId) {
+    // Placeholder for property details modal
+    showToast('Funcionalidade em desenvolvimento');
+  }
+
+  function showToast(message) {
+    const toast = document.getElementById('toast');
+    const messageElement = toast.querySelector('span');
+    messageElement.textContent = message;
+    
+    toast.classList.remove('translate-x-full');
+    
+    setTimeout(() => {
+      toast.classList.add('translate-x-full');
+    }, 3000);
+  }
+
+  // Close modal when clicking outside
+  document.getElementById('novoImovelModal').addEventListener('click', function (e) {
+    if (e.target === this) {
+      fecharModalNovoImovel();
+    }
+  });
+</script>

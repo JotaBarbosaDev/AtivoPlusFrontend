@@ -1,4 +1,4 @@
-[33mcommit 661df2dc965a0bb11b66e0aa607933477b9c5579[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+\[33mcommit 661df2dc965a0bb11b66e0aa607933477b9c5579[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
 Merge: 9a3fce6 cce7f4d
 Author: JotaBarbosaDev <123131950+JotaBarbosaDev@users.noreply.github.com>
 Date:   Sun Mar 16 10:27:54 2025 +0000

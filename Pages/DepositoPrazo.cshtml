@@ -1,0 +1,365 @@
+@page
+@model AtivoPlusFrontend.Pages.Pages_DepositoPrazo
+@{
+    ViewData["Title"] = "Depósitos a Prazo";
+    Layout = "_Layout";
+}
+
+<div class="min-h-screen bg-gray-950 pt-20 pb-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- Header Section -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1
+                    class="text-4xl font-bold bg-gradient-to-r from-primary-400 to-blue-400 bg-clip-text text-transparent mb-2">
+                    Depósitos a Prazo
+                </h1>
+                <p class="text-gray-400">Gerencie seus depósitos bancários e certificados de depósito</p>
+            </div>
+            <button id="novoDepositoBtn"
+                class="bg-gradient-to-r from-primary-600 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-primary-700 hover:to-blue-700 focus:ring-4 focus:ring-primary-500/25 transition-all duration-200 transform hover:scale-105 active:scale-95 flex items-center gap-2 font-semibold shadow-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Novo Depósito
+            </button>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-lg font-semibold text-white">Total Depositado</h3>
+                        <p class="text-gray-400 text-sm">Todos os depósitos</p>
+                    </div>
+                    <div class="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="totalDepositado" class="text-2xl font-bold text-white">€0,00</span>
+                </div>
+            </div>
+
+            <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-lg font-semibold text-white">Juros Acumulados</h3>
+                        <p class="text-gray-400 text-sm">Total</p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="jurosAcumulados" class="text-2xl font-bold text-green-400">€0,00</span>
+                </div>
+            </div>
+
+            <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-lg font-semibold text-white">Taxa Média</h3>
+                        <p class="text-gray-400 text-sm">Ponderada</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="taxaMedia" class="text-2xl font-bold text-blue-400">0%</span>
+                </div>
+            </div>
+
+            <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-lg font-semibold text-white">Depósitos Ativos</h3>
+                        <p class="text-gray-400 text-sm">Total</p>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="depositosAtivos" class="text-2xl font-bold text-purple-400">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deposits Container with States -->
+        <div id="depositsContainer">
+            <!-- Loading State -->
+            <div id="loadingState" class="flex flex-col items-center justify-center py-16">
+                <div class="w-16 h-16 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mb-4">
+                </div>
+                <p class="text-gray-400">A carregar seus depósitos...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="errorState" class="flex flex-col items-center justify-center py-16 hidden">
+                <div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <p class="text-red-400 font-semibold mb-2">Erro ao carregar depósitos</p>
+                <p class="text-gray-400 text-center max-w-md">Não foi possível carregar seus depósitos neste momento.
+                    Por favor, tente novamente mais tarde.</p>
+                <button id="retryButton"
+                    class="mt-4 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-xl transition-colors">
+                    Tentar novamente
+                </button>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="flex flex-col items-center justify-center py-16 hidden">
+                <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                </div>
+                <p class="text-gray-300 font-semibold mb-2">Nenhum depósito encontrado</p>
+                <p class="text-gray-400 text-center max-w-md">Você ainda não tem nenhum depósito a prazo registrado.
+                    Clique em "Novo Depósito" para começar.</p>
+                <button id="emptyStateNovoDeposito"
+                    class="mt-6 bg-gradient-to-r from-primary-600 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-primary-700 hover:to-blue-700 transition-all duration-200 font-semibold">
+                    <span class="flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        Criar Depósito
+                    </span>
+                </button>
+            </div>
+
+            <!-- Deposits Grid -->
+            <div id="depositsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
+                <!-- Deposit cards will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Novo Depósito -->
+    <div id="novoDepositoModal"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-50 hidden">
+        <div class="bg-gray-900/95 backdrop-blur-xl border border-gray-800 rounded-2xl shadow-2xl w-full max-w-md mx-4">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-white">Novo Depósito</h2>
+                    <button onclick="fecharModalNovoDeposito()"
+                        class="text-gray-400 hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <form id="novoDepositoForm" class="space-y-4">
+                    <div>
+                        <label for="bancoSelect"
+                            class="block text-sm font-medium text-gray-300 mb-2">Banco/Instituição</label>
+                        <select id="bancoSelect" name="bancoId" required
+                            class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+                            <option value="">Selecione o banco</option>
+                            <!-- Options will be populated dynamically -->
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="ativoSelect" class="block text-sm font-medium text-gray-300 mb-2">Ativo
+                            Financeiro</label>
+                        <select id="ativoSelect" name="ativoFinanceiroId" required
+                            class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+                            <option value="">Selecione o ativo</option>
+                            <!-- Options will be populated dynamically -->
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="numeroConta" class="block text-sm font-medium text-gray-300 mb-2">Número da
+                            Conta</label>
+                        <input type="text" id="numeroConta" name="numeroConta" required placeholder="PT50XXXX..."
+                            class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+                    </div>
+
+                    <div>
+                        <label for="valorInicial" class="block text-sm font-medium text-gray-300 mb-2">Montante Inicial
+                            (€)</label>
+                        <input type="number" id="valorInicial" name="valorInvestido" required placeholder="25000"
+                            class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="taxaJuro" class="block text-sm font-medium text-gray-300 mb-2">Taxa de Juro
+                                (%)</label>
+                            <input type="number" id="taxaJuro" name="taxaJuroAnual" step="0.01" required
+                                placeholder="3.5"
+                                class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+                        </div>
+                        <div>
+                            <label for="dataInicio" class="block text-sm font-medium text-gray-300 mb-2">Data de
+                                Início</label>
+                            <input type="date" id="dataInicio" name="dataCriacao" required
+                                class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-400">*Todos os campos são obrigatórios</span>
+                            <div class="flex space-x-2">
+                                <button type="button" onclick="fecharModalNovoDeposito()"
+                                    class="bg-gray-700 text-white px-4 py-2 rounded-xl hover:bg-gray-600 transition-all duration-200">
+                                    Cancelar
+                                </button>
+                                <button type="submit"
+                                    class="bg-gradient-to-r from-primary-600 to-blue-600 text-white px-6 py-2 rounded-xl hover:from-primary-700 hover:to-blue-700 focus:ring-4 focus:ring-primary-500/25 transition-all duration-200">
+                                    Criar Depósito
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast"
+        class="fixed top-4 right-4 bg-green-600 text-white px-6 py-4 rounded-xl shadow-lg transform translate-x-full transition-transform duration-300 z-50 hidden">
+        <div class="flex items-center gap-3">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Depósito criado com sucesso!</span>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Eliminação -->
+    <div id="deleteConfirmationModal"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-50 hidden">
+        <div class="bg-gray-900/95 backdrop-blur-xl border border-gray-800 rounded-2xl shadow-2xl w-full max-w-md mx-4">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-bold text-white">Eliminar Depósito</h2>
+                    </div>
+                    <button onclick="fecharModalConfirmacaoDelete()"
+                        class="text-gray-400 hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="mb-6">
+                    <p class="text-gray-300 mb-4">
+                        Tem a certeza de que pretende eliminar este depósito? Esta ação não pode ser revertida.
+                    </p>
+                    <div class="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+                        <div id="deleteDepositInfo" class="text-white">
+                            <!-- Deposit info will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3">
+                    <button onclick="fecharModalConfirmacaoDelete()"
+                        class="bg-gray-700 text-white px-6 py-3 rounded-xl hover:bg-gray-600 transition-all duration-200 font-medium">
+                        Cancelar
+                    </button>
+                    <button id="confirmDeleteBtn" onclick="eliminarDeposito()"
+                        class="bg-red-600 text-white px-6 py-3 rounded-xl hover:bg-red-700 focus:ring-4 focus:ring-red-500/25 transition-all duration-200 font-medium">
+                        Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Include the depositoPrazo.js script -->
+<script src="~/js/depositoPrazo.js"></script>
+
+<script>
+    // Helper functions - these will be called from depositoPrazo.js
+    function fecharModalNovoDeposito() {
+        const modal = document.getElementById('novoDepositoModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    function fecharModalConfirmacaoDelete() {
+        const modal = document.getElementById('deleteConfirmationModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    function abrirDetalhesDeposito(depositoId) {
+        // Placeholder for deposit details modal
+        showToast('Detalhes do depósito ID: ' + depositoId);
+    }
+
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        const messageElement = toast.querySelector('span');
+        messageElement.textContent = message;
+
+        // Update toast appearance based on type
+        if (type === 'error') {
+            toast.className = 'fixed top-4 right-4 bg-red-600 text-white px-6 py-4 rounded-xl shadow-lg transform translate-x-full transition-transform duration-300 z-50';
+        } else {
+            toast.className = 'fixed top-4 right-4 bg-green-600 text-white px-6 py-4 rounded-xl shadow-lg transform translate-x-full transition-transform duration-300 z-50';
+        }
+
+        toast.classList.remove('translate-x-full', 'hidden');
+
+        setTimeout(() => {
+            toast.classList.add('translate-x-full');
+        }, 3000);
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('novoDepositoModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                fecharModalNovoDeposito();
+            }
+        });
+
+        document.getElementById('deleteConfirmationModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                fecharModalConfirmacaoDelete();
+            }
+        });
+    });
+</script>

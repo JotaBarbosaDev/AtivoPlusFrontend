@@ -37,7 +37,6 @@ project.lock.json
 
 # ASP.NET temporary files
 .vs/
-wwwroot/
 node_modules/
 .env
 
