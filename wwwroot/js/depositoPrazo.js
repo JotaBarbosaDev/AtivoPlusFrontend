@@ -142,14 +142,13 @@ function renderDeposits() {
 function createDepositCard(deposit) {
     // Get bank and asset information
     const bankName = getBankName(deposit.bancoId);
-    const asset = getAsset(deposit.ativoFinanceiroId);
-    const assetName = asset ? asset.nome : `Ativo ID: ${deposit.ativoFinanceiroId}`;
+    const asset = getAsset(deposit.ativoFinaceiroId);
+    const assetName = asset ? asset.nome : `Ativo ID: ${deposit.ativoFinaceiroId}`;
 
     // Calculate values
     const valorJuros = deposit.valorAtual - deposit.valorInvestido;
     const monthlyProfit = calculateMonthlyProfit(deposit);
     const maturityDate = calculateMaturityDate(deposit);
-    const progress = calculateProgress(deposit, maturityDate);
 
     // Create card element
     const card = document.createElement('div');
@@ -166,9 +165,11 @@ function createDepositCard(deposit) {
 
     // Calculate estimated maturity value with compound interest
     const monthsElapsed = Math.max(0, Math.floor((new Date() - dataCriacao) / (1000 * 60 * 60 * 24 * 30.44)));
-    const monthsTotal = asset && asset.duracaoMeses ? asset.duracaoMeses : 12;
     const monthlyRate = deposit.taxaJuroAnual / 100 / 12;
-    const valorVencimento = deposit.valorInvestido * Math.pow(1 + monthlyRate, monthsTotal);
+    const valorVencimento = deposit.valorInvestido * Math.pow(1 + monthlyRate, monthsElapsed);
+
+    const progress = calculateProgress(deposit.valorInvestido, valorVencimento);
+
 
     // Format currency values
     const formatter = new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' });
@@ -239,12 +240,55 @@ function createDepositCard(deposit) {
         </div>
 
         <div class="mt-4 pt-4 border-t border-gray-700">
-            <div class="flex justify-between items-center">
-                <span class="text-gray-400 text-sm">Progresso:</span>
-                <span class="text-white text-sm font-semibold">${progress}%</span>
+            <div class="flex justify-between items-center mb-3">
+                <span class="text-gray-400 text-sm">Ganho do Investimento:</span>
+                <span class="text-emerald-400 text-sm font-semibold">+${progress.toFixed(1)}%</span>
             </div>
-            <div class="w-full bg-gray-700 rounded-full h-2 mt-2">
-                <div class="bg-gradient-to-r from-primary-500 to-blue-500 h-2 rounded-full" style="width: ${progress}%">
+            
+            <!-- Enhanced Progress bar with markers -->
+            <div class="relative">
+                <!-- Background bar with subtle gradient -->
+                <div class="w-full bg-gradient-to-r from-gray-800 to-gray-700 rounded-full h-4 relative overflow-hidden border border-gray-600 shadow-inner">
+                    <!-- Progress fill with vibrant gradient -->
+                    <div class="bg-gradient-to-r from-emerald-500 to-green-400 h-4 rounded-full transition-all duration-700 ease-out relative" 
+                         style="width: ${Math.min(progress, 100)}%">
+                        <!-- Glossy effect -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-transparent via-white/10 to-white/20 rounded-full"></div>
+                    </div>
+                    
+                    <!-- Milestone markers with better visibility -->
+                    <div class="absolute top-0.5 left-[10%] w-0.5 h-3 bg-gray-400 rounded-full shadow-sm"></div>
+                    <div class="absolute top-0.5 left-[30%] w-0.5 h-3 bg-gray-400 rounded-full shadow-sm"></div>
+                    <div class="absolute top-0.5 left-[50%] w-0.5 h-3 bg-gray-300 rounded-full shadow-sm"></div>
+                    <div class="absolute top-0.5 left-[70%] w-0.5 h-3 bg-gray-300 rounded-full shadow-sm"></div>
+                    <div class="absolute top-0.5 right-0.5 w-0.5 h-3 bg-gray-200 rounded-full shadow-sm"></div>
+                    
+                    <!-- Progress indicator dot -->
+                    ${progress > 0 ? `
+                    <div class="absolute top-1/2 transform -translate-y-1/2 w-3 h-3 bg-white border-2 border-emerald-400 rounded-full shadow-lg pulse" 
+                         style="left: calc(${Math.min(progress, 100)}% - 6px)">
+                        <div class="absolute inset-0.5 bg-emerald-400 rounded-full"></div>
+                    </div>
+                    ` : ''}
+                </div>
+                
+                <!-- Percentage labels with better styling -->
+                <div class="flex justify-between text-xs mt-2 px-0.5">
+                    <span class="text-gray-500 font-medium">0%</span>
+                    <span class="text-gray-500 font-medium">10%</span>
+                    <span class="text-gray-400 font-medium">30%</span>
+                    <span class="text-gray-400 font-medium">50%</span>
+                    <span class="text-gray-400 font-medium">70%</span>
+                    <span class="text-gray-300 font-medium">100%</span>
+                </div>
+                
+                <!-- Achievement indicators -->
+                <div class="flex justify-center gap-1 mt-2">
+                    <div class="w-2 h-2 rounded-full ${progress >= 10 ? 'bg-emerald-400 shadow-sm' : 'bg-gray-600'}"></div>
+                    <div class="w-2 h-2 rounded-full ${progress >= 30 ? 'bg-emerald-400 shadow-sm' : 'bg-gray-600'}"></div>
+                    <div class="w-2 h-2 rounded-full ${progress >= 50 ? 'bg-green-400 shadow-sm' : 'bg-gray-600'}"></div>
+                    <div class="w-2 h-2 rounded-full ${progress >= 70 ? 'bg-green-400 shadow-sm' : 'bg-gray-600'}"></div>
+                    <div class="w-2 h-2 rounded-full ${progress >= 100 ? 'bg-yellow-400 shadow-md' : 'bg-gray-600'}"></div>
                 </div>
             </div>
         </div>
@@ -254,25 +298,19 @@ function createDepositCard(deposit) {
 }
 
 /**
- * Calculate the progress of a deposit (as a percentage of time elapsed)
+ * Calculate the progress of a deposit (as a percentage of profit gained)
  * @param {Object} deposit - The deposit data
- * @param {Date} maturityDate - The calculated maturity date
- * @returns {Number} - The progress percentage (0-100)
+ * @returns {Number} - The profit percentage gained (e.g., 30 for 30% profit)
  */
-function calculateProgress(deposit, maturityDate) {
-    const startDate = new Date(deposit.dataCriacao);
-    const endDate = maturityDate || calculateMaturityDate(deposit);
+function calculateProgress(valorInvestido, valorAtual) {
 
-    const now = new Date();
-    const total = endDate - startDate;
-    const elapsed = now - startDate;
+    if (valorInicial <= 0) return 0;
 
-    let progress = Math.floor((elapsed / total) * 100);
+    // Calculate profit percentage: ((current - initial) / initial) * 100
+    const profitPercentage = ((valorAtual - valorInvestido) / valorInvestido) * 100;
 
-    // Ensure progress is between 0 and 100
-    progress = Math.max(0, Math.min(100, progress));
-
-    return progress;
+    // Return the profit percentage, ensuring it's not negative
+    return Math.max(0, Math.round(profitPercentage * 100) / 100); // Round to 2 decimal places
 }
 
 /**
@@ -427,7 +465,7 @@ function calculateMonthlyProfit(deposit) {
  * @returns {Date} - The calculated maturity date
  */
 function calculateMaturityDate(deposit) {
-    const asset = getAsset(deposit.ativoFinanceiroId);
+    const asset = getAsset(deposit.ativoFinaceiroId);
     const startDate = new Date(deposit.dataCriacao);
     const maturityDate = new Date(startDate);
 
@@ -671,7 +709,7 @@ async function eliminarDeposito() {
         deleteBtn.innerHTML = '<div class="flex items-center justify-center"><div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>A eliminar...</div>';
 
         // Send DELETE request to API
-        const response = await fetch(`/api/depositoprazo/remover?id=${depositoParaEliminar}`, {
+        const response = await fetch(`/api/depositoprazo/remover?depositoPrazoId=${depositoParaEliminar}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'

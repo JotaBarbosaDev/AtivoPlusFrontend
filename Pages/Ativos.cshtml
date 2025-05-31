@@ -1,0 +1,773 @@
+@page
+@{
+    ViewData["Title"] = "Ativos";
+    Layout = "_Layout";
+}
+
+<div class="min-h-screen bg-gray-950 pt-20 pb-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- Header Section -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1
+                    class="text-4xl font-bold bg-gradient-to-r from-primary-400 to-blue-400 bg-clip-text text-transparent mb-2">
+                    Ativos
+                </h1>
+                <p class="text-gray-400">Gerencie todos os seus ativos financeiros</p>
+            </div>
+            <button id="novoAtivoBtn"
+                class="bg-gradient-to-r from-primary-600 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-primary-700 hover:to-blue-700 focus:ring-4 focus:ring-primary-500/25 transition-all duration-200 transform hover:scale-105 active:scale-95 flex items-center gap-2 font-semibold shadow-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Adicionar Ativo
+            </button>
+        </div>
+
+        <!-- Asset Categories Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Fundos de Investimento Card -->
+            <a href="/FundosInvestimento" class="group">
+                <div
+                    class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6 hover:border-primary-500/50 transition-all duration-300 card-hover">
+                    <div class="flex items-center justify-between mb-4">
+                        <div
+                            class="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center group-hover:bg-primary-500/20 transition-colors">
+                            <svg class="w-6 h-6 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                            </svg>
+                        </div>
+                        <svg class="w-5 h-5 text-gray-400 group-hover:text-primary-400 transition-colors" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-2">Fundos de Investimento</h3>
+                    <p class="text-gray-400 text-sm mb-4">Gerencie seus investimentos em fundos e criptomoedas</p>
+                    <div class="text-2xl font-bold text-white">€2.500,00</div>
+                    <div class="text-sm text-green-400">+5.2% este mês</div>
+                </div>
+            </a>
+
+            <!-- Imóveis Arrendados Card -->
+            <a href="/ImovelArrendado" class="group">
+                <div
+                    class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6 hover:border-primary-500/50 transition-all duration-300 card-hover">
+                    <div class="flex items-center justify-between mb-4">
+                        <div
+                            class="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center group-hover:bg-primary-500/20 transition-colors">
+                            <svg class="w-6 h-6 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                                </path>
+                            </svg>
+                        </div>
+                        <svg class="w-5 h-5 text-gray-400 group-hover:text-primary-400 transition-colors" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-2">Imóveis Arrendados</h3>
+                    <p class="text-gray-400 text-sm mb-4">Propriedades e rendas de imóveis</p>
+                    <div class="text-2xl font-bold text-white">€85.000,00</div>
+                    <div class="text-sm text-green-400">+2.1% este mês</div>
+                </div>
+            </a>
+
+            <!-- Depósitos a Prazo Card -->
+            <a href="/DepositoPrazo" class="group">
+                <div
+                    class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6 hover:border-primary-500/50 transition-all duration-300 card-hover">
+                    <div class="flex items-center justify-between mb-4">
+                        <div
+                            class="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center group-hover:bg-primary-500/20 transition-colors">
+                            <svg class="w-6 h-6 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1">
+                                </path>
+                            </svg>
+                        </div>
+                        <svg class="w-5 h-5 text-gray-400 group-hover:text-primary-400 transition-colors" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-2">Depósitos a Prazo</h3>
+                    <p class="text-gray-400 text-sm mb-4">Depósitos bancários e investimentos seguros</p>
+                    <div class="text-2xl font-bold text-white">€15.000,00</div>
+                    <div class="text-sm text-green-400">+1.8% este mês</div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Assets List -->
+        <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6 mb-8">
+            <h2 class="text-2xl font-bold text-white mb-6">Meus Ativos</h2>
+
+            <!-- Loading State -->
+            <div id="loadingAtivos" class="text-center py-8">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4"></div>
+                <p class="text-gray-400">Carregando ativos...</p>
+            </div>
+
+            <!-- Assets Grid -->
+            <div id="ativosGrid" class="hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Assets will be dynamically loaded here -->
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyStateAtivos" class="text-center py-16 hidden">
+                <div class="w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-12 h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                        </path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-2">Nenhum ativo encontrado</h3>
+                <p class="text-gray-400 mb-6">Comece adicionando seu primeiro ativo financeiro</p>
+                <button
+                    class="bg-gradient-to-r from-primary-600 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-primary-700 hover:to-blue-700 transition-all duration-200">
+                    Adicionar Primeiro Ativo
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6">
+            <h2 class="text-2xl font-bold text-white mb-6">Ações Rápidas</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button
+                    class="flex items-center justify-center gap-3 p-4 bg-gray-800/50 rounded-xl hover:bg-gray-700/50 transition-colors">
+                    <svg class="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    <span class="text-white font-medium">Adicionar Novo Ativo</span>
+                </button>
+
+                <button
+                    class="flex items-center justify-center gap-3 p-4 bg-gray-800/50 rounded-xl hover:bg-gray-700/50 transition-colors">
+                    <svg class="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                        </path>
+                    </svg>
+                    <span class="text-white font-medium">Ver Relatórios</span>
+                </button>
+
+                <button
+                    class="flex items-center justify-center gap-3 p-4 bg-gray-800/50 rounded-xl hover:bg-gray-700/50 transition-colors">
+                    <svg class="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                    <span class="text-white font-medium">Exportar Dados</span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal Novo Ativo -->
+<div id="novoAtivoModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-50 hidden">
+    <div class="bg-gray-900/95 backdrop-blur-xl border border-gray-800 rounded-2xl shadow-2xl w-full max-w-md mx-4">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-white">Novo Ativo</h2>
+                <button id="fecharModalNovoAtivo" class="text-gray-400 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <form id="formNovoAtivo" class="space-y-4">
+                <div>
+                    <label for="nomeAtivo" class="block text-sm font-medium text-gray-300 mb-2">Nome do Ativo</label>
+                    <input type="text" id="nomeAtivo" name="nome" required
+                        class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors"
+                        placeholder="Ex: Bitcoin, Tesla, PPR CGD...">
+                </div>
+
+                <div>
+                    <label for="carteiraSelect" class="block text-sm font-medium text-gray-300 mb-2">Carteira</label>
+                    <select id="carteiraSelect" name="carteiraId" required
+                        class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+                        <option value="">Selecione uma carteira</option>
+                        <!-- As opções serão preenchidas dinamicamente -->
+                    </select>
+                </div>
+
+                <div>
+                    <label for="dataInicio" class="block text-sm font-medium text-gray-300 mb-2">Data de Início</label>
+                    <input type="date" id="dataInicio" name="dataInicio" required
+                        class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="duracaoMeses" class="block text-sm font-medium text-gray-300 mb-2">Duração
+                            (meses)</label>
+                        <input type="number" id="duracaoMeses" name="duracaoMeses" min="0" value="0"
+                            class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors"
+                            placeholder="0">
+                    </div>
+
+                    <div>
+                        <label for="taxaImposto" class="block text-sm font-medium text-gray-300 mb-2">Taxa de Imposto
+                            (%)</label>
+                        <input type="number" id="taxaImposto" name="taxaImposto" min="0" max="100" step="0.1" value="23"
+                            class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors"
+                            placeholder="23">
+                    </div>
+                </div>
+
+                <div class="flex gap-3 pt-4">
+                    <button type="button" id="cancelarNovoAtivo"
+                        class="flex-1 py-3 bg-gray-800 text-gray-300 rounded-xl hover:bg-gray-700 transition-colors duration-200">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                        class="flex-1 py-3 bg-gradient-to-r from-primary-600 to-blue-600 text-white rounded-xl hover:from-primary-700 hover:to-blue-700 transition-all duration-200">
+                        Adicionar Ativo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Notifications Container -->
+<div id="toast-container" class="fixed top-20 right-4 z-50 space-y-2"></div>
+
+<!-- Include the asset calculations script -->
+<script src="~/js/ativosCalculos.js"></script>
+
+<script>
+    let carteiras = [];
+    let ativos = [];
+
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('Ativos page loaded');
+        carregarDados();
+
+        // Event listeners para o modal
+        document.getElementById('novoAtivoBtn')?.addEventListener('click', abrirModalNovoAtivo);
+        document.getElementById('fecharModalNovoAtivo')?.addEventListener('click', fecharModalNovoAtivo);
+        document.getElementById('cancelarNovoAtivo')?.addEventListener('click', fecharModalNovoAtivo);
+        document.getElementById('formNovoAtivo')?.addEventListener('submit', adicionarNovoAtivo);
+
+        // Definir data padrão para hoje
+        const hoje = new Date().toISOString().split('T')[0];
+        document.getElementById('dataInicio').value = hoje;
+    });
+
+    async function carregarDados() {
+        try {
+            // Carregar carteiras e ativos em paralelo
+            const [carteirasResponse, ativosResponse] = await Promise.all([
+                fetch('/api/carteira/ver?userIdFromCarteira=-1', {
+                    method: 'GET',
+                    credentials: 'include'
+                }),
+                fetch('/api/ativofinanceiro/ver?userIdFromAtivo=-1', {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+            ]);
+
+            if (!carteirasResponse.ok || !ativosResponse.ok) {
+                throw new Error('Erro ao carregar dados');
+            }
+
+            carteiras = await carteirasResponse.json();
+            ativos = await ativosResponse.json();
+
+            console.log('Carteiras carregadas:', carteiras);
+            console.log('Ativos carregados:', ativos);
+
+            // Carregar dados detalhados dos diferentes tipos de ativos
+            await fetchAllAssetData();
+
+            renderizarAtivos();
+            atualizarResumoAtivos();
+
+        } catch (error) {
+            console.error('Erro ao carregar dados:', error);
+            mostrarErro();
+        }
+    }
+
+    function renderizarAtivos() {
+        const loadingElement = document.getElementById('loadingAtivos');
+        const gridElement = document.getElementById('ativosGrid');
+        const emptyElement = document.getElementById('emptyStateAtivos');
+
+        // Esconder loading
+        loadingElement.classList.add('hidden');
+
+        if (ativos.length === 0) {
+            // Mostrar estado vazio
+            emptyElement.classList.remove('hidden');
+            return;
+        }
+
+        // Mostrar grid e renderizar ativos
+        gridElement.classList.remove('hidden');
+        const gridContainer = gridElement.querySelector('.grid');
+        gridContainer.innerHTML = '';
+
+        ativos.forEach(ativo => {
+            const carteira = carteiras.find(c => c.id === ativo.carteiraId);
+            const nomeCarteira = carteira ? carteira.nome : 'Carteira não encontrada';
+
+            const ativoCard = criarCardAtivo(ativo, nomeCarteira);
+            gridContainer.appendChild(ativoCard);
+        });
+    } function criarCardAtivo(ativo, nomeCarteira) {
+        const card = document.createElement('div');
+        card.className = 'bg-gray-800/50 backdrop-blur-xl border border-gray-700 rounded-2xl p-6 hover:border-primary-500/50 transition-all duration-300 card-hover';
+
+        // Get detailed asset information with profit calculations
+        const detailedInfo = getDetailedAssetInfo(ativo);
+
+        // Formatar data
+        const dataInicio = new Date(ativo.dataInicio).toLocaleDateString('pt-PT');
+
+        // Calcular duração ou mostrar "Sem prazo" se duracaoMeses for 0
+        const duracao = ativo.duracaoMeses > 0 ? `${ativo.duracaoMeses} meses` : 'Sem prazo definido';
+
+        // Formatar valores monetários
+        const formatter = new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' });
+
+        // Determinar cor do ícone baseado no tipo de ativo
+        let iconColor = 'primary';
+        let iconPath = 'd="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"';
+
+        if (detailedInfo.tipo === 'Depósito a Prazo') {
+            iconColor = 'blue';
+            iconPath = 'd="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"';
+        } else if (detailedInfo.tipo === 'Fundo de Investimento') {
+            iconColor = 'green';
+            iconPath = 'd="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"';
+        } else if (detailedInfo.tipo === 'Imóvel Arrendado') {
+            iconColor = 'orange';
+            iconPath = 'd="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"';
+        }
+
+        card.innerHTML = `
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-${iconColor}-500/10 rounded-xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-${iconColor}-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" ${iconPath}></path>
+                    </svg>
+                </div>
+                <button class="text-gray-400 hover:text-white transition-colors" onclick="verDetalhesAtivo(${ativo.id})">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold text-white mb-1">${ativo.nome}</h3>
+                <p class="text-primary-400 text-sm font-medium">📁 ${nomeCarteira}</p>
+                <p class="text-${iconColor}-400 text-xs font-medium mt-1">${detailedInfo.tipo}</p>
+            </div>
+            
+            <div class="space-y-3 mb-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-400 text-sm">Data de Início:</span>
+                    <span class="text-white text-sm font-medium">${dataInicio}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-400 text-sm">Duração:</span>
+                    <span class="text-white text-sm font-medium">${duracao}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-400 text-sm">Taxa de Imposto:</span>
+                    <span class="text-white text-sm font-medium">${ativo.taxaImposto}%</span>
+                </div>
+                ${detailedInfo.valorAtual > 0 ? `
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-400 text-sm">Valor Atual:</span>
+                    <span class="text-white text-sm font-medium">${formatter.format(detailedInfo.valorAtual)}</span>
+                </div>
+                ` : ''}
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-400 text-sm">Lucro Estimado:</span>
+                    <span class="text-green-400 text-sm font-medium">+${formatter.format(detailedInfo.lucro)}</span>
+                </div>
+            </div>
+            
+            <button onclick="verDetalhesAtivo(${ativo.id})"
+                class="w-full py-2 bg-${iconColor}-600/20 hover:bg-${iconColor}-600/30 text-${iconColor}-400 rounded-lg transition-colors duration-200 text-sm font-medium">
+                Ver Detalhes
+            </button>
+        `;
+
+        return card;
+    }
+
+    function atualizarResumoAtivos() {
+        const summary = calculateAssetSummary();
+        const formatter = new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' });
+
+        // Update the overview cards with real data
+        const cards = document.querySelectorAll('.grid .group');
+
+        if (cards.length >= 3) {
+            // Update Fundos de Investimento card
+            const fundosCard = cards[0];
+            const fundosValue = fundosCard.querySelector('.text-2xl');
+            const fundosChange = fundosCard.querySelector('.text-green-400');
+            if (fundosValue && fundosChange) {
+                const totalFundos = allAssetData.fundos.reduce((sum, fundo) => sum + (fundo.montanteInvestido || 0), 0);
+                fundosValue.textContent = formatter.format(totalFundos);
+                fundosChange.textContent = `${summary.breakdown.fundos} fundos`;
+            }
+
+            // Update Imóveis Arrendados card
+            const imoveisCard = cards[1];
+            const imoveisValue = imoveisCard.querySelector('.text-2xl');
+            const imoveisChange = imoveisCard.querySelector('.text-green-400');
+            if (imoveisValue && imoveisChange) {
+                const totalImoveis = allAssetData.imoveis.reduce((sum, imovel) => sum + (imovel.valorImovel || 0), 0);
+                imoveisValue.textContent = formatter.format(totalImoveis);
+                imoveisChange.textContent = `${summary.breakdown.imoveis} imóveis`;
+            }
+
+            // Update Depósitos a Prazo card
+            const depositosCard = cards[2];
+            const depositosValue = depositosCard.querySelector('.text-2xl');
+            const depositosChange = depositosCard.querySelector('.text-green-400');
+            if (depositosValue && depositosChange) {
+                const totalDepositos = allAssetData.depositos.reduce((sum, deposito) => sum + (deposito.valorAtual || deposito.valorInvestido || 0), 0);
+                depositosValue.textContent = formatter.format(totalDepositos);
+                depositosChange.textContent = `${summary.breakdown.depositos} depósitos`;
+            }
+        }
+
+        console.log('Resumo dos ativos:', summary);
+    }
+
+    function mostrarErro() {
+        const loadingElement = document.getElementById('loadingAtivos');
+        const gridElement = document.getElementById('ativosGrid');
+        const emptyElement = document.getElementById('emptyStateAtivos');
+
+        loadingElement.classList.add('hidden');
+        gridElement.classList.add('hidden');
+        emptyElement.classList.remove('hidden');
+
+        // Alterar mensagem para erro
+        emptyElement.querySelector('h3').textContent = 'Erro ao carregar ativos';
+        emptyElement.querySelector('p').textContent = 'Ocorreu um erro ao carregar os dados. Tente novamente.';
+    }
+
+    function abrirModalNovoAtivo() {
+        // Preencher select de carteiras
+        preencherSelectCarteiras();
+
+        const modal = document.getElementById('novoAtivoModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function fecharModalNovoAtivo() {
+        const modal = document.getElementById('novoAtivoModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+
+        // Limpar formulário
+        document.getElementById('formNovoAtivo').reset();
+        const hoje = new Date().toISOString().split('T')[0];
+        document.getElementById('dataInicio').value = hoje;
+        document.getElementById('taxaImposto').value = '23';
+    }
+
+    function preencherSelectCarteiras() {
+        const select = document.getElementById('carteiraSelect');
+
+        // Limpar opções existentes (exceto a primeira)
+        while (select.children.length > 1) {
+            select.removeChild(select.lastChild);
+        }
+
+        // Adicionar carteiras como opções
+        carteiras.forEach(carteira => {
+            const option = document.createElement('option');
+            option.value = carteira.id;
+            option.textContent = carteira.nome;
+            select.appendChild(option);
+        });
+    }
+
+    async function adicionarNovoAtivo(event) {
+        event.preventDefault();
+
+        const formData = new FormData(event.target);
+
+        // Converter data para formato ISO
+        const dataInicio = new Date(formData.get('dataInicio')).toISOString();
+
+        const novoAtivo = {
+            userId: -1,
+            carteiraId: parseInt(formData.get('carteiraId')),
+            nome: formData.get('nome'),
+            dataInicio: dataInicio,
+            duracaoMeses: parseInt(formData.get('duracaoMeses')) || 0,
+            taxaImposto: parseFloat(formData.get('taxaImposto')) || 0
+        };
+
+        try {
+            const response = await fetch('/api/ativofinanceiro/adicionar', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify(novoAtivo)
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro ao adicionar ativo');
+            }
+
+            showToast('Ativo adicionado com sucesso!', 'success');
+            fecharModalNovoAtivo();
+
+            // Recarregar dados para mostrar o novo ativo
+            carregarDados();
+
+        } catch (error) {
+            console.error('Erro ao adicionar ativo:', error);
+            showToast('Erro ao adicionar ativo. Tente novamente.', 'error');
+        }
+    }
+
+    function verDetalhesAtivo(ativoId) {
+        // Placeholder para ver detalhes do ativo
+        console.log('Ver detalhes do ativo:', ativoId);
+        alert(`Funcionalidade em desenvolvimento - Ativo ID: ${ativoId}`);
+    }
+
+    // Função para mostrar toast notifications
+    function showToast(message, type = 'info') {
+        // Criar elemento do toast se não existir
+        let toastContainer = document.getElementById('toast-container');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'toast-container';
+            toastContainer.className = 'fixed top-20 right-4 z-50 space-y-2';
+            document.body.appendChild(toastContainer);
+        }
+
+        const toast = document.createElement('div');
+        const bgColor = type === 'success' ? 'bg-green-600' : type === 'error' ? 'bg-red-600' : 'bg-blue-600';
+
+        toast.className = `${bgColor} text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 translate-x-full opacity-0`;
+        toast.textContent = message;
+
+        toastContainer.appendChild(toast);
+
+        // Animar entrada
+        setTimeout(() => {
+            toast.classList.remove('translate-x-full', 'opacity-0');
+        }, 100);
+
+        // Remover após 3 segundos
+        setTimeout(() => {
+            toast.classList.add('translate-x-full', 'opacity-0');
+            setTimeout(() => {
+                if (toastContainer.contains(toast)) {
+                    toastContainer.removeChild(toast);
+                }
+            }, 300);
+        }, 3000);
+    }
+
+    // Global variable to store all asset data
+    let allAssetData = {
+        depositos: [],
+        fundos: [],
+        imoveis: []
+    };
+
+    /**
+     * Fetch data from all asset-specific APIs
+     */
+    async function fetchAllAssetData() {
+        try {
+            console.log('Fetching data from asset-specific APIs...');
+
+            // Fetch data from all three APIs in parallel
+            const [depositosResponse, fundosResponse, imoveisResponse] = await Promise.all([
+                fetch('/api/depositoprazo/getAllByUser', {
+                    method: 'GET',
+                    credentials: 'include'
+                }).catch(err => {
+                    console.warn('Error fetching deposits:', err);
+                    return { ok: false, json: () => Promise.resolve([]) };
+                }),
+                fetch('/api/fundoinvestimento/getAllByUser', {
+                    method: 'GET',
+                    credentials: 'include'
+                }).catch(err => {
+                    console.warn('Error fetching funds:', err);
+                    return { ok: false, json: () => Promise.resolve([]) };
+                }),
+                fetch('/api/imovelarrendado/getAllByUser', {
+                    method: 'GET',
+                    credentials: 'include'
+                }).catch(err => {
+                    console.warn('Error fetching real estate:', err);
+                    return { ok: false, json: () => Promise.resolve([]) };
+                })
+            ]);
+
+            // Parse responses
+            allAssetData.depositos = depositosResponse.ok ? await depositosResponse.json() : [];
+            allAssetData.fundos = fundosResponse.ok ? await fundosResponse.json() : [];
+            allAssetData.imoveis = imoveisResponse.ok ? await imoveisResponse.json() : [];
+
+            console.log('Asset data loaded:', allAssetData);
+
+        } catch (error) {
+            console.error('Error fetching asset data:', error);
+            // Initialize with empty arrays to prevent errors
+            allAssetData = {
+                depositos: [],
+                fundos: [],
+                imoveis: []
+            };
+        }
+    }
+
+    /**
+     * Get detailed asset information including profit calculations
+     * @param { Object } ativo - The base asset data
+        * @returns { Object } - Detailed asset information
+            */
+    function getDetailedAssetInfo(ativo) {
+        let detailedInfo = {
+            tipo: 'Ativo Financeiro',
+            lucro: 0,
+            lucroPercentual: 0,
+            valorAtual: ativo.valorInvestido || 0,
+            valorInvestido: ativo.valorInvestido || 0
+        };
+
+        try {
+            // Try to find matching data in specific asset types
+            let specificAsset = null;
+
+            // Check if it's a deposit
+            specificAsset = allAssetData.depositos.find(d => d.ativoFinanceiroId === ativo.id);
+            if (specificAsset) {
+                detailedInfo.tipo = 'Depósito a Prazo';
+                const profit = calcularLucroDeposito(specificAsset);
+                detailedInfo.lucroPercentual = profit;
+                detailedInfo.valorAtual = specificAsset.valorAtual || specificAsset.valorInvestido || 0;
+                detailedInfo.lucro = detailedInfo.valorAtual - (specificAsset.valorInvestido || 0);
+                return detailedInfo;
+            }
+
+            // Check if it's a fund
+            specificAsset = allAssetData.fundos.find(f => f.ativoFinanceiroId === ativo.id);
+            if (specificAsset) {
+                detailedInfo.tipo = 'Fundo de Investimento';
+                // For funds, we'll calculate profit asynchronously
+                calcularLucroFundoInvestimento(specificAsset).then(profit => {
+                    detailedInfo.lucroPercentual = profit;
+                    // Update the card display if needed
+                }).catch(console.error);
+                detailedInfo.valorAtual = specificAsset.valorAtual || specificAsset.montanteInvestido || 0;
+                detailedInfo.lucro = detailedInfo.valorAtual - (specificAsset.montanteInvestido || 0);
+                return detailedInfo;
+            }
+
+            // Check if it's real estate
+            specificAsset = allAssetData.imoveis.find(i => i.ativoFinanceiroId === ativo.id);
+            if (specificAsset) {
+                detailedInfo.tipo = 'Imóvel Arrendado';
+                const profit = calcularLucroImovel(specificAsset);
+                detailedInfo.lucroPercentual = profit;
+                detailedInfo.valorAtual = specificAsset.valorAtual || specificAsset.valorCompra || 0;
+                detailedInfo.lucro = detailedInfo.valorAtual - (specificAsset.valorCompra || 0);
+                return detailedInfo;
+            }
+
+            // Default case - no specific asset type found
+            return detailedInfo;
+
+        } catch (error) {
+            console.error('Error getting detailed asset info:', error);
+            return detailedInfo;
+        }
+    }
+
+    /**
+     * Calculate asset summary statistics
+     * @returns { Object } - Summary data including breakdown by asset type
+        */
+    function calculateAssetSummary() {
+        const summary = {
+            totalValue: 0,
+            totalProfit: 0,
+            breakdown: {
+                depositos: 0,
+                fundos: 0,
+                imoveis: 0
+            }
+        };
+
+        try {
+            // Count and calculate values for each asset type
+            summary.breakdown.depositos = allAssetData.depositos.length;
+            summary.breakdown.fundos = allAssetData.fundos.length;
+            summary.breakdown.imoveis = allAssetData.imoveis.length;
+
+            // Calculate total values
+            const depositosValue = allAssetData.depositos.reduce((sum, d) => sum + (d.valorAtual || d.valorInvestido || 0), 0);
+            const fundosValue = allAssetData.fundos.reduce((sum, f) => sum + (f.valorAtual || f.montanteInvestido || 0), 0);
+            const imoveisValue = allAssetData.imoveis.reduce((sum, i) => sum + (i.valorAtual || i.valorImovel || 0), 0);
+
+            summary.totalValue = depositosValue + fundosValue + imoveisValue;
+
+            // Calculate total profit (this is simplified, could be enhanced)
+            const depositosProfit = allAssetData.depositos.reduce((sum, d) => {
+                const profit = calcularLucroDeposito(d);
+                return sum + ((d.valorAtual || d.valorInvestido || 0) * profit / 100);
+            }, 0);
+
+            const imoveisProfit = allAssetData.imoveis.reduce((sum, i) => {
+                const profit = calcularLucroImovel(i);
+                return sum + ((i.valorAtual || i.valorImovel || 0) * profit / 100);
+            }, 0);
+
+            summary.totalProfit = depositosProfit + imoveisProfit; // Funds profit calculated async
+
+        } catch (error) {
+            console.error('Error calculating asset summary:', error);
+        }
+
+        return summary;
+    }
+
+
+</script>
+
+
