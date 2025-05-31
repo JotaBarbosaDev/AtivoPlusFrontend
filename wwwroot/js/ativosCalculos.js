@@ -51,7 +51,7 @@ function calcularLucroDeposito(deposito) {
 
         // Get profit percentage
         const profitPercentage = calcularPorcentagemLucroDeposito(deposito);
-        
+
         // Calculate direct profit value: (percentage / 100) * invested amount
         const profitValue = (profitPercentage / 100) * deposito.valorInvestido;
 
@@ -142,7 +142,7 @@ async function calcularLucroFundoInvestimento(fundo) {
 
         // Get profit percentage
         const profitPercentage = await calcularPorcentagemLucroFundoInvestimento(fundo);
-        
+
         // Calculate direct profit value: (percentage / 100) * invested amount
         const profitValue = (profitPercentage / 100) * fundo.montanteInvestido;
 
@@ -207,7 +207,7 @@ function calcularLucroImovel(imovel) {
 
         // Get profit percentage
         const profitPercentage = calcularPorcentagemLucroImovel(imovel);
-        
+
         // Calculate direct profit value: (percentage / 100) * invested amount
         const profitValue = (profitPercentage / 100) * imovel.valorCompra;
 
@@ -223,7 +223,7 @@ function calcularLucroImovel(imovel) {
 /**
  * State variables for all asset types
  */
-let allAssetData = {
+window.allAssetData = {
     depositos: [],
     fundos: [],
     imoveis: [],
@@ -246,10 +246,10 @@ async function fetchDepositos() {
         }
 
         const data = await response.json();
-        allAssetData.depositos = Array.isArray(data) ? data : [data];
-        console.log('Depósitos carregados:', allAssetData.depositos);
+        window.allAssetData.depositos = Array.isArray(data) ? data : [data];
+        console.log('Depósitos carregados:', window.allAssetData.depositos);
 
-        return allAssetData.depositos;
+        return window.allAssetData.depositos;
     } catch (error) {
         console.error('Erro ao carregar depósitos:', error);
         return [];
@@ -271,10 +271,10 @@ async function fetchFundos() {
         }
 
         const data = await response.json();
-        allAssetData.fundos = Array.isArray(data) ? data : [data];
-        console.log('Fundos carregados:', allAssetData.fundos);
+        window.allAssetData.fundos = Array.isArray(data) ? data : [data];
+        console.log('Fundos carregados:', window.allAssetData.fundos);
 
-        return allAssetData.fundos;
+        return window.allAssetData.fundos;
     } catch (error) {
         console.error('Erro ao carregar fundos:', error);
         return [];
@@ -296,10 +296,10 @@ async function fetchImoveis() {
         }
 
         const data = await response.json();
-        allAssetData.imoveis = Array.isArray(data) ? data : [data];
-        console.log('Imóveis carregados:', allAssetData.imoveis);
+        window.allAssetData.imoveis = Array.isArray(data) ? data : [data];
+        console.log('Imóveis carregados:', window.allAssetData.imoveis);
 
-        return allAssetData.imoveis;
+        return window.allAssetData.imoveis;
     } catch (error) {
         console.error('Erro ao carregar imóveis:', error);
         return [];
@@ -347,7 +347,7 @@ function getDetailedAssetInfo(ativo) {
     };
 
     // Check if it's a deposit
-    const deposito = allAssetData.depositos.find(d => d.ativoFinaceiroId === ativo.id);
+    const deposito = window.allAssetData.depositos.find(d => d.ativoFinaceiroId === ativo.id);
     if (deposito) {
         detailedInfo.tipo = 'Depósito a Prazo';
         detailedInfo.lucro = calcularLucroDeposito(deposito);
@@ -357,7 +357,7 @@ function getDetailedAssetInfo(ativo) {
     }
 
     // Check if it's an investment fund
-    const fundo = allAssetData.fundos.find(f => f.ativoFinaceiroId === ativo.id);
+    const fundo = window.allAssetData.fundos.find(f => f.ativoFinaceiroId === ativo.id);
     if (fundo) {
         detailedInfo.tipo = 'Fundo de Investimento';
         detailedInfo.lucro = calcularLucroFundoInvestimento(fundo);
@@ -367,7 +367,7 @@ function getDetailedAssetInfo(ativo) {
     }
 
     // Check if it's real estate
-    const imovel = allAssetData.imoveis.find(i => i.ativoFinaceiroId === ativo.id);
+    const imovel = window.allAssetData.imoveis.find(i => i.ativoFinaceiroId === ativo.id);
     if (imovel) {
         detailedInfo.tipo = 'Imóvel Arrendado';
         detailedInfo.lucro = calcularLucroImovel(imovel);
@@ -386,26 +386,26 @@ function calculateAssetSummary() {
     let totalInvestido = 0;
     let totalAtual = 0;
     let totalLucro = 0;
-    let countDepositos = allAssetData.depositos.length;
-    let countFundos = allAssetData.fundos.length;
-    let countImoveis = allAssetData.imoveis.length;
+    let countDepositos = window.allAssetData.depositos.length;
+    let countFundos = window.allAssetData.fundos.length;
+    let countImoveis = window.allAssetData.imoveis.length;
 
     // Calculate from deposits
-    allAssetData.depositos.forEach(deposito => {
+    window.allAssetData.depositos.forEach(deposito => {
         totalInvestido += deposito.valorInvestido || 0;
         totalAtual += deposito.valorAtual || deposito.valorInvestido || 0;
         totalLucro += calcularLucroDeposito(deposito);
     });
 
     // Calculate from funds
-    allAssetData.fundos.forEach(fundo => {
+    window.allAssetData.fundos.forEach(fundo => {
         totalInvestido += fundo.montanteInvestido || 0;
         totalAtual += fundo.montanteInvestido || 0; // Assuming current value for now
         totalLucro += calcularLucroFundoInvestimento(fundo);
     });
 
     // Calculate from real estate
-    allAssetData.imoveis.forEach(imovel => {
+    window.allAssetData.imoveis.forEach(imovel => {
         totalInvestido += imovel.valorImovel || 0;
         totalAtual += imovel.valorImovel || 0;
         totalLucro += calcularLucroImovel(imovel);

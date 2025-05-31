@@ -49,7 +49,7 @@
                     <h3 class="text-xl font-semibold text-white mb-2">Fundos de Investimento</h3>
                     <p class="text-gray-400 text-sm mb-4">Gerencie seus investimentos em fundos e criptomoedas</p>
                     <div class="text-2xl font-bold text-white">€2.500,00</div>
-                    <div class="text-sm text-green-400">+5.2% este mês</div>
+                    <div class="text-sm text-green-400">+5.2%</div>
                 </div>
             </a>
 
@@ -75,7 +75,7 @@
                     <h3 class="text-xl font-semibold text-white mb-2">Imóveis Arrendados</h3>
                     <p class="text-gray-400 text-sm mb-4">Propriedades e rendas de imóveis</p>
                     <div class="text-2xl font-bold text-white">€85.000,00</div>
-                    <div class="text-sm text-green-400">+2.1% este mês</div>
+                    <div class="text-sm text-green-400">+2.1%</div>
                 </div>
             </a>
 
@@ -101,7 +101,7 @@
                     <h3 class="text-xl font-semibold text-white mb-2">Depósitos a Prazo</h3>
                     <p class="text-gray-400 text-sm mb-4">Depósitos bancários e investimentos seguros</p>
                     <div class="text-2xl font-bold text-white">€15.000,00</div>
-                    <div class="text-sm text-green-400">+1.8% este mês</div>
+                    <div class="text-sm text-green-400">+1.8%</div>
                 </div>
             </a>
         </div>
@@ -276,6 +276,8 @@
 
     async function carregarDados() {
         try {
+            console.log('Iniciando carregamento de dados...');
+
             // Carregar carteiras e ativos em paralelo
             const [carteirasResponse, ativosResponse] = await Promise.all([
                 fetch('/api/carteira/ver?userIdFromCarteira=-1', {
@@ -288,8 +290,13 @@
                 })
             ]);
 
+            console.log('Responses received:', {
+                carteiras: carteirasResponse.status,
+                ativos: ativosResponse.status
+            });
+
             if (!carteirasResponse.ok || !ativosResponse.ok) {
-                throw new Error('Erro ao carregar dados');
+                throw new Error(`Erro ao carregar dados - Carteiras: ${carteirasResponse.status}, Ativos: ${ativosResponse.status}`);
             }
 
             carteiras = await carteirasResponse.json();
@@ -299,10 +306,17 @@
             console.log('Ativos carregados:', ativos);
 
             // Carregar dados detalhados dos diferentes tipos de ativos
+            console.log('Iniciando fetchAllAssetData...');
             await fetchAllAssetData();
+            console.log('fetchAllAssetData concluído');
 
-            renderizarAtivos();
-            atualizarResumoAtivos();
+            console.log('Iniciando renderização de ativos...');
+            await renderizarAtivos();
+            console.log('Renderização de ativos concluída');
+
+            console.log('Iniciando atualização do resumo...');
+            await atualizarResumoAtivos();
+            console.log('Atualização do resumo concluída');
 
         } catch (error) {
             console.error('Erro ao carregar dados:', error);
@@ -310,7 +324,7 @@
         }
     }
 
-    function renderizarAtivos() {
+    async function renderizarAtivos() {
         const loadingElement = document.getElementById('loadingAtivos');
         const gridElement = document.getElementById('ativosGrid');
         const emptyElement = document.getElementById('emptyStateAtivos');
@@ -329,19 +343,25 @@
         const gridContainer = gridElement.querySelector('.grid');
         gridContainer.innerHTML = '';
 
-        ativos.forEach(ativo => {
+        // Create cards asynchronously to handle fund calculations
+        for (const ativo of ativos) {
             const carteira = carteiras.find(c => c.id === ativo.carteiraId);
             const nomeCarteira = carteira ? carteira.nome : 'Carteira não encontrada';
 
-            const ativoCard = criarCardAtivo(ativo, nomeCarteira);
+            const ativoCard = await criarCardAtivo(ativo, nomeCarteira);
             gridContainer.appendChild(ativoCard);
-        });
-    } function criarCardAtivo(ativo, nomeCarteira) {
-        const card = document.createElement('div');
+        }
+    }
+
+    async function criarCardAtivo(ativo, nomeCarteira) {
+    const card = document.createElement('div');
         card.className = 'bg-gray-800/50 backdrop-blur-xl border border-gray-700 rounded-2xl p-6 hover:border-primary-500/50 transition-all duration-300 card-hover';
 
         // Get detailed asset information with profit calculations
-        const detailedInfo = getDetailedAssetInfo(ativo);
+        const detailedInfo = await getDetailedAssetInfo(ativo);
+
+        // Debug: Log the detailed info
+        console.log(`Asset ${ativo.nome} detailedInfo:`, detailedInfo);
 
         // Formatar data
         const dataInicio = new Date(ativo.dataInicio).toLocaleDateString('pt-PT');
@@ -408,7 +428,7 @@
                 ` : ''}
                 <div class="flex justify-between items-center">
                     <span class="text-gray-400 text-sm">Lucro Estimado:</span>
-                    <span class="text-green-400 text-sm font-medium">+${formatter.format(detailedInfo.lucro)}</span>
+                    <span class="text-green-400 text-sm font-medium">+${formatter.format(detailedInfo.lucro)} lucro</span>
                 </div>
             </div>
             
@@ -421,22 +441,37 @@
         return card;
     }
 
-    function atualizarResumoAtivos() {
-        const summary = calculateAssetSummary();
+    async function atualizarResumoAtivos() {
         const formatter = new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' });
 
         // Update the overview cards with real data
         const cards = document.querySelectorAll('.grid .group');
 
-        if (cards.length >= 3) {
+        if (cards.length >= 3 && window.allAssetData) {
             // Update Fundos de Investimento card
             const fundosCard = cards[0];
             const fundosValue = fundosCard.querySelector('.text-2xl');
             const fundosChange = fundosCard.querySelector('.text-green-400');
             if (fundosValue && fundosChange) {
-                const totalFundos = allAssetData.fundos.reduce((sum, fundo) => sum + (fundo.montanteInvestido || 0), 0);
+                const totalFundos = window.allAssetData.fundos.reduce((sum, fundo) => sum + (fundo.montanteInvestido || 0), 0);
+
+                // Calculate total profit for funds (async)
+                let totalFundosProfit = 0;
+                for (const fundo of window.allAssetData.fundos) {
+                    try {
+                        const profit = await calcularLucroFundoInvestimento(fundo);
+                        console.log(`Lucro do fundo ${fundo.ativoSigla}:`, profit);
+                        totalFundosProfit += profit;
+                    } catch (error) {
+                        console.error('Erro ao calcular lucro do fundo:', error);
+                    }
+                }
+
+                console.log(`Total de fundos investido: ${formatter.format(totalFundos)}`);
+                console.log(`Total de lucro dos fundos: ${formatter.format(totalFundosProfit)}`);
+
                 fundosValue.textContent = formatter.format(totalFundos);
-                fundosChange.textContent = `${summary.breakdown.fundos} fundos`;
+                fundosChange.textContent = `+${formatter.format(totalFundosProfit)} lucro`;
             }
 
             // Update Imóveis Arrendados card
@@ -444,9 +479,16 @@
             const imoveisValue = imoveisCard.querySelector('.text-2xl');
             const imoveisChange = imoveisCard.querySelector('.text-green-400');
             if (imoveisValue && imoveisChange) {
-                const totalImoveis = allAssetData.imoveis.reduce((sum, imovel) => sum + (imovel.valorImovel || 0), 0);
+                const totalImoveis = window.allAssetData.imoveis.reduce((sum, imovel) => sum + (imovel.valorImovel || imovel.valorCompra || 0), 0);
+
+                // Calculate total profit for real estate
+                const totalImoveisProfit = window.allAssetData.imoveis.reduce((sum, imovel) => {
+                    const profit = calcularLucroImovel(imovel);
+                    return sum + profit;
+                }, 0);
+
                 imoveisValue.textContent = formatter.format(totalImoveis);
-                imoveisChange.textContent = `${summary.breakdown.imoveis} imóveis`;
+                imoveisChange.textContent = `+${formatter.format(totalImoveisProfit)} lucro`;
             }
 
             // Update Depósitos a Prazo card
@@ -454,13 +496,20 @@
             const depositosValue = depositosCard.querySelector('.text-2xl');
             const depositosChange = depositosCard.querySelector('.text-green-400');
             if (depositosValue && depositosChange) {
-                const totalDepositos = allAssetData.depositos.reduce((sum, deposito) => sum + (deposito.valorAtual || deposito.valorInvestido || 0), 0);
+                const totalDepositos = window.allAssetData.depositos.reduce((sum, deposito) => sum + (deposito.valorAtual || deposito.valorInvestido || 0), 0);
+
+                // Calculate total profit for deposits
+                const totalDepositosProfit = window.allAssetData.depositos.reduce((sum, deposito) => {
+                    const profit = calcularLucroDeposito(deposito);
+                    return sum + profit;
+                }, 0);
+
                 depositosValue.textContent = formatter.format(totalDepositos);
-                depositosChange.textContent = `${summary.breakdown.depositos} depósitos`;
+                depositosChange.textContent = `+${formatter.format(totalDepositosProfit)} lucro`;
             }
         }
 
-        console.log('Resumo dos ativos:', summary);
+        console.log('Resumo dos ativos atualizado com cálculos de lucro');
     }
 
     function mostrarErro() {
@@ -599,13 +648,6 @@
         }, 3000);
     }
 
-    // Global variable to store all asset data
-    let allAssetData = {
-        depositos: [],
-        fundos: [],
-        imoveis: []
-    };
-
     /**
      * Fetch data from all asset-specific APIs
      */
@@ -613,42 +655,26 @@
         try {
             console.log('Fetching data from asset-specific APIs...');
 
-            // Fetch data from all three APIs in parallel
-            const [depositosResponse, fundosResponse, imoveisResponse] = await Promise.all([
-                fetch('/api/depositoprazo/getAllByUser', {
-                    method: 'GET',
-                    credentials: 'include'
-                }).catch(err => {
-                    console.warn('Error fetching deposits:', err);
-                    return { ok: false, json: () => Promise.resolve([]) };
-                }),
-                fetch('/api/fundoinvestimento/getAllByUser', {
-                    method: 'GET',
-                    credentials: 'include'
-                }).catch(err => {
-                    console.warn('Error fetching funds:', err);
-                    return { ok: false, json: () => Promise.resolve([]) };
-                }),
-                fetch('/api/imovelarrendado/getAllByUser', {
-                    method: 'GET',
-                    credentials: 'include'
-                }).catch(err => {
-                    console.warn('Error fetching real estate:', err);
-                    return { ok: false, json: () => Promise.resolve([]) };
-                })
+            // Call the individual fetch functions directly
+            const [depositos, fundos, imoveis] = await Promise.all([
+                fetchDepositos(),
+                fetchFundos(),
+                fetchImoveis()
             ]);
 
-            // Parse responses
-            allAssetData.depositos = depositosResponse.ok ? await depositosResponse.json() : [];
-            allAssetData.fundos = fundosResponse.ok ? await fundosResponse.json() : [];
-            allAssetData.imoveis = imoveisResponse.ok ? await imoveisResponse.json() : [];
+            // Update the global variable
+            window.allAssetData = {
+                depositos: depositos || [],
+                fundos: fundos || [],
+                imoveis: imoveis || []
+            };
 
-            console.log('Asset data loaded:', allAssetData);
+            console.log('Asset data loaded:', window.allAssetData);
 
         } catch (error) {
             console.error('Error fetching asset data:', error);
             // Initialize with empty arrays to prevent errors
-            allAssetData = {
+            window.allAssetData = {
                 depositos: [],
                 fundos: [],
                 imoveis: []
@@ -656,12 +682,7 @@
         }
     }
 
-    /**
-     * Get detailed asset information including profit calculations
-     * @param { Object } ativo - The base asset data
-        * @returns { Object } - Detailed asset information
-            */
-    function getDetailedAssetInfo(ativo) {
+    async function getDetailedAssetInfo(ativo) {
         let detailedInfo = {
             tipo: 'Ativo Financeiro',
             lucro: 0,
@@ -671,42 +692,67 @@
         };
 
         try {
+            // Check if allAssetData exists and is initialized
+            if (!window.allAssetData) {
+                return detailedInfo;
+            }
+
             // Try to find matching data in specific asset types
             let specificAsset = null;
 
             // Check if it's a deposit
-            specificAsset = allAssetData.depositos.find(d => d.ativoFinanceiroId === ativo.id);
+            specificAsset = window.allAssetData.depositos.find(d => d.ativoFinanceiroId === ativo.id);
             if (specificAsset) {
                 detailedInfo.tipo = 'Depósito a Prazo';
                 const profit = calcularLucroDeposito(specificAsset);
-                detailedInfo.lucroPercentual = profit;
+                const profitPercent = calcularPorcentagemLucroDeposito(specificAsset);
+                detailedInfo.lucro = profit;
+                detailedInfo.lucroPercentual = profitPercent;
                 detailedInfo.valorAtual = specificAsset.valorAtual || specificAsset.valorInvestido || 0;
-                detailedInfo.lucro = detailedInfo.valorAtual - (specificAsset.valorInvestido || 0);
+                detailedInfo.valorInvestido = specificAsset.valorInvestido || 0;
                 return detailedInfo;
             }
 
             // Check if it's a fund
-            specificAsset = allAssetData.fundos.find(f => f.ativoFinanceiroId === ativo.id);
+            specificAsset = window.allAssetData.fundos.find(f => f.ativoFinanceiroId === ativo.id);
             if (specificAsset) {
                 detailedInfo.tipo = 'Fundo de Investimento';
-                // For funds, we'll calculate profit asynchronously
-                calcularLucroFundoInvestimento(specificAsset).then(profit => {
-                    detailedInfo.lucroPercentual = profit;
-                    // Update the card display if needed
-                }).catch(console.error);
+                console.log(`Found fund asset for ${ativo.nome}:`, specificAsset);
+
+                try {
+                    const profit = await calcularLucroFundoInvestimento(specificAsset);
+                    const profitPercent = await calcularPorcentagemLucroFundoInvestimento(specificAsset);
+
+                    console.log(`Calculated values for ${ativo.nome}:`, {
+                        profit,
+                        profitPercent,
+                        montanteInvestido: specificAsset.montanteInvestido
+                    });
+
+                    detailedInfo.lucro = profit;
+                    detailedInfo.lucroPercentual = profitPercent;
+                } catch (error) {
+                    console.error('Erro ao calcular lucro do fundo:', error);
+                    detailedInfo.lucro = 0;
+                    detailedInfo.lucroPercentual = 0;
+                }
                 detailedInfo.valorAtual = specificAsset.valorAtual || specificAsset.montanteInvestido || 0;
-                detailedInfo.lucro = detailedInfo.valorAtual - (specificAsset.montanteInvestido || 0);
+                detailedInfo.valorInvestido = specificAsset.montanteInvestido || 0;
+
+                console.log(`Final detailedInfo for ${ativo.nome}:`, detailedInfo);
                 return detailedInfo;
             }
 
             // Check if it's real estate
-            specificAsset = allAssetData.imoveis.find(i => i.ativoFinanceiroId === ativo.id);
+            specificAsset = window.allAssetData.imoveis.find(i => i.ativoFinanceiroId === ativo.id);
             if (specificAsset) {
                 detailedInfo.tipo = 'Imóvel Arrendado';
                 const profit = calcularLucroImovel(specificAsset);
-                detailedInfo.lucroPercentual = profit;
-                detailedInfo.valorAtual = specificAsset.valorAtual || specificAsset.valorCompra || 0;
-                detailedInfo.lucro = detailedInfo.valorAtual - (specificAsset.valorCompra || 0);
+                const profitPercent = calcularPorcentagemLucroImovel(specificAsset);
+                detailedInfo.lucro = profit;
+                detailedInfo.lucroPercentual = profitPercent;
+                detailedInfo.valorAtual = specificAsset.valorAtual || specificAsset.valorImovel || specificAsset.valorCompra || 0;
+                detailedInfo.valorInvestido = specificAsset.valorCompra || specificAsset.valorImovel || 0;
                 return detailedInfo;
             }
 
@@ -719,10 +765,6 @@
         }
     }
 
-    /**
-     * Calculate asset summary statistics
-     * @returns { Object } - Summary data including breakdown by asset type
-        */
     function calculateAssetSummary() {
         const summary = {
             totalValue: 0,
@@ -735,27 +777,32 @@
         };
 
         try {
+            // Check if window.allAssetData exists
+            if (!window.allAssetData) {
+                return summary;
+            }
+
             // Count and calculate values for each asset type
-            summary.breakdown.depositos = allAssetData.depositos.length;
-            summary.breakdown.fundos = allAssetData.fundos.length;
-            summary.breakdown.imoveis = allAssetData.imoveis.length;
+            summary.breakdown.depositos = window.allAssetData.depositos.length;
+            summary.breakdown.fundos = window.allAssetData.fundos.length;
+            summary.breakdown.imoveis = window.allAssetData.imoveis.length;
 
             // Calculate total values
-            const depositosValue = allAssetData.depositos.reduce((sum, d) => sum + (d.valorAtual || d.valorInvestido || 0), 0);
-            const fundosValue = allAssetData.fundos.reduce((sum, f) => sum + (f.valorAtual || f.montanteInvestido || 0), 0);
-            const imoveisValue = allAssetData.imoveis.reduce((sum, i) => sum + (i.valorAtual || i.valorImovel || 0), 0);
+            const depositosValue = window.allAssetData.depositos.reduce((sum, d) => sum + (d.valorAtual || d.valorInvestido || 0), 0);
+            const fundosValue = window.allAssetData.fundos.reduce((sum, f) => sum + (f.valorAtual || f.montanteInvestido || 0), 0);
+            const imoveisValue = window.allAssetData.imoveis.reduce((sum, i) => sum + (i.valorAtual || i.valorImovel || 0), 0);
 
             summary.totalValue = depositosValue + fundosValue + imoveisValue;
 
-            // Calculate total profit (this is simplified, could be enhanced)
-            const depositosProfit = allAssetData.depositos.reduce((sum, d) => {
+            // Calculate total profit
+            const depositosProfit = window.allAssetData.depositos.reduce((sum, d) => {
                 const profit = calcularLucroDeposito(d);
-                return sum + ((d.valorAtual || d.valorInvestido || 0) * profit / 100);
+                return sum + profit;
             }, 0);
 
-            const imoveisProfit = allAssetData.imoveis.reduce((sum, i) => {
+            const imoveisProfit = window.allAssetData.imoveis.reduce((sum, i) => {
                 const profit = calcularLucroImovel(i);
-                return sum + ((i.valorAtual || i.valorImovel || 0) * profit / 100);
+                return sum + profit;
             }, 0);
 
             summary.totalProfit = depositosProfit + imoveisProfit; // Funds profit calculated async
@@ -769,5 +816,4 @@
 
 
 </script>
-
 
