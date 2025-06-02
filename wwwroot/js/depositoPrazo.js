@@ -100,10 +100,10 @@ async function fetchDeposits() {
         deposits = data;
 
         // Update UI
-        renderDeposits();
+        await renderDeposits();
 
-        // Calculate and update summary
-        updateSummary();
+        // Calculate and update summary (now asynchronous)
+        await updateSummary();
 
     } catch (error) {
         console.error('Error fetching deposits:', error);
@@ -114,7 +114,7 @@ async function fetchDeposits() {
 /**
  * Render deposits
  */
-function renderDeposits() {
+async function renderDeposits() {
     // Check if we have deposits
     if (!deposits || deposits.length === 0) {
         showState('empty');
@@ -128,25 +128,39 @@ function renderDeposits() {
     elements.depositsGrid.innerHTML = '';
 
     // Render each deposit
-    deposits.forEach(deposit => {
-        const card = createDepositCard(deposit);
+    for (const deposit of deposits) {
+        const card = await createDepositCard(deposit);
         elements.depositsGrid.appendChild(card);
-    });
+    }
 }
 
 /**
  * Create a deposit card element
  * @param {Object} deposit - The deposit data
- * @returns {HTMLElement} - The deposit card element
+ * @returns {Promise<HTMLElement>} - The deposit card element
  */
-function createDepositCard(deposit) {
+async function createDepositCard(deposit) {
     // Get bank and asset information
     const bankName = getBankName(deposit.bancoId);
     const asset = getAsset(deposit.ativoFinaceiroId);
     const assetName = asset ? asset.nome : `Ativo ID: ${deposit.ativoFinaceiroId}`;
 
-    // Calculate values
-    const valorJuros = deposit.valorAtual - deposit.valorInvestido;
+    // Get all values from API using the calculation functions from ativosCalculos.js
+    let profitSoFar = 0;
+    let profitPercentage = 0;
+    let progress = 0; // Define progress variable for use in the template
+    let valorAtualCalculado = deposit.valorAtual || deposit.valorInvestido || 0;
+
+    try {
+        profitSoFar = await calcularLucroDeposito(deposit);
+        profitPercentage = await calcularPorcentagemLucroDeposito(deposit);
+        progress = profitPercentage; // Set progress equal to profitPercentage
+        valorAtualCalculado = await calcularValorTotalDeposito(deposit);
+    } catch (error) {
+        console.error('Erro ao calcular dados do depósito:', error);
+    }
+
+    // Calculate other values that don't have API endpoints yet
     const monthlyProfit = calculateMonthlyProfit(deposit);
     const maturityDate = calculateMaturityDate(deposit);
 
@@ -162,14 +176,6 @@ function createDepositCard(deposit) {
     const dataCriacao = new Date(deposit.dataCriacao);
     const formattedDataCriacao = dataCriacao.toLocaleDateString('pt-PT');
     const formattedMaturityDate = maturityDate.toLocaleDateString('pt-PT');
-
-    // Calculate estimated maturity value with compound interest
-    const monthsElapsed = Math.max(0, Math.floor((new Date() - dataCriacao) / (1000 * 60 * 60 * 24 * 30.44)));
-    const monthlyRate = deposit.taxaJuroAnual / 100 / 12;
-    const valorVencimento = deposit.valorInvestido * Math.pow(1 + monthlyRate, monthsElapsed);
-
-    const progress = calculateProgress(deposit.valorInvestido, valorVencimento);
-
 
     // Format currency values
     const formatter = new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' });
@@ -209,7 +215,7 @@ function createDepositCard(deposit) {
             </div>
             <div class="flex justify-between items-center">
                 <span class="text-gray-400">Valor Atual:</span>
-                <span class="text-blue-400 font-semibold">${formatter.format(deposit.valorAtual)}</span>
+                <span class="text-blue-400 font-semibold">${formatter.format(valorAtualCalculado)}</span>
             </div>
             <div class="flex justify-between items-center">
                 <span class="text-gray-400">Taxa de Juro Anual:</span>
@@ -217,7 +223,7 @@ function createDepositCard(deposit) {
             </div>
             <div class="flex justify-between items-center">
                 <span class="text-gray-400">Juros Acumulados:</span>
-                <span class="text-green-400 font-semibold">${formatter.format(valorJuros)}</span>
+                <span class="text-green-400 font-semibold">${formatter.format(profitSoFar)}</span>
             </div>
             <div class="flex justify-between items-center">
                 <span class="text-gray-400">Lucro Mensal:</span>
@@ -229,7 +235,7 @@ function createDepositCard(deposit) {
             </div>
             <div class="flex justify-between items-center">
                 <span class="text-gray-400">Valor no Vencimento:</span>
-                <span class="text-green-400 font-semibold">${formatter.format(valorVencimento)}</span>
+                <span class="text-green-400 font-semibold">${formatter.format(valorAtualCalculado)}</span>
             </div>
             ${deposit.valorAnualDespesasEstimadas > 0 ? `
             <div class="flex justify-between items-center">
@@ -242,7 +248,7 @@ function createDepositCard(deposit) {
         <div class="mt-4 pt-4 border-t border-gray-700">
             <div class="flex justify-between items-center mb-3">
                 <span class="text-gray-400 text-sm">Ganho do Investimento:</span>
-                <span class="text-emerald-400 text-sm font-semibold">+${progress.toFixed(1)}%</span>
+                <span class="text-emerald-400 text-sm font-semibold">+${profitPercentage.toFixed(1)}%</span>
             </div>
             
             <!-- Enhanced Progress bar with markers -->
@@ -251,7 +257,7 @@ function createDepositCard(deposit) {
                 <div class="w-full bg-gradient-to-r from-gray-800 to-gray-700 rounded-full h-4 relative overflow-hidden border border-gray-600 shadow-inner">
                     <!-- Progress fill with vibrant gradient -->
                     <div class="bg-gradient-to-r from-emerald-500 to-green-400 h-4 rounded-full transition-all duration-700 ease-out relative" 
-                         style="width: ${Math.min(progress, 100)}%">
+                         style="width: ${Math.min(profitPercentage, 100)}%">
                         <!-- Glossy effect -->
                         <div class="absolute inset-0 bg-gradient-to-t from-transparent via-white/10 to-white/20 rounded-full"></div>
                     </div>
@@ -280,15 +286,13 @@ function createDepositCard(deposit) {
                     <span class="text-gray-400 font-medium">50%</span>
                     <span class="text-gray-400 font-medium">70%</span>
                     <span class="text-gray-300 font-medium">100%</span>
-                </div>
-                
-                <!-- Achievement indicators -->
+                </div>                    <!-- Achievement indicators -->
                 <div class="flex justify-center gap-1 mt-2">
-                    <div class="w-2 h-2 rounded-full ${progress >= 10 ? 'bg-emerald-400 shadow-sm' : 'bg-gray-600'}"></div>
-                    <div class="w-2 h-2 rounded-full ${progress >= 30 ? 'bg-emerald-400 shadow-sm' : 'bg-gray-600'}"></div>
-                    <div class="w-2 h-2 rounded-full ${progress >= 50 ? 'bg-green-400 shadow-sm' : 'bg-gray-600'}"></div>
-                    <div class="w-2 h-2 rounded-full ${progress >= 70 ? 'bg-green-400 shadow-sm' : 'bg-gray-600'}"></div>
-                    <div class="w-2 h-2 rounded-full ${progress >= 100 ? 'bg-yellow-400 shadow-md' : 'bg-gray-600'}"></div>
+                    <div class="w-2 h-2 rounded-full ${profitPercentage >= 10 ? 'bg-emerald-400 shadow-sm' : 'bg-gray-600'}"></div>
+                    <div class="w-2 h-2 rounded-full ${profitPercentage >= 30 ? 'bg-emerald-400 shadow-sm' : 'bg-gray-600'}"></div>
+                    <div class="w-2 h-2 rounded-full ${profitPercentage >= 50 ? 'bg-green-400 shadow-sm' : 'bg-gray-600'}"></div>
+                    <div class="w-2 h-2 rounded-full ${profitPercentage >= 70 ? 'bg-green-400 shadow-sm' : 'bg-gray-600'}"></div>
+                    <div class="w-2 h-2 rounded-full ${profitPercentage >= 100 ? 'bg-yellow-400 shadow-md' : 'bg-gray-600'}"></div>
                 </div>
             </div>
         </div>
@@ -300,23 +304,23 @@ function createDepositCard(deposit) {
 /**
  * Calculate the progress of a deposit (as a percentage of profit gained)
  * @param {Object} deposit - The deposit data
- * @returns {Number} - The profit percentage gained (e.g., 30 for 30% profit)
+ * @returns {Promise<Number>} - The profit percentage gained (e.g., 30 for 30% profit)
  */
-function calculateProgress(valorInvestido, valorAtual) {
-
-    if (valorInicial <= 0) return 0;
-
-    // Calculate profit percentage: ((current - initial) / initial) * 100
-    const profitPercentage = ((valorAtual - valorInvestido) / valorInvestido) * 100;
-
-    // Return the profit percentage, ensuring it's not negative
-    return Math.max(0, Math.round(profitPercentage * 100) / 100); // Round to 2 decimal places
+async function calculateProgress(deposit) {
+    try {
+        // Use the API-based calculation from ativosCalculos.js
+        const profitPercentage = await calcularPorcentagemLucroDeposito(deposit);
+        return Math.max(0, profitPercentage);
+    } catch (error) {
+        console.error('Erro ao calcular progresso do depósito:', error);
+        return 0;
+    }
 }
 
 /**
  * Update the summary cards with calculated values
  */
-function updateSummary() {
+async function updateSummary() {
     if (!deposits || deposits.length === 0) {
         // Reset summary for empty state
         summaryData = {
@@ -340,9 +344,14 @@ function updateSummary() {
     let totalTaxas = 0;
     let totalMonthlyProfit = 0;
 
-    deposits.forEach(deposit => {
+    // Use API-based calculations with Promise.all for better performance
+    const profitPromises = deposits.map(deposit => calcularLucroDeposito(deposit));
+    const profitResults = await Promise.all(profitPromises);
+
+    deposits.forEach((deposit, index) => {
         totalDepositado += deposit.valorInvestido;
-        jurosAcumulados += (deposit.valorAtual - deposit.valorInvestido);
+        // Use the API-calculated profit from calcularLucroDeposito
+        jurosAcumulados += profitResults[index];
         totalTaxas += deposit.taxaJuroAnual;
         totalMonthlyProfit += calculateMonthlyProfit(deposit);
     });

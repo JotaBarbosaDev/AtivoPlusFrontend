@@ -145,8 +145,8 @@
         <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6">
             <h2 class="text-2xl font-bold text-white mb-6">Ações Rápidas</h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <button
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <button id="novoAtivoBtn"
                     class="flex items-center justify-center gap-3 p-4 bg-gray-800/50 rounded-xl hover:bg-gray-700/50 transition-colors">
                     <svg class="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -155,14 +155,25 @@
                     <span class="text-white font-medium">Adicionar Novo Ativo</span>
                 </button>
 
-                <button
+                <button id="btnRelatorioPorAtivo" onclick="exibirRelatorioPorAtivo()"
                     class="flex items-center justify-center gap-3 p-4 bg-gray-800/50 rounded-xl hover:bg-gray-700/50 transition-colors">
                     <svg class="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
                         </path>
                     </svg>
-                    <span class="text-white font-medium">Ver Relatórios</span>
+                    <span class="text-white font-medium">Lucros por Ativo</span>
+                </button>
+
+                <button id="btnRelatorioTipos" onclick="showToast('Funcionalidade em desenvolvimento', 'info')"
+                    class="flex items-center justify-center gap-3 p-4 bg-gray-800/50 rounded-xl hover:bg-gray-700/50 transition-colors">
+                    <svg class="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
+                    </svg>
+                    <span class="text-white font-medium">Análise por Tipo</span>
                 </button>
 
                 <button
@@ -249,6 +260,109 @@
     </div>
 </div>
 
+<!-- Confirmation Modal for Asset Deletion -->
+<div id="eliminarAtivoModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-50 hidden">
+    <div class="bg-gray-900/95 backdrop-blur-xl border border-gray-800 rounded-2xl shadow-2xl w-full max-w-md mx-4">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-bold text-white">Eliminar Ativo</h2>
+                </div>
+                <button id="fecharModalEliminarAtivo" class="text-gray-400 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="mb-6">
+                <p class="text-gray-300 mb-4">
+                    Tem a certeza de que pretende eliminar este ativo? Esta ação não pode ser revertida.
+                </p>
+                <div class="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+                    <div id="deleteAtivoInfo" class="text-white">
+                        <!-- Ativo info will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3">
+                <button id="cancelarEliminarAtivo"
+                    class="bg-gray-700 text-white px-6 py-3 rounded-xl hover:bg-gray-600 transition-all duration-200 font-medium">
+                    Cancelar
+                </button>
+                <button id="confirmarEliminarAtivo"
+                    class="bg-red-600 text-white px-6 py-3 rounded-xl hover:bg-red-700 focus:ring-4 focus:ring-red-500/25 transition-all duration-200 font-medium">
+                    Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Transferring Asset to Another Portfolio -->
+<div id="transferirAtivoModal"
+    class="fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-50 hidden">
+    <div class="bg-gray-900/95 backdrop-blur-xl border border-gray-800 rounded-2xl shadow-2xl w-full max-w-md mx-4">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-bold text-white">Transferir Ativo</h2>
+                </div>
+                <button id="fecharModalTransferirAtivo" class="text-gray-400 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="mb-6">
+                <div class="bg-gray-800/50 rounded-xl p-4 border border-gray-700 mb-4">
+                    <div id="transferAtivoInfo" class="text-white">
+                        <!-- Ativo info will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <label for="carteiraDestinoSelect" class="block text-sm font-medium text-gray-300 mb-2">
+                        Selecione a Carteira de Destino
+                    </label>
+                    <select id="carteiraDestinoSelect" name="carteiraDestinoId" required
+                        class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/25 transition-colors">
+                        <option value="">Selecione uma carteira</option>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3">
+                <button id="cancelarTransferirAtivo"
+                    class="bg-gray-700 text-white px-6 py-3 rounded-xl hover:bg-gray-600 transition-all duration-200 font-medium">
+                    Cancelar
+                </button>
+                <button id="confirmarTransferirAtivo"
+                    class="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 focus:ring-4 focus:ring-blue-500/25 transition-all duration-200 font-medium">
+                    Transferir
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Toast Notifications Container -->
 <div id="toast-container" class="fixed top-20 right-4 z-50 space-y-2"></div>
 
@@ -263,11 +377,34 @@
         console.log('Ativos page loaded');
         carregarDados();
 
-        // Event listeners para o modal
+        // Event listeners para o modal de novo ativo
         document.getElementById('novoAtivoBtn')?.addEventListener('click', abrirModalNovoAtivo);
         document.getElementById('fecharModalNovoAtivo')?.addEventListener('click', fecharModalNovoAtivo);
         document.getElementById('cancelarNovoAtivo')?.addEventListener('click', fecharModalNovoAtivo);
         document.getElementById('formNovoAtivo')?.addEventListener('submit', adicionarNovoAtivo);
+
+        // Event listeners para o modal de eliminação
+        document.getElementById('fecharModalEliminarAtivo')?.addEventListener('click', fecharModalEliminarAtivo);
+        document.getElementById('cancelarEliminarAtivo')?.addEventListener('click', fecharModalEliminarAtivo);
+        document.getElementById('confirmarEliminarAtivo')?.addEventListener('click', confirmarEliminarAtivo);
+
+        // Event listeners para o modal de transferência
+        document.getElementById('fecharModalTransferirAtivo')?.addEventListener('click', fecharModalTransferirAtivo);
+        document.getElementById('cancelarTransferirAtivo')?.addEventListener('click', fecharModalTransferirAtivo);
+        document.getElementById('confirmarTransferirAtivo')?.addEventListener('click', confirmarTransferirAtivo);
+
+        // Fechar modais ao clicar fora deles
+        document.getElementById('novoAtivoModal')?.addEventListener('click', function (e) {
+            if (e.target === this) fecharModalNovoAtivo();
+        });
+
+        document.getElementById('eliminarAtivoModal')?.addEventListener('click', function (e) {
+            if (e.target === this) fecharModalEliminarAtivo();
+        });
+
+        document.getElementById('transferirAtivoModal')?.addEventListener('click', function (e) {
+            if (e.target === this) fecharModalTransferirAtivo();
+        });
 
         // Definir data padrão para hoje
         const hoje = new Date().toISOString().split('T')[0];
@@ -354,7 +491,7 @@
     }
 
     async function criarCardAtivo(ativo, nomeCarteira) {
-    const card = document.createElement('div');
+        const card = document.createElement('div');
         card.className = 'bg-gray-800/50 backdrop-blur-xl border border-gray-700 rounded-2xl p-6 hover:border-primary-500/50 transition-all duration-300 card-hover';
 
         // Get detailed asset information with profit calculations
@@ -394,11 +531,23 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" ${iconPath}></path>
                     </svg>
                 </div>
-                <button class="text-gray-400 hover:text-white transition-colors" onclick="verDetalhesAtivo(${ativo.id})">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </button>
+                <div class="flex gap-2">
+                    <button class="text-gray-400 hover:text-blue-500 transition-colors p-1.5 rounded-lg hover:bg-blue-500/10" onclick="transferirAtivo(${ativo.id}, event)" title="Transferir para outra carteira">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+                    </button>
+                    <button class="text-gray-400 hover:text-red-500 transition-colors p-1.5 rounded-lg hover:bg-red-500/10" onclick="eliminarAtivo(${ativo.id}, event)" title="Eliminar ativo">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                    <button class="text-gray-400 hover:text-white transition-colors" onclick="verDetalhesAtivo(${ativo.id})">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </button>
+                </div>
             </div>
             
             <div class="mb-4">
@@ -426,10 +575,22 @@
                     <span class="text-white text-sm font-medium">${formatter.format(detailedInfo.valorAtual)}</span>
                 </div>
                 ` : ''}
-                <div class="flex justify-between items-center">
-                    <span class="text-gray-400 text-sm">Lucro Estimado:</span>
-                    <span class="text-green-400 text-sm font-medium">+${formatter.format(detailedInfo.lucro)} lucro</span>
+                ${detailedInfo.detalhes && detailedInfo.detalhes.length > 1 ? `
+                <div class="pt-3 mt-2 border-t border-gray-700">
+                    <div class="flex justify-between items-center">
+                        <span class="text-purple-400 text-sm font-medium">Totais Agregados:</span>
+                        <span class="text-gray-300 text-xs">${detailedInfo.detalhes.length} investimentos</span>
+                    </div>
+                    <div class="flex justify-between items-center mt-1">
+                        <span class="text-gray-400 text-sm">Valor Total:</span>
+                        <span class="text-white text-sm font-medium">${formatter.format(detailedInfo.valorAtualTotal)}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400 text-sm">Lucro Total:</span>
+                        <span class="text-green-400 text-sm font-bold">+${formatter.format(detailedInfo.lucroTotal)}</span>
+                    </div>
                 </div>
+                ` : ''}
             </div>
             
             <button onclick="verDetalhesAtivo(${ativo.id})"
@@ -481,11 +642,16 @@
             if (imoveisValue && imoveisChange) {
                 const totalImoveis = window.allAssetData.imoveis.reduce((sum, imovel) => sum + (imovel.valorImovel || imovel.valorCompra || 0), 0);
 
-                // Calculate total profit for real estate
-                const totalImoveisProfit = window.allAssetData.imoveis.reduce((sum, imovel) => {
-                    const profit = calcularLucroImovel(imovel);
-                    return sum + profit;
-                }, 0);
+                // Calculate total profit for real estate (async)
+                let totalImoveisProfit = 0;
+                for (const imovel of window.allAssetData.imoveis) {
+                    try {
+                        const profit = await calcularLucroImovel(imovel);
+                        totalImoveisProfit += profit;
+                    } catch (error) {
+                        console.error('Erro ao calcular lucro do imóvel:', error);
+                    }
+                }
 
                 imoveisValue.textContent = formatter.format(totalImoveis);
                 imoveisChange.textContent = `+${formatter.format(totalImoveisProfit)} lucro`;
@@ -498,11 +664,16 @@
             if (depositosValue && depositosChange) {
                 const totalDepositos = window.allAssetData.depositos.reduce((sum, deposito) => sum + (deposito.valorAtual || deposito.valorInvestido || 0), 0);
 
-                // Calculate total profit for deposits
-                const totalDepositosProfit = window.allAssetData.depositos.reduce((sum, deposito) => {
-                    const profit = calcularLucroDeposito(deposito);
-                    return sum + profit;
-                }, 0);
+                // Calculate total profit for deposits (async)
+                let totalDepositosProfit = 0;
+                for (const deposito of window.allAssetData.depositos) {
+                    try {
+                        const profit = await calcularLucroDeposito(deposito);
+                        totalDepositosProfit += profit;
+                    } catch (error) {
+                        console.error('Erro ao calcular lucro do depósito:', error);
+                    }
+                }
 
                 depositosValue.textContent = formatter.format(totalDepositos);
                 depositosChange.textContent = `+${formatter.format(totalDepositosProfit)} lucro`;
@@ -613,6 +784,307 @@
         alert(`Funcionalidade em desenvolvimento - Ativo ID: ${ativoId}`);
     }
 
+    // Variáveis para operações com ativos
+    let ativoParaEliminar = null;
+    let ativoParaTransferir = null;
+    let carteiraAtual = null;
+
+    // Função para abrir o modal de confirmação de eliminação
+    function eliminarAtivo(ativoId, event) {
+        // Impede a propagação do evento para não ativar outras ações
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        ativoParaEliminar = ativoId;
+        const ativo = ativos.find(a => a.id === ativoId);
+
+        if (!ativo) {
+            showToast('Ativo não encontrado.', 'error');
+            return;
+        }
+
+        // Procurar detalhes específicos do ativo
+        let tipoAtivo = 'Ativo Financeiro';
+        let valorAtual = 0;
+
+        // Verifica o tipo específico de ativo para mostrar informações detalhadas
+        if (window.allAssetData) {
+            // Check for deposit
+            const deposito = window.allAssetData.depositos.find(d => d.ativoFinanceiroId === ativoId);
+            if (deposito) {
+                tipoAtivo = 'Depósito a Prazo';
+                valorAtual = deposito.valorAtual || deposito.valorInvestido || 0;
+            }
+
+            // Check for fund
+            const fundo = window.allAssetData.fundos.find(f => f.ativoFinanceiroId === ativoId);
+            if (fundo) {
+                tipoAtivo = 'Fundo de Investimento';
+                valorAtual = fundo.montanteInvestido || 0;
+            }
+
+            // Check for real estate
+            const imovel = window.allAssetData.imoveis.find(i => i.ativoFinanceiroId === ativoId);
+            if (imovel) {
+                tipoAtivo = 'Imóvel Arrendado';
+                valorAtual = imovel.valorImovel || imovel.valorCompra || 0;
+            }
+        }
+
+        // Encontrar a carteira do ativo
+        const carteira = carteiras.find(c => c.id === ativo.carteiraId);
+        const nomeCarteira = carteira ? carteira.nome : 'Carteira não encontrada';
+
+        // Formatar valores para exibição
+        const formatter = new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' });
+        const valorFormatado = formatter.format(valorAtual);
+
+        // Atualizar informações no modal
+        document.getElementById('deleteAtivoInfo').innerHTML = `
+            <strong>${ativo.nome}</strong><br>
+            <span class="text-gray-400">Tipo: ${tipoAtivo}</span><br>
+            <span class="text-gray-400">Carteira: ${nomeCarteira}</span><br>
+            <span class="text-gray-400">Valor: ${valorFormatado}</span>
+        `;
+
+        // Mostrar o modal
+        const modal = document.getElementById('eliminarAtivoModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    // Função para fechar o modal de confirmação
+    function fecharModalEliminarAtivo() {
+        const modal = document.getElementById('eliminarAtivoModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        ativoParaEliminar = null;
+    }
+
+    // Função para confirmar e executar a eliminação do ativo
+    async function confirmarEliminarAtivo() {
+        if (!ativoParaEliminar) {
+            showToast('Nenhum ativo selecionado para eliminar.', 'error');
+            return;
+        }
+
+        try {
+            // Mostrar estado de carregamento no botão
+            const btnConfirm = document.getElementById('confirmarEliminarAtivo');
+            const originalText = btnConfirm.textContent;
+            btnConfirm.disabled = true;
+            btnConfirm.innerHTML = '<div class="flex items-center justify-center"><div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>A eliminar...</div>';
+
+            // Fazer a requisição de eliminação
+            const response = await fetch(`/api/ativofinanceiro/remover?ativoFinanceiroId=${ativoParaEliminar}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+
+            // Restaurar botão
+            btnConfirm.disabled = false;
+            btnConfirm.textContent = originalText;
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            // Fechar o modal
+            fecharModalEliminarAtivo();
+
+            // Mostrar mensagem de sucesso
+            showToast('Ativo eliminado com sucesso!', 'success');
+
+            // Recarregar os dados para atualizar a interface
+            await carregarDados();
+
+        } catch (error) {
+            console.error('Erro ao eliminar ativo:', error);
+            showToast('Erro ao eliminar ativo. Por favor, tente novamente.', 'error');
+            fecharModalEliminarAtivo();
+        }
+    }
+
+    // Função para abrir o modal de transferência de ativo
+    function transferirAtivo(ativoId, event) {
+        // Impede a propagação do evento para não ativar outras ações
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        ativoParaTransferir = ativoId;
+        const ativo = ativos.find(a => a.id === ativoId);
+
+        if (!ativo) {
+            showToast('Ativo não encontrado.', 'error');
+            return;
+        }
+
+        // Encontrar a carteira atual do ativo
+        const carteira = carteiras.find(c => c.id === ativo.carteiraId);
+        carteiraAtual = carteira;
+        const nomeCarteira = carteira ? carteira.nome : 'Carteira não encontrada';
+
+        // Procurar detalhes específicos do ativo
+        let tipoAtivo = 'Ativo Financeiro';
+        let valorAtual = 0;
+
+        // Verifica o tipo específico de ativo para mostrar informações detalhadas
+        if (window.allAssetData) {
+            // Check for deposit
+            const deposito = window.allAssetData.depositos.find(d => d.ativoFinanceiroId === ativoId);
+            if (deposito) {
+                tipoAtivo = 'Depósito a Prazo';
+                valorAtual = deposito.valorAtual || deposito.valorInvestido || 0;
+            }
+
+            // Check for fund
+            const fundo = window.allAssetData.fundos.find(f => f.ativoFinanceiroId === ativoId);
+            if (fundo) {
+                tipoAtivo = 'Fundo de Investimento';
+                valorAtual = fundo.montanteInvestido || 0;
+            }
+
+            // Check for real estate
+            const imovel = window.allAssetData.imoveis.find(i => i.ativoFinanceiroId === ativoId);
+            if (imovel) {
+                tipoAtivo = 'Imóvel Arrendado';
+                valorAtual = imovel.valorImovel || imovel.valorCompra || 0;
+            }
+        }
+
+        // Formatar valores para exibição
+        const formatter = new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' });
+        const valorFormatado = formatter.format(valorAtual);
+
+        // Atualizar informações no modal
+        document.getElementById('transferAtivoInfo').innerHTML = `
+            <strong>${ativo.nome}</strong><br>
+            <span class="text-gray-400">Tipo: ${tipoAtivo}</span><br>
+            <span class="text-gray-400">Carteira Atual: ${nomeCarteira}</span><br>
+            <span class="text-gray-400">Valor: ${valorFormatado}</span>
+        `;
+
+        // Preencher select de carteiras de destino
+        preencherSelectCarteirasDestino(ativo.carteiraId);
+
+        // Mostrar o modal
+        const modal = document.getElementById('transferirAtivoModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    // Função para preencher o select de carteiras de destino (excluindo a carteira atual)
+    function preencherSelectCarteirasDestino(carteiraAtualId) {
+        const select = document.getElementById('carteiraDestinoSelect');
+
+        // Limpar opções existentes
+        while (select.options.length > 1) {
+            select.remove(1);
+        }
+
+        // Adicionar carteiras como opções (exceto a carteira atual)
+        carteiras.forEach(carteira => {
+            if (carteira.id !== carteiraAtualId) {
+                const option = document.createElement('option');
+                option.value = carteira.id;
+                option.textContent = carteira.nome;
+                select.appendChild(option);
+            }
+        });
+    }
+
+    // Função para fechar o modal de transferência
+    function fecharModalTransferirAtivo() {
+        const modal = document.getElementById('transferirAtivoModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        ativoParaTransferir = null;
+        carteiraAtual = null;
+    }
+
+    // Função para confirmar e executar a transferência do ativo
+    async function confirmarTransferirAtivo() {
+        const select = document.getElementById('carteiraDestinoSelect');
+        const carteiraDestinoId = select.value;
+
+        if (!ativoParaTransferir) {
+            showToast('Nenhum ativo selecionado para transferir.', 'error');
+            return;
+        }
+
+        if (!carteiraDestinoId) {
+            showToast('Selecione uma carteira de destino.', 'error');
+            return;
+        }
+
+        // Mostrar estado de carregamento no botão
+        const btnConfirm = document.getElementById('confirmarTransferirAtivo');
+        const originalText = btnConfirm.textContent;
+        btnConfirm.disabled = true;
+        btnConfirm.innerHTML = '<div class="flex items-center justify-center"><div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>A transferir...</div>';
+
+        try {
+            // Preparar dados para a requisição
+            const transferData = {
+                userId: -1,
+                ativoFinanceiroIds: [ativoParaTransferir],
+                novaCarteiraId: parseInt(carteiraDestinoId)
+            };
+
+            console.log('Enviando requisição de transferência:', transferData);
+
+            // Fazer a requisição de transferência
+            const response = await fetch('/api/ativofinanceiro/transferir', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify(transferData)
+            });
+
+            console.log('Resposta recebida:', { status: response.status, ok: response.ok });
+
+            // Restaurar botão
+            btnConfirm.disabled = false;
+            btnConfirm.textContent = originalText;
+
+            // Verificar se a resposta foi bem-sucedida
+            if (response.ok) {
+                // Encontrar nomes das carteiras para mensagem
+                const carteiraOrigem = carteiras.find(c => c.id === carteiraAtual.id)?.nome || 'Carteira anterior';
+                const carteiraDestino = carteiras.find(c => c.id === parseInt(carteiraDestinoId))?.nome || 'Nova carteira';
+
+                // Fechar o modal antes de mostrar a mensagem de sucesso
+                fecharModalTransferirAtivo();
+
+                // Mostrar mensagem de sucesso
+                showToast(`Ativo transferido com sucesso de ${carteiraOrigem} para ${carteiraDestino}!`, 'success');
+
+                // Recarregar os dados para atualizar a interface
+                await carregarDados();
+            } else {
+                // Se a resposta não foi ok, lançar um erro
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+        } catch (error) {
+            console.error('Erro ao transferir ativo:', error);
+
+            // Restaurar botão caso ainda não tenha sido feito
+            if (btnConfirm.disabled) {
+                btnConfirm.disabled = false;
+                btnConfirm.textContent = originalText;
+            }
+
+            // Mostrar mensagem de erro
+            showToast('Erro ao transferir ativo. Por favor, tente novamente.', 'error');
+        }
+    }
+
     // Função para mostrar toast notifications
     function showToast(message, type = 'info') {
         // Criar elemento do toast se não existir
@@ -666,8 +1138,14 @@
             window.allAssetData = {
                 depositos: depositos || [],
                 fundos: fundos || [],
-                imoveis: imoveis || []
+                imoveis: imoveis || [],
+                lucrosPorAtivo: {} // Armazenar os lucros calculados por ativoFinanceiroId
             };
+
+            // Calcular lucros agregados para cada ativoFinanceiroId
+            console.log('Calculando lucros por ativo financeiro...');
+            window.allAssetData.lucrosPorAtivo = await calcularLucroPorAtivoFinanceiro();
+            console.log('Lucros por ativo financeiro calculados:', window.allAssetData.lucrosPorAtivo);
 
             console.log('Asset data loaded:', window.allAssetData);
 
@@ -688,13 +1166,33 @@
             lucro: 0,
             lucroPercentual: 0,
             valorAtual: ativo.valorInvestido || 0,
-            valorInvestido: ativo.valorInvestido || 0
+            valorInvestido: ativo.valorInvestido || 0,
+            valorAtualTotal: 0,
+            lucroTotal: 0,
+            detalhes: []
         };
 
         try {
             // Check if allAssetData exists and is initialized
             if (!window.allAssetData) {
                 return detailedInfo;
+            }
+
+            // Verificar se temos dados de lucro agregado para este ativo
+            if (window.allAssetData.lucrosPorAtivo && window.allAssetData.lucrosPorAtivo[ativo.id]) {
+                const dadosAgregados = window.allAssetData.lucrosPorAtivo[ativo.id];
+                detailedInfo.tipo = dadosAgregados.tipo;
+                detailedInfo.lucroTotal = dadosAgregados.lucroTotal;
+                detailedInfo.valorAtualTotal = dadosAgregados.valorAtualTotal;
+                detailedInfo.valorInvestidoTotal = dadosAgregados.valorInvestidoTotal;
+                detailedInfo.detalhes = dadosAgregados.detalhes;
+
+                // Calcular percentual de lucro
+                if (dadosAgregados.valorInvestidoTotal > 0) {
+                    detailedInfo.lucroPercentual = (dadosAgregados.lucroTotal / dadosAgregados.valorInvestidoTotal) * 100;
+                }
+
+                console.log(`Dados agregados encontrados para ativo ${ativo.id}:`, dadosAgregados);
             }
 
             // Try to find matching data in specific asset types
@@ -704,8 +1202,8 @@
             specificAsset = window.allAssetData.depositos.find(d => d.ativoFinanceiroId === ativo.id);
             if (specificAsset) {
                 detailedInfo.tipo = 'Depósito a Prazo';
-                const profit = calcularLucroDeposito(specificAsset);
-                const profitPercent = calcularPorcentagemLucroDeposito(specificAsset);
+                const profit = await calcularLucroDeposito(specificAsset);
+                const profitPercent = await calcularPorcentagemLucroDeposito(specificAsset);
                 detailedInfo.lucro = profit;
                 detailedInfo.lucroPercentual = profitPercent;
                 detailedInfo.valorAtual = specificAsset.valorAtual || specificAsset.valorInvestido || 0;
@@ -747,8 +1245,8 @@
             specificAsset = window.allAssetData.imoveis.find(i => i.ativoFinanceiroId === ativo.id);
             if (specificAsset) {
                 detailedInfo.tipo = 'Imóvel Arrendado';
-                const profit = calcularLucroImovel(specificAsset);
-                const profitPercent = calcularPorcentagemLucroImovel(specificAsset);
+                const profit = await calcularLucroImovel(specificAsset);
+                const profitPercent = await calcularPorcentagemLucroImovel(specificAsset);
                 detailedInfo.lucro = profit;
                 detailedInfo.lucroPercentual = profitPercent;
                 detailedInfo.valorAtual = specificAsset.valorAtual || specificAsset.valorImovel || specificAsset.valorCompra || 0;
@@ -814,6 +1312,248 @@
         return summary;
     }
 
+    /**
+     * Calcula o lucro total por ativo financeiro, agrupando todos os tipos de investimentos
+     * associados ao mesmo ativoFinanceiroId
+     */
+    async function calcularLucroPorAtivoFinanceiro() {
+        // Objeto para armazenar os resultados agrupados por ativoFinanceiroId
+        const lucrosPorAtivo = {};
+
+        try {
+            // Verificar se os dados dos ativos estão carregados
+            if (!window.allAssetData) {
+                console.error('Dados dos ativos não estão carregados');
+                return {};
+            }
+
+            // Processar depósitos
+            for (const deposito of window.allAssetData.depositos) {
+                const id = deposito.ativoFinaceiroId;
+                if (!id) continue;
+
+                if (!lucrosPorAtivo[id]) {
+                    lucrosPorAtivo[id] = {
+                        id: id,
+                        nome: '',
+                        tipo: 'Depósito a Prazo',
+                        lucroTotal: 0,
+                        valorInvestidoTotal: 0,
+                        valorAtualTotal: 0,
+                        detalhes: []
+                    };
+                }
+
+                const lucro = await calcularLucroDeposito(deposito);
+                lucrosPorAtivo[id].lucroTotal += lucro;
+                lucrosPorAtivo[id].valorInvestidoTotal += deposito.valorInvestido || 0;
+                lucrosPorAtivo[id].valorAtualTotal += deposito.valorAtual || deposito.valorInvestido || 0;
+                lucrosPorAtivo[id].detalhes.push({
+                    tipo: 'Depósito a Prazo',
+                    lucro: lucro,
+                    valorInvestido: deposito.valorInvestido || 0,
+                    valorAtual: deposito.valorAtual || deposito.valorInvestido || 0
+                });
+            }
+
+            // Processar fundos de investimento
+            for (const fundo of window.allAssetData.fundos) {
+                const id = fundo.ativoFinaceiroId;
+                if (!id) continue;
+
+                if (!lucrosPorAtivo[id]) {
+                    lucrosPorAtivo[id] = {
+                        id: id,
+                        nome: '',
+                        tipo: 'Fundo de Investimento',
+                        lucroTotal: 0,
+                        valorInvestidoTotal: 0,
+                        valorAtualTotal: 0,
+                        detalhes: []
+                    };
+                }
+
+                const lucro = await calcularLucroFundoInvestimento(fundo);
+                lucrosPorAtivo[id].lucroTotal += lucro;
+                lucrosPorAtivo[id].valorInvestidoTotal += fundo.montanteInvestido || 0;
+                lucrosPorAtivo[id].valorAtualTotal += fundo.montanteInvestido || 0; // Assume valor atual
+                lucrosPorAtivo[id].detalhes.push({
+                    tipo: 'Fundo de Investimento',
+                    lucro: lucro,
+                    valorInvestido: fundo.montanteInvestido || 0,
+                    valorAtual: fundo.montanteInvestido || 0
+                });
+            }
+
+            // Processar imóveis
+            for (const imovel of window.allAssetData.imoveis) {
+                const id = imovel.ativoFinaceiroId;
+                if (!id) continue;
+
+                if (!lucrosPorAtivo[id]) {
+                    lucrosPorAtivo[id] = {
+                        id: id,
+                        nome: '',
+                        tipo: 'Imóvel Arrendado',
+                        lucroTotal: 0,
+                        valorInvestidoTotal: 0,
+                        valorAtualTotal: 0,
+                        detalhes: []
+                    };
+                }
+
+                const lucro = await calcularLucroImovel(imovel);
+                lucrosPorAtivo[id].lucroTotal += lucro;
+                lucrosPorAtivo[id].valorInvestidoTotal += imovel.valorCompra || imovel.valorImovel || 0;
+                lucrosPorAtivo[id].valorAtualTotal += imovel.valorImovel || imovel.valorCompra || 0;
+                lucrosPorAtivo[id].detalhes.push({
+                    tipo: 'Imóvel Arrendado',
+                    lucro: lucro,
+                    valorInvestido: imovel.valorCompra || imovel.valorImovel || 0,
+                    valorAtual: imovel.valorImovel || imovel.valorCompra || 0
+                });
+            }                // Adicionar os nomes dos ativos
+            for (const ativoId in lucrosPorAtivo) {
+                const ativo = ativos.find(a => a.id.toString() === ativoId.toString());
+                if (ativo) {
+                    lucrosPorAtivo[ativoId].nome = ativo.nome;
+                }
+                if (ativo) {
+                    lucrosPorAtivo[ativoId].nome = ativo.nome;
+                }
+            }
+
+            console.log('Lucros por ativo financeiro:', lucrosPorAtivo);
+            return lucrosPorAtivo;
+        } catch (error) {
+            console.error('Erro ao calcular lucro por ativo financeiro:', error);
+            return {};
+        }
+    }
+
+    /**
+     * Exibe um relatório de lucros agrupados por ativo financeiro
+     */
+    async function exibirRelatorioPorAtivo() {
+        try {
+            const lucrosPorAtivo = await calcularLucroPorAtivoFinanceiro();
+
+            // Criar um array a partir do objeto para poder ordenar
+            const ativosArray = Object.values(lucrosPorAtivo);
+
+            // Ordenar por lucro total (do maior para o menor)
+            ativosArray.sort((a, b) => b.lucroTotal - a.lucroTotal);
+
+            // Formatar valores monetários
+            const formatter = new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' });
+
+            // Criar o HTML para o relatório
+            let relatorioHTML = `
+                <h3 class="text-xl font-semibold text-white mb-4">Relatório de Lucros por Ativo</h3>
+                <div class="space-y-4">
+            `;
+
+            ativosArray.forEach(ativo => {
+                const lucroFormatado = formatter.format(ativo.lucroTotal);
+                const valorInvestidoFormatado = formatter.format(ativo.valorInvestidoTotal);
+                const valorAtualFormatado = formatter.format(ativo.valorAtualTotal);
+                const percentualLucro = ativo.valorInvestidoTotal > 0
+                    ? ((ativo.lucroTotal / ativo.valorInvestidoTotal) * 100).toFixed(2)
+                    : "0.00";
+
+                const lucroClass = ativo.lucroTotal >= 0 ? "text-green-400" : "text-red-400";
+
+                relatorioHTML += `
+                    <div class="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="text-lg font-medium text-white">${ativo.nome}</h4>
+                            <span class="text-sm ${lucroClass} font-medium">${lucroFormatado} (${percentualLucro}%)</span>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-2">Tipo principal: ${ativo.tipo}</p>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Investimento:</span>
+                            <span class="text-white">${valorInvestidoFormatado}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Valor Atual:</span>
+                            <span class="text-white">${valorAtualFormatado}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            relatorioHTML += `
+                </div>
+            `;
+
+            // Criar um modal para exibir o relatório
+            const modalHTML = `
+                <div id="relatorioPorAtivoModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-50 hidden">
+                    <div class="bg-gray-900/95 backdrop-blur-xl border border-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 max-h-[80vh] overflow-y-auto">
+                        <div class="p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h2 class="text-2xl font-bold text-white">Relatório de Lucros por Ativo</h2>
+                                <button id="fecharRelatorioPorAtivoModal" class="text-gray-400 hover:text-white transition-colors">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div id="relatorioPorAtivoContent" class="space-y-4">
+                                ${relatorioHTML}
+                            </div>
+                            <div class="flex justify-end mt-6">
+                                <button id="fecharBtnRelatorioPorAtivo"
+                                    class="bg-gray-700 text-white px-6 py-3 rounded-xl hover:bg-gray-600 transition-all duration-200 font-medium">
+                                    Fechar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Adicionar o modal ao DOM se ainda não existir
+            if (!document.getElementById('relatorioPorAtivoModal')) {
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+                // Adicionar event listeners para fechar o modal
+                document.getElementById('fecharRelatorioPorAtivoModal').addEventListener('click', fecharRelatorioPorAtivoModal);
+                document.getElementById('fecharBtnRelatorioPorAtivo').addEventListener('click', fecharRelatorioPorAtivoModal);
+                document.getElementById('relatorioPorAtivoModal').addEventListener('click', function (e) {
+                    if (e.target === this) fecharRelatorioPorAtivoModal();
+                });
+            } else {
+                // Atualizar o conteúdo se o modal já existe
+                document.getElementById('relatorioPorAtivoContent').innerHTML = relatorioHTML;
+            }
+
+            // Mostrar o modal
+            const modal = document.getElementById('relatorioPorAtivoModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+        } catch (error) {
+            console.error('Erro ao exibir relatório por ativo:', error);
+            showToast('Erro ao gerar relatório por ativo.', 'error');
+        }
+    }
+
+    function fecharRelatorioPorAtivoModal() {
+        const modal = document.getElementById('relatorioPorAtivoModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
 
 </script>
 
+
+
+
+
+
+
+
+<div

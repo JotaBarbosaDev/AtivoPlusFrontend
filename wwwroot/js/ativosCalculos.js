@@ -9,29 +9,35 @@
  * @returns {number} - The calculated profit
  */
 /**
- * Calculate profit percentage for deposit investments
+ * Calculate profit percentage for deposit investments using API
  * @param {Object} deposito - The deposit data
- * @returns {number} - The calculated profit percentage
+ * @returns {Promise<number>} - The calculated profit percentage
  */
-function calcularPorcentagemLucroDeposito(deposito) {
+async function calcularPorcentagemLucroDeposito(deposito) {
     try {
-        if (!deposito || !deposito.valorInvestido || !deposito.dataCriacao) {
+        if (!deposito || !deposito.id) {
             return 0;
         }
 
-        // Calculate estimated maturity value with compound interest
-        const dataCriacao = new Date(deposito.dataCriacao);
-        const monthsElapsed = Math.max(0, Math.floor((new Date() - dataCriacao) / (1000 * 60 * 60 * 24 * 30.44)));
-        const monthlyRate = (deposito.taxaJuroAnual || 0) / 100 / 12;
-        const valorAtual = deposito.valorInvestido * Math.pow(1 + monthlyRate, monthsElapsed);
+        const response = await fetch(`/api/depositoprazo/getLucroById?depositoPrazoId=${deposito.id}`);
 
-        if (deposito.valorInvestido <= 0) return 0;
+        if (!response.ok) {
+            console.error('Erro na API de lucro do depósito:', response.status);
+            return 0;
+        }
 
-        // Calculate profit percentage: ((current - initial) / initial) * 100
-        const profitPercentage = ((valorAtual - deposito.valorInvestido) / deposito.valorInvestido) * 100;
+        const data = await response.json();
 
-        console.log(`Porcentagem de lucro do depósito ${deposito.ativoFinaceiroId}: ${profitPercentage}%`);
-        return Math.max(0, Math.round(profitPercentage * 100) / 100); // Round to 2 decimal places
+        // Check if response contains error message
+        if (typeof data === 'string' || data.error) {
+            console.error('Erro na resposta da API:', data);
+            return 0;
+        }
+
+        const profitPercentage = data.percentagemLucro || 0;
+        console.log(`Porcentagem de lucro do depósito ${deposito.id}: ${profitPercentage}%`);
+        return Math.max(0, Math.round(profitPercentage * 100) / 100);
+
     } catch (error) {
         console.error('Erro ao calcular porcentagem de lucro do depósito:', error);
         return 0;
@@ -39,23 +45,33 @@ function calcularPorcentagemLucroDeposito(deposito) {
 }
 
 /**
- * Calculate direct profit value for deposit investments
+ * Calculate direct profit value for deposit investments using API
  * @param {Object} deposito - The deposit data
- * @returns {number} - The calculated profit value
+ * @returns {Promise<number>} - The calculated profit value
  */
-function calcularLucroDeposito(deposito) {
+async function calcularLucroDeposito(deposito) {
     try {
-        if (!deposito || !deposito.valorInvestido || !deposito.dataCriacao) {
+        if (!deposito || !deposito.id) {
             return 0;
         }
 
-        // Get profit percentage
-        const profitPercentage = calcularPorcentagemLucroDeposito(deposito);
+        const response = await fetch(`/api/depositoprazo/getLucroById?depositoPrazoId=${deposito.id}`);
 
-        // Calculate direct profit value: (percentage / 100) * invested amount
-        const profitValue = (profitPercentage / 100) * deposito.valorInvestido;
+        if (!response.ok) {
+            console.error('Erro na API de lucro do depósito:', response.status);
+            return 0;
+        }
 
-        console.log(`Lucro direto do depósito ${deposito.ativoFinaceiroId}: ${profitValue}`);
+        const data = await response.json();
+
+        // Check if response contains error message
+        if (typeof data === 'string' || data.error) {
+            console.error('Erro na resposta da API:', data);
+            return 0;
+        }
+
+        const profitValue = data.lucro || 0;
+        console.log(`Lucro direto do depósito ${deposito.id}: ${profitValue}`);
         return Math.round(profitValue * 100) / 100;
 
     } catch (error) {
@@ -65,62 +81,33 @@ function calcularLucroDeposito(deposito) {
 }
 
 /**
- * Calculate profit percentage for investment funds
+ * Calculate profit percentage for investment funds using API
  * @param {Object} fundo - The fund data
- * @returns {number} - The calculated profit percentage    
+ * @returns {Promise<number>} - The calculated profit percentage    
  */
 async function calcularPorcentagemLucroFundoInvestimento(fundo) {
     try {
-        if (!fundo.ativoSigla || !fundo.dataCriacao || !fundo.montanteInvestido) {
+        if (!fundo || !fundo.id) {
             return 0;
         }
 
-        // Get yesterday's date
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        const yesterdayStr = yesterday.toISOString().split('T')[0];
+        const response = await fetch(`/api/fundoinvestimento/getLucroById?fundoInvestimentoId=${fundo.id}`);
 
-        // Get creation date
-        const creationDate = new Date(fundo.dataCriacao).toISOString().split('T')[0];
-
-        let sigla = fundo.ativoSigla;
-        let urlSafeSigla = encodeURIComponent(sigla);
-
-        // Fetch current price (yesterday's data)
-        const currentResponse = await fetch(`/api/candle/time/${yesterdayStr}/${urlSafeSigla}/1day`);
-        if (!currentResponse.ok) {
-            console.error('Failed to fetch current price');
-            return 0;
-        }
-        const currentData = await currentResponse.json();
-
-        // Fetch creation date price
-        const creationResponse = await fetch(`/api/candle/time/${creationDate}/${urlSafeSigla}/1day`);
-        if (!creationResponse.ok) {
-            console.error('Failed to fetch creation date price');
-            return 0;
-        }
-        const creationData = await creationResponse.json();
-
-        // Get the close price from current data
-        const currentPrice = Array.isArray(currentData) && currentData.length > 0
-            ? currentData[currentData.length - 1].close
-            : currentData.close;
-
-        // Get creation date close price
-        const creationPrice = Array.isArray(creationData) && creationData.length > 0
-            ? creationData[0].close
-            : creationData.close;
-
-        if (!currentPrice || !creationPrice || creationPrice <= 0) {
+        if (!response.ok) {
+            console.error('Erro na API de lucro do fundo:', response.status);
             return 0;
         }
 
-        // Calculate profit percentage: ((current - creation) / creation) * 100
-        const profitPercentage = ((currentPrice - creationPrice) / creationPrice) * 100;
+        const data = await response.json();
 
-        // Return the profit percentage, rounded to 2 decimal places
-        console.log(`Porcentagem de lucro do fundo ${sigla}: ${profitPercentage}%`);
+        // Check if response contains error message
+        if (typeof data === 'string' || data.error) {
+            console.error('Erro na resposta da API:', data);
+            return 0;
+        }
+
+        const profitPercentage = data.percentagemLucro || 0;
+        console.log(`Porcentagem de lucro do fundo ${fundo.id}: ${profitPercentage}%`);
         return Math.round(profitPercentage * 100) / 100;
 
     } catch (error) {
@@ -130,23 +117,33 @@ async function calcularPorcentagemLucroFundoInvestimento(fundo) {
 }
 
 /**
- * Calculate direct profit value for investment funds
+ * Calculate direct profit value for investment funds using API
  * @param {Object} fundo - The fund data
- * @returns {number} - The calculated direct profit value    
+ * @returns {Promise<number>} - The calculated direct profit value    
  */
 async function calcularLucroFundoInvestimento(fundo) {
     try {
-        if (!fundo.ativoSigla || !fundo.dataCriacao || !fundo.montanteInvestido) {
+        if (!fundo || !fundo.id) {
             return 0;
         }
 
-        // Get profit percentage
-        const profitPercentage = await calcularPorcentagemLucroFundoInvestimento(fundo);
+        const response = await fetch(`/api/fundoinvestimento/getLucroById?fundoInvestimentoId=${fundo.id}`);
 
-        // Calculate direct profit value: (percentage / 100) * invested amount
-        const profitValue = (profitPercentage / 100) * fundo.montanteInvestido;
+        if (!response.ok) {
+            console.error('Erro na API de lucro do fundo:', response.status);
+            return 0;
+        }
 
-        console.log(`Lucro direto do fundo ${fundo.ativoSigla}: ${profitValue}`);
+        const data = await response.json();
+
+        // Check if response contains error message
+        if (typeof data === 'string' || data.error) {
+            console.error('Erro na resposta da API:', data);
+            return 0;
+        }
+
+        const profitValue = data.lucro || 0;
+        console.log(`Lucro direto do fundo ${fundo.id}: ${profitValue}`);
         return Math.round(profitValue * 100) / 100;
 
     } catch (error) {
@@ -156,38 +153,35 @@ async function calcularLucroFundoInvestimento(fundo) {
 }
 
 /**
- * Calculate profit percentage for real estate properties
+ * Calculate profit percentage for real estate properties using API
  * @param {Object} imovel - The property data
- * @returns {number} - The calculated profit percentage
+ * @returns {Promise<number>} - The calculated profit percentage
  */
-function calcularPorcentagemLucroImovel(imovel) {
+async function calcularPorcentagemLucroImovel(imovel) {
     try {
-        if (!imovel || !imovel.valorCompra || !imovel.dataCriacao) {
+        if (!imovel || !imovel.id) {
             return 0;
         }
 
-        // Calculate months since creation
-        const dataCriacao = new Date(imovel.dataCriacao);
-        const monthsElapsed = Math.max(0, Math.floor((new Date() - dataCriacao) / (1000 * 60 * 60 * 24 * 30.44)));
+        const response = await fetch(`/api/imovelarrendado/getLucroById?imovelArrendadoId=${imovel.id}`);
 
-        // Calculate rental income over time
-        const rendaMensal = imovel.rendaMensal || 0;
-        const totalRenda = rendaMensal * monthsElapsed;
+        if (!response.ok) {
+            console.error('Erro na API de lucro do imóvel:', response.status);
+            return 0;
+        }
 
-        // Calculate property appreciation (assuming 3% annual appreciation rate if not provided)
-        const taxaApreciacao = (imovel.taxaApreciacaoAnual || 3) / 100 / 12;
-        const valorAtual = imovel.valorCompra * Math.pow(1 + taxaApreciacao, monthsElapsed);
-        const appreciation = valorAtual - imovel.valorCompra;
+        const data = await response.json();
 
-        const totalProfit = totalRenda + appreciation;
+        // Check if response contains error message
+        if (typeof data === 'string' || data.error) {
+            console.error('Erro na resposta da API:', data);
+            return 0;
+        }
 
-        if (imovel.valorCompra <= 0) return 0;
+        const profitPercentage = data.percentagemLucro || 0;
+        console.log(`Porcentagem de lucro do imóvel ${imovel.id}: ${profitPercentage}%`);
+        return Math.max(0, Math.round(profitPercentage * 100) / 100);
 
-        // Calculate profit percentage: ((total profit) / initial investment) * 100
-        const profitPercentage = (totalProfit / imovel.valorCompra) * 100;
-
-        console.log(`Porcentagem de lucro do imóvel ${imovel.ativoFinaceiroId}: ${profitPercentage}%`);
-        return Math.max(0, Math.round(profitPercentage * 100) / 100); // Round to 2 decimal places
     } catch (error) {
         console.error('Erro ao calcular porcentagem de lucro do imóvel:', error);
         return 0;
@@ -195,23 +189,33 @@ function calcularPorcentagemLucroImovel(imovel) {
 }
 
 /**
- * Calculate direct profit value for real estate properties
+ * Calculate direct profit value for real estate properties using API
  * @param {Object} imovel - The property data
- * @returns {number} - The calculated profit value
+ * @returns {Promise<number>} - The calculated profit value
  */
-function calcularLucroImovel(imovel) {
+async function calcularLucroImovel(imovel) {
     try {
-        if (!imovel || !imovel.valorCompra || !imovel.dataCriacao) {
+        if (!imovel || !imovel.id) {
             return 0;
         }
 
-        // Get profit percentage
-        const profitPercentage = calcularPorcentagemLucroImovel(imovel);
+        const response = await fetch(`/api/imovelarrendado/getLucroById?imovelArrendadoId=${imovel.id}`);
 
-        // Calculate direct profit value: (percentage / 100) * invested amount
-        const profitValue = (profitPercentage / 100) * imovel.valorCompra;
+        if (!response.ok) {
+            console.error('Erro na API de lucro do imóvel:', response.status);
+            return 0;
+        }
 
-        console.log(`Lucro direto do imóvel ${imovel.ativoFinaceiroId}: ${profitValue}`);
+        const data = await response.json();
+
+        // Check if response contains error message
+        if (typeof data === 'string' || data.error) {
+            console.error('Erro na resposta da API:', data);
+            return 0;
+        }
+
+        const profitValue = data.lucro || 0;
+        console.log(`Lucro direto do imóvel ${imovel.id}: ${profitValue}`);
         return Math.round(profitValue * 100) / 100;
 
     } catch (error) {
@@ -335,9 +339,9 @@ async function fetchAllAssetData() {
 /**
  * Get detailed asset information with profit calculations
  * @param {Object} ativo - The basic asset data
- * @returns {Object} - Enhanced asset data with profit information
+ * @returns {Promise<Object>} - Enhanced asset data with profit information
  */
-function getDetailedAssetInfo(ativo) {
+async function getDetailedAssetInfo(ativo) {
     let detailedInfo = {
         ...ativo,
         tipo: 'Desconhecido',
@@ -350,7 +354,7 @@ function getDetailedAssetInfo(ativo) {
     const deposito = window.allAssetData.depositos.find(d => d.ativoFinaceiroId === ativo.id);
     if (deposito) {
         detailedInfo.tipo = 'Depósito a Prazo';
-        detailedInfo.lucro = calcularLucroDeposito(deposito);
+        detailedInfo.lucro = await calcularLucroDeposito(deposito);
         detailedInfo.valorAtual = deposito.valorAtual || deposito.valorInvestido;
         detailedInfo.detalhes = deposito;
         return detailedInfo;
@@ -360,7 +364,7 @@ function getDetailedAssetInfo(ativo) {
     const fundo = window.allAssetData.fundos.find(f => f.ativoFinaceiroId === ativo.id);
     if (fundo) {
         detailedInfo.tipo = 'Fundo de Investimento';
-        detailedInfo.lucro = calcularLucroFundoInvestimento(fundo);
+        detailedInfo.lucro = await calcularLucroFundoInvestimento(fundo);
         detailedInfo.valorAtual = fundo.montanteInvestido; // Assuming this is current value
         detailedInfo.detalhes = fundo;
         return detailedInfo;
@@ -370,7 +374,7 @@ function getDetailedAssetInfo(ativo) {
     const imovel = window.allAssetData.imoveis.find(i => i.ativoFinaceiroId === ativo.id);
     if (imovel) {
         detailedInfo.tipo = 'Imóvel Arrendado';
-        detailedInfo.lucro = calcularLucroImovel(imovel);
+        detailedInfo.lucro = await calcularLucroImovel(imovel);
         detailedInfo.valorAtual = imovel.valorImovel;
         detailedInfo.detalhes = imovel;
         return detailedInfo;
@@ -381,8 +385,9 @@ function getDetailedAssetInfo(ativo) {
 
 /**
  * Calculate summary statistics for all assets
+ * @returns {Promise<Object>} - Summary statistics
  */
-function calculateAssetSummary() {
+async function calculateAssetSummary() {
     let totalInvestido = 0;
     let totalAtual = 0;
     let totalLucro = 0;
@@ -391,25 +396,25 @@ function calculateAssetSummary() {
     let countImoveis = window.allAssetData.imoveis.length;
 
     // Calculate from deposits
-    window.allAssetData.depositos.forEach(deposito => {
+    for (const deposito of window.allAssetData.depositos) {
         totalInvestido += deposito.valorInvestido || 0;
         totalAtual += deposito.valorAtual || deposito.valorInvestido || 0;
-        totalLucro += calcularLucroDeposito(deposito);
-    });
+        totalLucro += await calcularLucroDeposito(deposito);
+    }
 
     // Calculate from funds
-    window.allAssetData.fundos.forEach(fundo => {
+    for (const fundo of window.allAssetData.fundos) {
         totalInvestido += fundo.montanteInvestido || 0;
         totalAtual += fundo.montanteInvestido || 0; // Assuming current value for now
-        totalLucro += calcularLucroFundoInvestimento(fundo);
-    });
+        totalLucro += await calcularLucroFundoInvestimento(fundo);
+    }
 
     // Calculate from real estate
-    window.allAssetData.imoveis.forEach(imovel => {
+    for (const imovel of window.allAssetData.imoveis) {
         totalInvestido += imovel.valorImovel || 0;
         totalAtual += imovel.valorImovel || 0;
-        totalLucro += calcularLucroImovel(imovel);
-    });
+        totalLucro += await calcularLucroImovel(imovel);
+    }
 
     return {
         totalInvestido,
@@ -422,5 +427,41 @@ function calculateAssetSummary() {
             imoveis: countImoveis
         }
     };
+}
+
+/**
+ * Calculate total current value for deposit investments using API
+ * @param {Object} deposito - The deposit data
+ * @returns {Promise<number>} - The calculated total current value (base + profit)
+ */
+async function calcularValorTotalDeposito(deposito) {
+    try {
+        if (!deposito || !deposito.id) {
+            return deposito?.valorAtual || deposito?.valorInvestido || 0;
+        }
+
+        const response = await fetch(`/api/depositoprazo/getLucroById?depositoPrazoId=${deposito.id}`);
+        
+        if (!response.ok) {
+            console.error('Erro na API de lucro do depósito:', response.status);
+            return deposito.valorAtual || deposito.valorInvestido || 0;
+        }
+
+        const data = await response.json();
+        
+        // Check if response contains error message
+        if (typeof data === 'string' || data.error) {
+            console.error('Erro na resposta da API:', data);
+            return deposito.valorAtual || deposito.valorInvestido || 0;
+        }
+
+        const totalValue = data.total || (data.base + data.lucro) || deposito.valorAtual || deposito.valorInvestido || 0;
+        console.log(`Valor total do depósito ${deposito.id}: ${totalValue}`);
+        return Math.round(totalValue * 100) / 100;
+
+    } catch (error) {
+        console.error('Erro ao calcular valor total do depósito:', error);
+        return deposito?.valorAtual || deposito?.valorInvestido || 0;
+    }
 }
 
