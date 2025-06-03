@@ -84,6 +84,7 @@ async function calcularLucroDeposito(deposito) {
  * Calculate profit percentage for investment funds using API
  * @param {Object} fundo - The fund data
  * @returns {Promise<number>} - The calculated profit percentage    
+ * @throws {Error} - Throws error with message "Nao temos acesso com a api gratis symbol" when API access is not available
  */
 async function calcularPorcentagemLucroFundoInvestimento(fundo) {
     try {
@@ -98,7 +99,7 @@ async function calcularPorcentagemLucroFundoInvestimento(fundo) {
             if (data.includes("Nao temos acesso com a api gratis symbol")) {
                 const symbol = fundo.symbol || fundo.simbolo || 'unknown';
                 console.error(`Nao temos acesso com a api gratis symbol ${symbol}`);
-                return -69;
+                throw new Error("Nao temos acesso com a api gratis symbol");
             }
             console.error('Erro na API de lucro do fundo:', response.status);
             return 0;
@@ -110,7 +111,7 @@ async function calcularPorcentagemLucroFundoInvestimento(fundo) {
         if (typeof data === 'string' && data.includes("Nao temos acesso com a api gratis symbol")) {
             const symbol = fundo.symbol || fundo.simbolo || 'unknown';
             console.error(`Nao temos acesso com a api gratis symbol ${symbol}`);
-            return -69;
+            throw new Error("Nao temos acesso com a api gratis symbol");
         }
 
         // Check if response contains error message
@@ -124,6 +125,10 @@ async function calcularPorcentagemLucroFundoInvestimento(fundo) {
         return Math.round(profitPercentage * 100) / 100;
 
     } catch (error) {
+        // Re-throw API access errors
+        if (error.message === "Nao temos acesso com a api gratis symbol") {
+            throw error;
+        }
         console.error('Erro ao calcular porcentagem de lucro do fundo:', error);
         return 0;
     }
@@ -133,6 +138,7 @@ async function calcularPorcentagemLucroFundoInvestimento(fundo) {
  * Calculate direct profit value for investment funds using API
  * @param {Object} fundo - The fund data
  * @returns {Promise<number>} - The calculated direct profit value    
+ * @throws {Error} - Throws error with message "Nao temos acesso com a api gratis symbol" when API access is not available
  */
 async function calcularLucroFundoInvestimento(fundo) {
     try {
@@ -147,7 +153,7 @@ async function calcularLucroFundoInvestimento(fundo) {
             if (data.includes("Nao temos acesso com a api gratis symbol")) {
                 const symbol = fundo.symbol || fundo.simbolo || 'unknown';
                 console.error(`Nao temos acesso com a api gratis symbol ${symbol}`);
-                return -69;
+                throw new Error("Nao temos acesso com a api gratis symbol");
             }
             console.error('Erro na API de lucro do fundo:', response.status);
             return 0;
@@ -159,7 +165,7 @@ async function calcularLucroFundoInvestimento(fundo) {
         if (typeof data === 'string' && data.includes("Nao temos acesso com a api gratis symbol")) {
             const symbol = fundo.symbol || fundo.simbolo || 'unknown';
             console.error(`Nao temos acesso com a api gratis symbol ${symbol}`);
-            return -69;
+            throw new Error("Nao temos acesso com a api gratis symbol");
         }
         if (typeof data === 'string' || data.error) {
             console.error('Erro na resposta da API:', data);
@@ -171,6 +177,10 @@ async function calcularLucroFundoInvestimento(fundo) {
         return Math.round(profitValue * 100) / 100;
 
     } catch (error) {
+        // Re-throw API access errors
+        if (error.message === "Nao temos acesso com a api gratis symbol") {
+            throw error;
+        }
         console.error('Erro ao calcular lucro direto do fundo:', error);
         return 0;
     }

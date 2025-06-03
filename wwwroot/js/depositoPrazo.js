@@ -154,147 +154,114 @@ async function createDepositCard(deposit) {
     try {
         profitSoFar = await calcularLucroDeposito(deposit);
         profitPercentage = await calcularPorcentagemLucroDeposito(deposit);
-        progress = profitPercentage; // Set progress equal to profitPercentage
         valorAtualCalculado = await calcularValorTotalDeposito(deposit);
+
+        // Calculate doubling progress for infinite deposits, use profit percentage for fixed-term deposits
+        const asset = getAsset(deposit.ativoFinaceiroId);
+        if (!asset || !asset.duracaoMeses || asset.duracaoMeses <= 0) {
+            // For infinite deposits, use doubling progress
+            progress = calculateDoublingProgress(deposit);
+        } else {
+            // For fixed-term deposits, use profit percentage
+            progress = profitPercentage;
+        }
     } catch (error) {
         console.error('Erro ao calcular dados do depósito:', error);
     }
 
     // Calculate other values that don't have API endpoints yet
     const monthlyProfit = calculateMonthlyProfit(deposit);
-    const maturityDate = calculateMaturityDate(deposit);
+    const maturityDate = calculateMaturityDateImproved(deposit);
 
     // Create card element
     const card = document.createElement('div');
-    card.className = 'bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6 hover:border-primary-500/50 transition-all duration-200';
+    card.className = 'bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl overflow-hidden hover:border-primary-500/30 transition-all duration-300 group';
 
-    // Generate a random color for the bank icon
-    const colors = ['red', 'blue', 'green', 'orange', 'purple', 'pink', 'yellow', 'indigo'];
-    const randomColor = colors[Math.floor(Math.random() * colors.length)];
-
-    // Format dates
-    const dataCriacao = new Date(deposit.dataCriacao);
-    const formattedDataCriacao = dataCriacao.toLocaleDateString('pt-PT');
-    const formattedMaturityDate = maturityDate.toLocaleDateString('pt-PT');
+    // Generate a gradient color based on bank or asset
+    const gradients = [
+        'from-blue-500 to-cyan-500',
+        'from-green-500 to-emerald-500',
+        'from-purple-500 to-indigo-500',
+        'from-orange-500 to-red-500',
+        'from-pink-500 to-rose-500',
+        'from-yellow-500 to-amber-500'
+    ];
+    const gradientClass = gradients[deposit.id % gradients.length];
 
     // Format currency values
     const formatter = new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' });
 
-    // Create card HTML with all deposit fields (except ID)
+    // Create card HTML with standardized header
     card.innerHTML = `
-        <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-${randomColor}-500/10 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-${randomColor}-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+        <div class="relative h-32 bg-gradient-to-br ${gradientClass} p-6">
+            <div class="absolute top-4 right-4">
+                <span class="text-2xl">🏦</span>
+            </div>
+            <div class="absolute bottom-4 left-6">
+                <h3 class="text-xl font-bold text-white">${bankName}</h3>
+                <span class="text-white/80 text-sm">${assetName}</span>
+            </div>
+        </div>
+        
+        <div class="p-6">
+            <!-- Header with delete button -->
+            <div class="flex justify-between items-start mb-4">
+                <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-white mb-1">${bankName}</h3>
+                    <span class="text-gray-400 text-sm">Conta: ${deposit.numeroConta}</span>
+                </div>
+                <button onclick="abrirModalConfirmacaoDelete(${deposit.id})" 
+                    class="w-8 h-8 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 rounded-lg flex items-center justify-center transition-colors"
+                    title="Eliminar depósito">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold text-white">${bankName}</h3>
-                    <p class="text-gray-400 text-sm">${assetName}</p>
-                </div>
+                </button>
             </div>
-            <button onclick="abrirModalConfirmacaoDelete(${deposit.id})" 
-                class="text-gray-400 hover:text-red-400 transition-colors p-2 rounded-lg hover:bg-red-500/10">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-            </button>
-        </div>
 
-        <div class="space-y-3">
-            <div class="flex justify-between items-center">
-                <span class="text-gray-400">Conta:</span>
-                <span class="text-white font-semibold">${deposit.numeroConta}</span>
+            <div class="space-y-3 mb-4">
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Valor Investido:</span>
+                    <span class="text-white font-semibold">${formatter.format(deposit.valorInvestido)}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Valor Atual:</span>
+                    <span class="text-blue-400 font-semibold">${formatter.format(valorAtualCalculado)}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Taxa de Juro:</span>
+                    <span class="text-green-400 font-semibold">${deposit.taxaJuroAnual}%</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Juros Acumulados:</span>
+                    <span class="text-green-400 font-semibold">${formatter.format(profitSoFar)}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Retorno:</span>
+                    <span class="text-${profitPercentage >= 0 ? 'green' : 'red'}-400 font-semibold">${profitPercentage >= 0 ? '+' : ''}${profitPercentage.toFixed(1)}%</span>
+                </div>
             </div>
-            <div class="flex justify-between items-center">
-                <span class="text-gray-400">Valor Investido:</span>
-                <span class="text-white font-semibold">${formatter.format(deposit.valorInvestido)}</span>
-            </div>
-            <div class="flex justify-between items-center">
-                <span class="text-gray-400">Valor Atual:</span>
-                <span class="text-blue-400 font-semibold">${formatter.format(valorAtualCalculado)}</span>
-            </div>
-            <div class="flex justify-between items-center">
-                <span class="text-gray-400">Taxa de Juro Anual:</span>
-                <span class="text-green-400 font-semibold">${deposit.taxaJuroAnual}%</span>
-            </div>
-            <div class="flex justify-between items-center">
-                <span class="text-gray-400">Juros Acumulados:</span>
-                <span class="text-green-400 font-semibold">${formatter.format(profitSoFar)}</span>
-            </div>
-            <div class="flex justify-between items-center">
-                <span class="text-gray-400">Lucro Mensal:</span>
-                <span class="text-emerald-400 font-semibold">${formatter.format(monthlyProfit)}</span>
-            </div>
-            <div class="flex justify-between items-center">
-                <span class="text-gray-400">Data de Início:</span>
-                <span class="text-white font-semibold">${formattedDataCriacao}</span>
-            </div>
-            <div class="flex justify-between items-center">
-                <span class="text-gray-400">Valor no Vencimento:</span>
-                <span class="text-green-400 font-semibold">${formatter.format(valorAtualCalculado)}</span>
-            </div>
-            ${deposit.valorAnualDespesasEstimadas > 0 ? `
-            <div class="flex justify-between items-center">
-                <span class="text-gray-400">Despesas Anuais:</span>
-                <span class="text-red-400 font-semibold">${formatter.format(deposit.valorAnualDespesasEstimadas)}</span>
-            </div>
-            ` : ''}
-        </div>
 
-        <div class="mt-4 pt-4 border-t border-gray-700">
-            <div class="flex justify-between items-center mb-3">
-                <span class="text-gray-400 text-sm">Ganho do Investimento:</span>
-                <span class="text-emerald-400 text-sm font-semibold">+${profitPercentage.toFixed(1)}%</span>
-            </div>
-            
-            <!-- Enhanced Progress bar with markers -->
-            <div class="relative">
-                <!-- Background bar with subtle gradient -->
-                <div class="w-full bg-gradient-to-r from-gray-800 to-gray-700 rounded-full h-4 relative overflow-hidden border border-gray-600 shadow-inner">
-                    <!-- Progress fill with vibrant gradient -->
-                    <div class="bg-gradient-to-r from-emerald-500 to-green-400 h-4 rounded-full transition-all duration-700 ease-out relative" 
-                         style="width: ${Math.min(profitPercentage, 100)}%">
-                        <!-- Glossy effect -->
-                        <div class="absolute inset-0 bg-gradient-to-t from-transparent via-white/10 to-white/20 rounded-full"></div>
-                    </div>
-                    
-                    <!-- Milestone markers with better visibility -->
-                    <div class="absolute top-0.5 left-[10%] w-0.5 h-3 bg-gray-400 rounded-full shadow-sm"></div>
-                    <div class="absolute top-0.5 left-[30%] w-0.5 h-3 bg-gray-400 rounded-full shadow-sm"></div>
-                    <div class="absolute top-0.5 left-[50%] w-0.5 h-3 bg-gray-300 rounded-full shadow-sm"></div>
-                    <div class="absolute top-0.5 left-[70%] w-0.5 h-3 bg-gray-300 rounded-full shadow-sm"></div>
-                    <div class="absolute top-0.5 right-0.5 w-0.5 h-3 bg-gray-200 rounded-full shadow-sm"></div>
-                    
-                    <!-- Progress indicator dot -->
-                    ${progress > 0 ? `
-                    <div class="absolute top-1/2 transform -translate-y-1/2 w-3 h-3 bg-white border-2 border-emerald-400 rounded-full shadow-lg pulse" 
-                         style="left: calc(${Math.min(progress, 100)}% - 6px)">
-                        <div class="absolute inset-0.5 bg-emerald-400 rounded-full"></div>
-                    </div>
-                    ` : ''}
+            <div class="mt-4 pt-4 border-t border-gray-700">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-gray-400 text-sm">${(!asset || !asset.duracaoMeses || asset.duracaoMeses <= 0) ? 'Progresso para Duplicar:' : 'Progresso do Investimento:'}</span>
+                    <span class="text-emerald-400 text-sm font-semibold">${(!asset || !asset.duracaoMeses || asset.duracaoMeses <= 0) ? `${progress.toFixed(1)}%` : `+${profitPercentage.toFixed(1)}%`}</span>
                 </div>
                 
-                <!-- Percentage labels with better styling -->
-                <div class="flex justify-between text-xs mt-2 px-0.5">
-                    <span class="text-gray-500 font-medium">0%</span>
-                    <span class="text-gray-500 font-medium">10%</span>
-                    <span class="text-gray-400 font-medium">30%</span>
-                    <span class="text-gray-400 font-medium">50%</span>
-                    <span class="text-gray-400 font-medium">70%</span>
-                    <span class="text-gray-300 font-medium">100%</span>
-                </div>                    <!-- Achievement indicators -->
-                <div class="flex justify-center gap-1 mt-2">
-                    <div class="w-2 h-2 rounded-full ${profitPercentage >= 10 ? 'bg-emerald-400 shadow-sm' : 'bg-gray-600'}"></div>
-                    <div class="w-2 h-2 rounded-full ${profitPercentage >= 30 ? 'bg-emerald-400 shadow-sm' : 'bg-gray-600'}"></div>
-                    <div class="w-2 h-2 rounded-full ${profitPercentage >= 50 ? 'bg-green-400 shadow-sm' : 'bg-gray-600'}"></div>
-                    <div class="w-2 h-2 rounded-full ${profitPercentage >= 70 ? 'bg-green-400 shadow-sm' : 'bg-gray-600'}"></div>
-                    <div class="w-2 h-2 rounded-full ${profitPercentage >= 100 ? 'bg-yellow-400 shadow-md' : 'bg-gray-600'}"></div>
+                <!-- Progress bar -->
+                <div class="relative">
+                    <div class="w-full bg-gray-800 rounded-full h-3 border border-gray-600">
+                        <div class="bg-gradient-to-r from-emerald-500 to-green-400 h-3 rounded-full transition-all duration-700" 
+                             style="width: ${Math.min(progress, 100)}%"></div>
+                    </div>
                 </div>
             </div>
+            
+            <button onclick="abrirDetalhesDeposito(${deposit.id})" 
+                class="w-full mt-4 py-2 bg-primary-600/20 hover:bg-primary-600/30 text-primary-400 rounded-lg transition-colors duration-200 text-sm font-medium">
+                Ver Detalhes
+            </button>
         </div>
     `;
 
@@ -455,7 +422,11 @@ function getBankName(bancoId) {
  * @returns {object|null} - The asset object or null
  */
 function getAsset(ativoId) {
-    return assets.find(a => a.id === ativoId) || null;
+    console.log('Getting asset for ID:', ativoId);
+    console.log('Available assets:', assets);
+    const asset = assets.find(a => a.id === ativoId);
+    console.log('Found asset:', asset);
+    return asset || null;
 }
 
 /**
@@ -469,22 +440,83 @@ function calculateMonthlyProfit(deposit) {
 }
 
 /**
- * Calculate maturity date based on asset duration
+ * Calculate time to double money using compound interest (Rule of 72)
  * @param {Object} deposit - The deposit data
- * @returns {Date} - The calculated maturity date
+ * @returns {Object} - Object with yearsToDouble and isInfinite properties
  */
-function calculateMaturityDate(deposit) {
+function calculateTimeToDouble(deposit) {
+    const rate = deposit.taxaJuroAnual;
+
+    if (rate <= 0) {
+        return { yearsToDouble: Infinity, isInfinite: true };
+    }
+
+    // More accurate formula for compound interest doubling time
+    // t = log(2) / log(1 + r/100)
+    // This is more accurate than the Rule of 72 especially for low rates
+    const yearsToDouble = Math.log(2) / Math.log(1 + rate / 100);
+
+    console.log(`Deposit ${deposit.id} with ${rate}% rate will double in ${yearsToDouble.toFixed(1)} years`);
+
+    return { yearsToDouble, isInfinite: false };
+}
+
+/**
+ * Calculate progress towards doubling money using Rule of 72
+ * @param {Object} deposit - The deposit data
+ * @returns {number} - Progress percentage (0-100, where 100 = doubled)
+ */
+function calculateDoublingProgress(deposit) {
+    const startDate = new Date(deposit.dataCriacao);
+    const now = new Date();
+    const yearsPassed = (now - startDate) / (1000 * 60 * 60 * 24 * 365.25);
+
+    const { yearsToDouble, isInfinite } = calculateTimeToDouble(deposit);
+
+    if (isInfinite || yearsToDouble === Infinity) {
+        return 0;
+    }
+
+    const progress = Math.min(100, (yearsPassed / yearsToDouble) * 100);
+
+    console.log(`Deposit ${deposit.id}: ${yearsPassed.toFixed(2)} years passed, ${yearsToDouble.toFixed(1)} years to double, progress: ${progress.toFixed(1)}%`);
+
+    return progress;
+}
+
+/**
+ * Calculate maturity date with improved fallback logic
+ * @param {Object} deposit - The deposit data
+ * @returns {Date} - The calculated maturity date (or date when money doubles for infinite deposits)
+ */
+function calculateMaturityDateImproved(deposit) {
     const asset = getAsset(deposit.ativoFinaceiroId);
     const startDate = new Date(deposit.dataCriacao);
     const maturityDate = new Date(startDate);
 
-    if (asset && asset.duracaoMeses) {
+    console.log('Improved calculation for deposit:', deposit.id);
+    console.log('Asset found:', asset);
+
+    if (asset && asset.duracaoMeses && asset.duracaoMeses > 0) {
+        console.log('Using asset duration:', asset.duracaoMeses, 'months');
         maturityDate.setMonth(startDate.getMonth() + asset.duracaoMeses);
     } else {
-        // Default to 12 months if no asset duration found
-        maturityDate.setFullYear(startDate.getFullYear() + 1);
+        // For infinite deposits, calculate when money would double
+        const { yearsToDouble, isInfinite } = calculateTimeToDouble(deposit);
+
+        if (isInfinite) {
+            // If rate is 0 or negative, return a date far in the future
+            maturityDate.setFullYear(startDate.getFullYear() + 100);
+        } else {
+            // Set maturity to when money doubles
+            const daysToDouble = yearsToDouble * 365.25;
+            maturityDate.setTime(startDate.getTime() + (daysToDouble * 24 * 60 * 60 * 1000));
+        }
+
+        console.log('No asset duration, calculated doubling date:', maturityDate);
     }
 
+    console.log('Final maturity date:', maturityDate);
     return maturityDate;
 }
 
@@ -747,6 +779,156 @@ async function eliminarDeposito() {
 }
 
 /**
+ * Open deposit details modal
+ * @param {number} depositId - The ID of the deposit to show details for
+ */
+async function abrirDetalhesDeposito(depositId) {
+    const deposit = deposits.find(d => d.id === depositId);
+
+    if (!deposit) {
+        showToast('Depósito não encontrado.', 'error');
+        return;
+    }
+
+    try {
+        // Get calculated values from API
+        const [profitSoFar, profitPercentage, valorAtual] = await Promise.all([
+            calcularLucroDeposito(deposit),
+            calcularPorcentagemLucroDeposito(deposit),
+            calcularValorTotalDeposito(deposit)
+        ]);
+
+        // Get reference data
+        const bankName = getBankName(deposit.bancoId);
+        const asset = getAsset(deposit.ativoFinaceiroId);
+        const assetName = asset ? asset.nome : `Ativo ID: ${deposit.ativoFinaceiroId}`;
+
+        // Calculate doubling information using Rule of 72
+        const { yearsToDouble, isInfinite } = calculateTimeToDouble(deposit);
+        const progress = calculateDoublingProgress(deposit);
+        const monthlyProfit = calculateMonthlyProfit(deposit);
+
+        // Start date of deposit
+        const startDate = new Date(deposit.dataCriacao);
+
+        // Format dates and currency values
+        const formatter = new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' });
+        const dateFormatter = new Intl.DateTimeFormat('pt-PT');
+
+        // For doubling calculation (applies for all deposits)
+        const doublingDate = new Date(startDate);
+
+        // Convert years to days and add to the start date
+        const daysToDouble = Math.round(yearsToDouble * 365.25);
+        doublingDate.setDate(startDate.getDate() + daysToDouble);
+
+        // Calculate days remaining until doubling
+        const today = new Date();
+        const daysRemaining = Math.max(0, Math.ceil((doublingDate - today) / (1000 * 60 * 60 * 24)));
+
+        // Calculate estimated value at double (which is twice the initial investment)
+        const doubledValue = deposit.valorInvestido * 2;
+
+        // Set a gradient color for the header (similar to the card)
+        const gradients = [
+            'from-blue-500 to-cyan-500',
+            'from-green-500 to-emerald-500',
+            'from-purple-500 to-indigo-500',
+            'from-orange-500 to-red-500',
+            'from-pink-500 to-rose-500',
+            'from-yellow-500 to-amber-500'
+        ];
+        const gradientClass = gradients[deposit.id % gradients.length];
+        document.getElementById('modalDepositoHeader').className =
+            `bg-gradient-to-r ${gradientClass} p-6 rounded-xl text-center mb-6`;
+
+        // Populate modal with data
+        document.getElementById('detalhesDepositoBanco').textContent = bankName;
+        document.getElementById('detalhesDepositoConta').textContent = `Conta: ${deposit.numeroConta}`;
+        document.getElementById('detalhesAtivoNome').textContent = assetName;
+        document.getElementById('detalhesDataCriacao').textContent = dateFormatter.format(startDate);
+        document.getElementById('detalhesDataVencimento').textContent = isInfinite ? "∞" : dateFormatter.format(doublingDate);
+
+        // Format the doubling time in a more human-readable way
+        let durationText = "∞";
+        if (!isInfinite) {
+            if (yearsToDouble >= 100) {
+                durationText = "Mais de 100 anos";
+            } else if (yearsToDouble >= 50) {
+                durationText = "Mais de 50 anos";
+            } else {
+                const years = Math.floor(yearsToDouble);
+                const months = Math.round((yearsToDouble - years) * 12);
+                if (months > 0) {
+                    durationText = `${years} anos e ${months} meses`;
+                } else {
+                    durationText = `${years} anos`;
+                }
+            }
+        }
+
+        document.getElementById('detalhesDuracao').textContent = durationText;
+
+        document.getElementById('detalhesValorInvestido').textContent = formatter.format(deposit.valorInvestido);
+        document.getElementById('detalhesValorAtual').textContent = formatter.format(valorAtual);
+        document.getElementById('detalhesTaxaJuro').textContent = `${deposit.taxaJuroAnual}%`;
+        document.getElementById('detalhesJurosAcumulados').textContent = formatter.format(profitSoFar);
+        document.getElementById('detalhesLucroMensal').textContent = formatter.format(monthlyProfit);
+        document.getElementById('detalhesRetorno').textContent = `${profitPercentage >= 0 ? '+' : ''}${profitPercentage.toFixed(1)}%`;
+
+        // Despesas e taxas (estimadas)
+        document.getElementById('detalhesDespesasAnuais').textContent = formatter.format(deposit.valorAnualDespesasEstimadas || 0);
+        document.getElementById('detalhesTaxaImposto').textContent = '28%'; // Standard Portuguese tax rate for deposits
+        const estimatedTax = profitSoFar * 0.28;
+        document.getElementById('detalhesImpostoEstimado').textContent = formatter.format(estimatedTax);
+
+        // Progress towards doubling the money
+        document.getElementById('detalhesProgressoPercentagem').textContent = `${progress.toFixed(1)}%`;
+        document.getElementById('detalhesProgressoBarra').style.width = `${progress}%`;
+
+        // Format days remaining in a more user-friendly way
+        let daysRemainingText = "∞";
+        if (!isInfinite) {
+            if (daysRemaining > 36500) {  // More than 100 years
+                daysRemainingText = "Mais de 100 anos";
+            } else if (daysRemaining > 18250) { // More than 50 years
+                daysRemainingText = "Mais de 50 anos";
+            } else if (daysRemaining > 365) {
+                const years = Math.floor(daysRemaining / 365);
+                daysRemainingText = `${years} ano${years > 1 ? 's' : ''}`;
+            } else {
+                daysRemainingText = `${daysRemaining} dia${daysRemaining > 1 ? 's' : ''}`;
+            }
+        }
+
+        document.getElementById('detalhesDiasRestantes').textContent = daysRemainingText;
+        document.getElementById('detalhesValorVencimento').textContent = formatter.format(doubledValue);
+
+        // Show modal
+        const modal = document.getElementById('detalhesDepositoModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+
+        // Store current deposit ID for potential editing
+        window.currentDepositId = depositId;
+
+    } catch (error) {
+        console.error('Erro ao carregar detalhes do depósito:', error);
+        showToast('Erro ao carregar detalhes do depósito.', 'error');
+    }
+}
+
+/**
+ * Close deposit details modal
+ */
+function fecharModalDetalhes() {
+    const modal = document.getElementById('detalhesDepositoModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    window.currentDepositId = null;
+}
+
+/**
  * Setup form event listeners
  */
 function setupFormListeners() {
@@ -785,3 +967,10 @@ document.addEventListener('DOMContentLoaded', function () {
     init();
     setupFormListeners();
 });
+
+// Expose functions to global scope for HTML onclick handlers
+window.abrirDetalhesDeposito = abrirDetalhesDeposito;
+window.fecharModalDetalhes = fecharModalDetalhes;
+window.abrirModalConfirmacaoDelete = abrirModalConfirmacaoDelete;
+window.fecharModalConfirmacaoDelete = fecharModalConfirmacaoDelete;
+window.eliminarDeposito = eliminarDeposito;

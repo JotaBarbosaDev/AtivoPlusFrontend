@@ -256,6 +256,146 @@
         </div>
     </div>
 
+    <!-- Modal Detalhes do Depósito -->
+    <div id="detalhesDepositoModal"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-50 hidden">
+        <div
+            class="bg-gray-900/95 backdrop-blur-xl border border-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-white">Detalhes do Depósito</h2>
+                    <button onclick="fecharModalDetalhes()" class="text-gray-400 hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- Header com gradient -->
+                    <div id="modalDepositoHeader"
+                        class="bg-gradient-to-r from-blue-600 to-purple-600 p-6 rounded-xl text-center mb-6">
+                        <h3 id="detalhesDepositoBanco" class="text-xl font-bold text-white mb-1">Nome do Banco</h3>
+                        <p id="detalhesDepositoConta" class="text-white/80">Número da Conta</p>
+                    </div>
+
+                    <!-- Informações Básicas -->
+                    <div class="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
+                        <h4 class="text-white font-semibold mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Informações Básicas
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Ativo Financeiro:</span>
+                                <span id="detalhesAtivoNome" class="text-white font-semibold">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Data de Criação:</span>
+                                <span id="detalhesDataCriacao" class="text-white font-semibold">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Data de Duplicação:</span>
+                                <span id="detalhesDataVencimento" class="text-white font-semibold">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Tempo para Duplicar:</span>
+                                <span id="detalhesDuracao" class="text-white font-semibold">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informações Financeiras -->
+                    <div class="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
+                        <h4 class="text-white font-semibold mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Informações Financeiras
+                        </h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Valor Investido:</span>
+                                <span id="detalhesValorInvestido" class="text-white font-semibold text-lg">€0,00</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Valor Atual:</span>
+                                <span id="detalhesValorAtual" class="text-blue-400 font-semibold text-lg">€0,00</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Taxa de Juro Anual:</span>
+                                <span id="detalhesTaxaJuro" class="text-green-400 font-semibold">0%</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Juros Acumulados:</span>
+                                <span id="detalhesJurosAcumulados" class="text-green-400 font-semibold">€0,00</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Lucro Mensal Estimado:</span>
+                                <span id="detalhesLucroMensal" class="text-emerald-400 font-semibold">€0,00</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Retorno (%):</span>
+                                <span id="detalhesRetorno" class="text-green-400 font-semibold">+0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Progresso do Investimento -->
+                    <div class="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
+                        <h4 class="text-white font-semibold mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                            Progresso do Investimento
+                        </h4>
+                        <div class="mb-3">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-gray-400 text-sm">Progresso para Duplicar:</span>
+                                <span id="detalhesProgressoPercentagem"
+                                    class="text-emerald-400 text-sm font-semibold">0%</span>
+                            </div>
+                            <div class="w-full bg-gray-800 rounded-full h-3 border border-gray-600">
+                                <div id="detalhesProgressoBarra"
+                                    class="bg-gradient-to-r from-emerald-500 to-green-400 h-3 rounded-full transition-all duration-500"
+                                    style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mt-4">
+                            <div class="text-center">
+                                <span class="text-gray-400 text-sm">Dias restantes</span>
+                                <div id="detalhesDiasRestantes" class="text-white font-bold text-xl">-</div>
+                            </div>
+                            <div class="text-center">
+                                <span class="text-gray-400 text-sm">Valor quando duplicar</span>
+                                <div id="detalhesValorVencimento" class="text-green-400 font-bold text-xl">€0,00</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botões de ação -->
+                <div class="flex justify-end gap-3 mt-6 pt-6 border-t border-gray-700">
+                    <button onclick="fecharModalDetalhes()"
+                        class="px-6 py-3 bg-gray-800 text-gray-300 rounded-xl hover:bg-gray-700 transition-colors duration-200 font-medium">
+                        Fechar
+                    </button>
+                    <button id="editarDepositoBtn"
+                        class="px-6 py-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-colors duration-200 font-medium">
+                        Editar Depósito
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal de Confirmação de Eliminação -->
     <div id="deleteConfirmationModal"
         class="fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-50 hidden">
@@ -325,9 +465,12 @@
         modal.classList.remove('flex');
     }
 
-    function abrirDetalhesDeposito(depositoId) {
-        // Placeholder for deposit details modal
-        showToast('Detalhes do depósito ID: ' + depositoId);
+    // abrirDetalhesDeposito function is defined in depositoPrazo.js
+
+    function fecharModalDetalhes() {
+        const modal = document.getElementById('detalhesDepositoModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
     }
 
     function showToast(message, type = 'success') {
@@ -360,6 +503,12 @@
         document.getElementById('deleteConfirmationModal').addEventListener('click', function (e) {
             if (e.target === this) {
                 fecharModalConfirmacaoDelete();
+            }
+        });
+
+        document.getElementById('detalhesDepositoModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                fecharModalDetalhes();
             }
         });
     });

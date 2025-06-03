@@ -116,6 +116,27 @@ function setupEventListeners() {
             }
         });
     }
+
+    // Delete modal event listeners
+    const cancelarRemocaoBtn = document.getElementById('cancelarRemocaoBtn');
+    if (cancelarRemocaoBtn) {
+        cancelarRemocaoBtn.addEventListener('click', fecharModalRemocao);
+    }
+
+    const confirmarRemocaoBtn = document.getElementById('confirmarRemocaoBtn');
+    if (confirmarRemocaoBtn) {
+        confirmarRemocaoBtn.addEventListener('click', removerFundo);
+    }
+
+    // Close the delete modal when clicking outside
+    const confirmarRemocaoModal = document.getElementById('confirmarRemocaoModal');
+    if (confirmarRemocaoModal) {
+        confirmarRemocaoModal.addEventListener('click', function (e) {
+            if (e.target === this) {
+                fecharModalRemocao();
+            }
+        });
+    }
 }
 
 /**
@@ -204,11 +225,26 @@ async function renderFundos() {
     // Calculate lucro for all fundos to determine sorting order
     const fundosWithLucro = await Promise.all(
         sortedFundos.map(async (fundo) => {
-            const lucro = await calcularLucroFundoInvestimento(fundo);
-            return {
-                fundo,
-                hasDataAccess: lucro !== -69
-            };
+            try {
+                const lucro = await calcularLucroFundoInvestimento(fundo);
+                return {
+                    fundo,
+                    hasDataAccess: true
+                };
+            } catch (error) {
+                if (error.message === "Nao temos acesso com a api gratis symbol") {
+                    return {
+                        fundo,
+                        hasDataAccess: false
+                    };
+                } else {
+                    console.error(`Erro ao calcular lucro do fundo ${fundo.id}:`, error);
+                    return {
+                        fundo,
+                        hasDataAccess: true // Consider it accessible but with error
+                    };
+                }
+            }
         })
     );
 
@@ -250,19 +286,17 @@ async function createFundoCard(fundo) {
     // Try to get calculated values if available
     try {
         lucro = await calcularLucroFundoInvestimento(fundo);
-
-        // Check if API returned -69 (no access to symbol data)
-        if (lucro === -69) {
+        porcentagemLucro = await calcularPorcentagemLucroFundoInvestimento(fundo);
+        valorAtual = montanteInvestido + lucro;
+    } catch (error) {
+        if (error.message === "Nao temos acesso com a api gratis symbol") {
             hasDataAccessIssue = true;
             lucro = 0; // Reset to 0 for display purposes
             valorAtual = montanteInvestido;
             porcentagemLucro = 0;
         } else {
-            porcentagemLucro = await calcularPorcentagemLucroFundoInvestimento(fundo);
-            valorAtual = montanteInvestido + lucro;
+            console.error(`Erro ao calcular dados do fundo ${fundo.id}:`, error);
         }
-    } catch (error) {
-        console.error(`Erro ao calcular dados do fundo ${fundo.id}:`, error);
     }
 
     // Format dates
@@ -309,6 +343,22 @@ async function createFundoCard(fundo) {
                     </div>
                 </div>
             ` : ''}
+            
+            <!-- Header with delete button -->
+            <div class="flex justify-between items-start mb-4">
+                <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-white mb-1">${ativoNome}</h3>
+                    <span class="text-gray-400 text-sm">${ativoSigla}</span>
+                </div>
+                <button onclick="abrirModalRemocao('${fundo.id}', '${ativoNome.replace(/'/g, "\\\'")}')"
+                    class="w-8 h-8 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 rounded-lg flex items-center justify-center transition-colors"
+                    title="Remover fundo">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                </button>
+            </div>
+            
             <div class="space-y-3 mb-4">
                 <div class="flex justify-between">
                     <span class="text-gray-400">Investido:</span>
@@ -334,6 +384,9 @@ async function createFundoCard(fundo) {
             </button>
         </div>
     `;
+
+    // Debug: Log that card was created with delete button
+    console.log(`Card created for fund ${fundo.id} with delete button`);
 
     return card;
 }
@@ -364,22 +417,25 @@ async function updateSummary() {
     let totalLucro = 0;
     let valorAtualTotal = 0;
 
-    // Use API-based calculations with Promise.all for better performance
-    const lucroPromises = fundos.map(fundo => calcularLucroFundoInvestimento(fundo));
-    const lucroResults = await Promise.all(lucroPromises);
-
-    fundos.forEach((fundo, index) => {
+    // Use API-based calculations with proper error handling
+    for (const fundo of fundos) {
         totalInvestido += fundo.montanteInvestido || 0;
 
-        // Skip funds with -69 (no access to data) in summary calculations
-        if (lucroResults[index] !== -69) {
-            totalLucro += lucroResults[index];
-            valorAtualTotal += (fundo.montanteInvestido || 0) + lucroResults[index];
-        } else {
-            // For funds without data access, just add the invested amount
-            valorAtualTotal += fundo.montanteInvestido || 0;
+        try {
+            const lucro = await calcularLucroFundoInvestimento(fundo);
+            totalLucro += lucro;
+            valorAtualTotal += (fundo.montanteInvestido || 0) + lucro;
+        } catch (error) {
+            if (error.message === "Nao temos acesso com a api gratis symbol") {
+                // For funds without data access, just add the invested amount
+                valorAtualTotal += fundo.montanteInvestido || 0;
+            } else {
+                console.error(`Erro ao calcular lucro do fundo ${fundo.id}:`, error);
+                // For other errors, assume no profit but include invested amount
+                valorAtualTotal += fundo.montanteInvestido || 0;
+            }
         }
-    });
+    }
 
     // Update summary data
     summaryData = {
@@ -476,7 +532,7 @@ function getAtivo(ativoId) {
  * Open the fund details modal
  * @param {string|number} fundoId - The ID of the fund to show details for
  */
-function abrirModalDetalhes(fundoId) {
+async function abrirModalDetalhes(fundoId) {
     // Convert to number if it's a string
     fundoId = typeof fundoId === 'string' ? parseInt(fundoId, 10) : fundoId;
 
@@ -513,20 +569,61 @@ function abrirModalDetalhes(fundoId) {
             ? new Date(fundo.dataCriacao).toLocaleDateString('pt-PT')
             : 'Não definido');
 
-    // Calculate values with API functions
-    calcularLucroFundoInvestimento(fundo).then(lucro => {
-        calcularPorcentagemLucroFundoInvestimento(fundo).then(percentagem => {
-            const valorAtual = (fundo.montanteInvestido || 0) + lucro;
+    // Currency formatter
+    const formatter = new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' });
 
-            // Currency formatter
-            const formatter = new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' });
+    // Get ativo information
+    const ativo = getAtivo(fundo.ativoFinanceiroId || fundo.ativoFinaceiroId);
+    const ativoNome = fundo.nome || (ativo ? ativo.nome : `Fundo ${fundo.id}`);
+    const ativoSigla = fundo.ativoSigla || (ativo ? ativo.sigla : 'N/A');
 
-            // Get ativo information
-            const ativo = getAtivo(fundo.ativoFinanceiroId || fundo.ativoFinaceiroId);
-            const ativoNome = fundo.nome || (ativo ? ativo.nome : `Fundo ${fundo.id}`);
-            const ativoSigla = fundo.ativoSigla || (ativo ? ativo.sigla : 'N/A');
+    try {
+        // Calculate values with API functions
+        const lucro = await calcularLucroFundoInvestimento(fundo);
+        const percentagem = await calcularPorcentagemLucroFundoInvestimento(fundo);
+        const valorAtual = (fundo.montanteInvestido || 0) + lucro;
 
-            // Generate gradient colors consistently
+        // Generate gradient colors consistently
+        const gradients = [
+            'from-orange-500 to-yellow-500',
+            'from-blue-500 to-purple-500',
+            'from-green-500 to-teal-500',
+            'from-pink-500 to-rose-500',
+            'from-indigo-500 to-blue-500',
+            'from-purple-500 to-pink-500'
+        ];
+        const gradientClass = gradients[fundo.id % gradients.length];
+        headerEl.className = `bg-gradient-to-r ${gradientClass} p-6 rounded-xl text-center mb-6`;
+
+        // Set text content for all elements
+        nomeEl.textContent = ativoNome;
+        siglaEl.textContent = ativoSigla;
+        montanteEl.textContent = formatter.format(fundo.montanteInvestido || 0);
+        valorAtualEl.textContent = formatter.format(valorAtual);
+
+        // Set lucro value with proper formatting and color
+        lucroEl.textContent = `${lucro >= 0 ? '+' : ''}${formatter.format(lucro)}`;
+        lucroEl.className = `text-${lucro >= 0 ? 'green' : 'red'}-400 font-semibold`;
+
+        // Set percentagem value
+        retornoEl.textContent = `${percentagem >= 0 ? '+' : ''}${percentagem.toFixed(2)}%`;
+        retornoEl.className = `text-${percentagem >= 0 ? 'green' : 'red'}-400 font-semibold`;
+
+        // Additional details
+        dataInicioEl.textContent = dataInicio;
+        duracaoMesesEl.textContent = fundo.duracaoMeses || 0;
+        taxaImpostoEl.textContent = `${(fundo.taxaImposto || 0).toFixed(2)}%`;
+
+        // Show modal
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+
+    } catch (error) {
+        console.error('Erro ao carregar detalhes do fundo:', error);
+
+        // Check if this is an API access error
+        if (error.message === "Nao temos acesso com a api gratis symbol") {
+            // Show modal with "No access" message
             const gradients = [
                 'from-orange-500 to-yellow-500',
                 'from-blue-500 to-purple-500',
@@ -538,21 +635,14 @@ function abrirModalDetalhes(fundoId) {
             const gradientClass = gradients[fundo.id % gradients.length];
             headerEl.className = `bg-gradient-to-r ${gradientClass} p-6 rounded-xl text-center mb-6`;
 
-            // Set text content for all elements
             nomeEl.textContent = ativoNome;
             siglaEl.textContent = ativoSigla;
             montanteEl.textContent = formatter.format(fundo.montanteInvestido || 0);
-            valorAtualEl.textContent = formatter.format(valorAtual);
-
-            // Set lucro value with proper formatting and color
-            lucroEl.textContent = `${lucro >= 0 ? '+' : ''}${formatter.format(lucro)}`;
-            lucroEl.className = `text-${lucro >= 0 ? 'green' : 'red'}-400 font-semibold`;
-
-            // Set percentagem value
-            retornoEl.textContent = `${percentagem >= 0 ? '+' : ''}${percentagem.toFixed(2)}%`;
-            retornoEl.className = `text-${percentagem >= 0 ? 'green' : 'red'}-400 font-semibold`;
-
-            // Additional details
+            valorAtualEl.textContent = "Não disponível";
+            lucroEl.textContent = "Não disponível";
+            lucroEl.className = "text-yellow-400 font-semibold";
+            retornoEl.textContent = "Não disponível";
+            retornoEl.className = "text-yellow-400 font-semibold";
             dataInicioEl.textContent = dataInicio;
             duracaoMesesEl.textContent = fundo.duracaoMeses || 0;
             taxaImpostoEl.textContent = `${(fundo.taxaImposto || 0).toFixed(2)}%`;
@@ -560,14 +650,10 @@ function abrirModalDetalhes(fundoId) {
             // Show modal
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-        }).catch(error => {
-            console.error('Erro ao calcular porcentagem de lucro:', error);
+        } else {
             showToast("Erro ao carregar detalhes do fundo", "error");
-        });
-    }).catch(error => {
-        console.error('Erro ao calcular lucro:', error);
-        showToast("Erro ao carregar detalhes do fundo", "error");
-    });
+        }
+    }
 }
 
 /**
@@ -1098,5 +1184,86 @@ function hideSymbolSearchResults() {
     const searchResults = document.getElementById('symbolSearchResults');
     if (searchResults) {
         searchResults.classList.add('hidden');
+    }
+}
+
+// Global variable to store the fund ID to be deleted
+let fundoParaRemover = null;
+
+/**
+ * Open the fund removal confirmation modal
+ * @param {string|number} fundoId - The ID of the fund to remove
+ * @param {string} fundoNome - The name of the fund to remove
+ */
+function abrirModalRemocao(fundoId, fundoNome) {
+    fundoParaRemover = typeof fundoId === 'string' ? parseInt(fundoId, 10) : fundoId;
+
+    const modal = document.getElementById('confirmarRemocaoModal');
+    const fundoNomeEl = document.getElementById('fundoParaRemoverNome');
+
+    if (modal && fundoNomeEl) {
+        fundoNomeEl.textContent = fundoNome;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+}
+
+/**
+ * Close the fund removal confirmation modal
+ */
+function fecharModalRemocao() {
+    const modal = document.getElementById('confirmarRemocaoModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        fundoParaRemover = null;
+    }
+}
+
+/**
+ * Remove the fund via API
+ */
+async function removerFundo() {
+    if (!fundoParaRemover) {
+        showToast('Erro: Nenhum fundo selecionado para remoção', 'error');
+        return;
+    }
+
+    try {
+        // Show loading state
+        const confirmarBtn = document.getElementById('confirmarRemocaoBtn');
+        const originalText = confirmarBtn.textContent;
+        confirmarBtn.textContent = 'Removendo...';
+        confirmarBtn.disabled = true;
+
+        // Make API call to remove the fund
+        const response = await fetch(`/api/fundoinvestimento/remover?fundoInvestimentoID=${fundoParaRemover}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+
+        if (response.ok) {
+            // Success
+            showToast('Fundo removido com sucesso!', 'success');
+            fecharModalRemocao();
+
+            // Reload the funds list
+            await fetchFundos();
+        } else {
+            // Error response
+            const errorText = await response.text();
+            console.error('API Error:', errorText);
+            showToast('Erro ao remover fundo. Tente novamente.', 'error');
+        }
+    } catch (error) {
+        console.error('Network Error:', error);
+        showToast('Erro de conexão. Verifique sua internet.', 'error');
+    } finally {
+        // Reset button state
+        const confirmarBtn = document.getElementById('confirmarRemocaoBtn');
+        if (confirmarBtn) {
+            confirmarBtn.textContent = 'Remover';
+            confirmarBtn.disabled = false;
+        }
     }
 }

@@ -196,82 +196,87 @@ async function createImovelCard(imovel) {
 
     // Create card element
     const card = document.createElement('div');
-    card.className = 'bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6 hover:border-primary-500/50 transition-all duration-200 transform hover:scale-105 cursor-pointer';
+    card.className = 'bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl overflow-hidden hover:border-primary-500/30 transition-all duration-300 group';
+
+    // Generate a gradient color based on property type or ID
+    const gradients = [
+        'from-emerald-500 to-teal-500',
+        'from-blue-500 to-indigo-500',
+        'from-purple-500 to-pink-500',
+        'from-orange-500 to-amber-500',
+        'from-green-500 to-lime-500',
+        'from-red-500 to-rose-500'
+    ];
+    const gradientClass = gradients[imovel.id % gradients.length];
 
     // Display both morada and localizacao in the card
     const moradaDisplay = imovel.moradaId || imovel.morada || 'Morada não especificada';
     const localizacaoDisplay = imovel.localizacao || 'Localização não especificada';
 
     card.innerHTML = `
-        <div class="flex justify-between items-start mb-4">
-            <div>
-                <h3 class="text-lg font-semibold text-white mb-1">${imovel.designacao || 'Imóvel sem nome'}</h3>
-                <p class="text-gray-400 text-sm">${assetName}</p>
-                <p class="text-gray-500 text-xs">${moradaDisplay}</p>
-                <p class="text-gray-500 text-xs">${localizacaoDisplay}</p>
+        <div class="relative h-32 bg-gradient-to-br ${gradientClass} p-6">
+            <div class="absolute top-4 right-4">
+                <span class="text-2xl">🏠</span>
             </div>
-            <div class="flex items-center gap-2">
-                <span class="px-2 py-1 bg-green-500/10 text-green-400 text-xs rounded-lg font-medium">
-                    Ativo
-                </span>
-                <button onclick="abrirModalEditarImovel(${imovel.id})" 
-                    class="w-8 h-8 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 hover:text-blue-300 rounded-lg flex items-center justify-center transition-colors" 
-                    title="Editar imóvel">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                </button>
-                <button onclick="abrirConfirmacaoDelete(${imovel.id}, '${imovel.designacao?.replace(/'/g, "\\'")}', '${(imovel.moradaId || imovel.morada || 'Sem morada')?.replace(/'/g, "\\'")}')" 
-                    class="w-8 h-8 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 rounded-lg flex items-center justify-center transition-colors" 
-                    title="Eliminar imóvel">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+            <div class="absolute bottom-4 left-6">
+                <h3 class="text-xl font-bold text-white">${imovel.designacao || 'Imóvel sem nome'}</h3>
+                <span class="text-white/80 text-sm">${assetName}</span>
             </div>
         </div>
+        
+        <div class="p-6">
+            <!-- Header with edit and delete buttons -->
+            <div class="flex justify-between items-start mb-4">
+                <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-white mb-1">${imovel.designacao || 'Imóvel sem nome'}</h3>
+                    <span class="text-gray-400 text-sm">${moradaDisplay}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="px-2 py-1 bg-green-500/10 text-green-400 text-xs rounded-lg font-medium">
+                        Ativo
+                    </span>
+                    <button onclick="abrirModalEditarImovel(${imovel.id})" 
+                        class="w-8 h-8 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 hover:text-blue-300 rounded-lg flex items-center justify-center transition-colors" 
+                        title="Editar imóvel">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                    </button>
+                    <button onclick="abrirConfirmacaoDelete(${imovel.id}, '${imovel.designacao?.replace(/'/g, "\\'")}', '${(imovel.moradaId || imovel.morada || 'Sem morada')?.replace(/'/g, "\\'")}')" 
+                        class="w-8 h-8 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 rounded-lg flex items-center justify-center transition-colors" 
+                        title="Eliminar imóvel">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
 
-        <div class="space-y-3 mb-4">
-            <div class="flex justify-between items-center">
-                <span class="text-gray-400 text-sm">Valor do Imóvel</span>
-                <span class="text-white font-medium">€${(imovel.valorImovel || 0).toLocaleString('pt-PT', { minimumFractionDigits: 2 })}</span>
+            <div class="space-y-3 mb-4">
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Valor do Imóvel:</span>
+                    <span class="text-white font-semibold">€${(imovel.valorImovel || 0).toLocaleString('pt-PT', { minimumFractionDigits: 2 })}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Renda Mensal:</span>
+                    <span class="text-white font-semibold">€${(imovel.valorRenda || 0).toLocaleString('pt-PT', { minimumFractionDigits: 2 })}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Renda Anual Líquida:</span>
+                    <span class="text-green-400 font-semibold">€${rendaLiquida.toLocaleString('pt-PT', { minimumFractionDigits: 2 })}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Lucro Acumulado:</span>
+                    <span class="text-${profitSoFar >= 0 ? 'green' : 'red'}-400 font-semibold">${profitSoFar >= 0 ? '+' : ''}€${profitSoFar.toLocaleString('pt-PT', { minimumFractionDigits: 2 })}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Yield Anual:</span>
+                    <span class="text-primary-400 font-semibold">${yieldAnual.toFixed(2)}%</span>
+                </div>
             </div>
-            <div class="flex justify-between items-center">
-                <span class="text-gray-400 text-sm">Renda Mensal</span>
-                <span class="text-white font-medium">€${(imovel.valorRenda || 0).toLocaleString('pt-PT', { minimumFractionDigits: 2 })}</span>
-            </div>
-            <div class="flex justify-between items-center">
-                <span class="text-gray-400 text-sm">Renda Anual Líquida</span>
-                <span class="text-green-400 font-medium">€${rendaLiquida.toLocaleString('pt-PT', { minimumFractionDigits: 2 })}</span>
-            </div>
-            <div class="flex justify-between items-center">
-                <span class="text-gray-400 text-sm">Condomínio Mensal</span>
-                <span class="text-red-400 font-medium">€${(imovel.valorMensalCondominio || 0).toLocaleString('pt-PT', { minimumFractionDigits: 2 })}</span>
-            </div>
-            <div class="flex justify-between items-center">
-                <span class="text-gray-400 text-sm">Despesas Anuais</span>
-                <span class="text-red-400 font-medium">€${(imovel.valorAnualDespesasEstimadas || 0).toLocaleString('pt-PT', { minimumFractionDigits: 2 })}</span>
-            </div>
-            <div class="flex justify-between items-center">
-                <span class="text-gray-400 text-sm">Lucro Acumulado</span>
-                <span class="${profitSoFar >= 0 ? 'text-green-400' : 'text-red-400'} font-medium">€${profitSoFar.toLocaleString('pt-PT', { minimumFractionDigits: 2 })}</span>
-            </div>
-            <div class="flex justify-between items-center">
-                <span class="text-gray-400 text-sm">Data de Aquisição</span>
-                <span class="text-white font-medium">${dataCriacaoFormatada}</span>
-            </div>
-        </div>
 
-        <div class="border-t border-gray-800 pt-4">
-            <div class="flex justify-between items-center text-sm mb-2">
-                <span class="text-gray-400">Yield Anual</span>
-                <span class="text-primary-400 font-medium">${yieldAnual.toFixed(2)}%</span>
-            </div>
-        </div>
-
-        <div class="mt-4 flex gap-2">
             <button onclick="abrirDetalhesImovel(${imovel.id})" 
-                class="flex-1 bg-primary-600/20 text-primary-400 py-2 px-4 rounded-lg hover:bg-primary-600/30 transition-colors text-sm font-medium">
+                class="w-full py-2 bg-primary-600/20 hover:bg-primary-600/30 text-primary-400 rounded-lg transition-colors duration-200 text-sm font-medium">
                 Ver Detalhes
             </button>
         </div>
