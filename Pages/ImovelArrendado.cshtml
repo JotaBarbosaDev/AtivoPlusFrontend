@@ -108,31 +108,47 @@
 
     <!-- Estado de erro -->
     <div id="errorState" class="py-20 items-center justify-center text-gray-400 hidden">
-      <div class="bg-red-500/10 p-4 rounded-full mb-4">
-        <svg class="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="bg-red-500/10 p-5 rounded-full mb-5">
+        <svg class="w-14 h-14 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       </div>
-      <p class="text-lg mb-4">Erro ao carregar imóveis</p>
-      <button id="retryButton" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">
-        Tentar novamente
-      </button>
+      <p id="errorStateMessage" class="text-lg mb-4 text-center max-w-md">Erro ao carregar imóveis</p>
+      <div class="flex gap-3">
+        <button id="retryButton"
+          class="bg-gray-700 hover:bg-gray-600 text-white px-5 py-2 rounded-lg transition-colors">
+          Tentar novamente
+        </button>
+        <button id="errorStateNovoImovel"
+          class="bg-gradient-to-r from-primary-600 to-blue-600 text-white px-5 py-2 rounded-xl hover:from-primary-700 hover:to-blue-700 focus:ring-4 focus:ring-primary-500/25 transition-all duration-200 transform hover:scale-105 active:scale-95 flex items-center gap-2 font-semibold hidden">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+          Cria o teu primeiro imóvel
+        </button>
+      </div>
     </div>
 
     <!-- Estado vazio -->
     <div id="emptyState" class="py-20 items-center justify-center text-gray-400 hidden">
-      <div class="bg-gray-800/50 p-4 rounded-full mb-4">
-        <svg class="w-12 h-12 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="bg-gray-800/50 p-5 rounded-full mb-5">
+        <svg class="w-16 h-16 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
         </svg>
       </div>
-      <p class="text-lg mb-2">Nenhum imóvel encontrado</p>
-      <p class="text-sm text-gray-500 mb-6">Adicione seu primeiro imóvel para começar</p>
+      <h3 class="text-xl font-bold text-white mb-2">Nenhum imóvel encontrado</h3>
+      <p class="text-gray-400 mb-2 max-w-md text-center">Você ainda não possui imóveis arrendados cadastrados na sua
+        carteira.</p>
+      <p class="text-gray-500 mb-6 max-w-md text-center">Comece adicionando seu primeiro imóvel para acompanhar
+        rendimentos e valorização.</p>
       <button id="emptyStateNovoImovel"
-        class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg transition-colors">
-        Adicionar Imóvel
+        class="bg-gradient-to-r from-primary-600 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-primary-700 hover:to-blue-700 focus:ring-4 focus:ring-primary-500/25 transition-all duration-200 transform hover:scale-105 active:scale-95 flex items-center gap-2 font-semibold">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+        Cria o teu primeiro imóvel
       </button>
     </div>
 

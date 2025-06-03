@@ -22,6 +22,8 @@ const elements = {
     // States
     loadingState: document.getElementById('loadingState'),
     errorState: document.getElementById('errorState'),
+    errorStateMessage: document.getElementById('errorStateMessage'),
+    errorStateNovoImovel: document.getElementById('errorStateNovoImovel'),
     emptyState: document.getElementById('emptyState'),
 
     // Summary elements
@@ -47,6 +49,13 @@ async function init() {
 
     // Fetch real estate properties from API
     await fetchImoveis();
+
+    // Add debug functions to window for testing
+    window.debugImovelArrendado = {
+        showEmptyState: () => { imoveis = []; showState('empty'); },
+        resetImoveis: fetchImoveis,
+        showErrorState: () => showState('error')
+    };
 }
 
 /**
@@ -58,9 +67,17 @@ function setupEventListeners() {
         elements.retryButton.addEventListener('click', fetchImoveis);
     }
 
-    // Empty state new property button
+    // Empty state new property button ("Cria o teu primeiro imóvel")
     if (elements.emptyStateNovoImovel) {
         elements.emptyStateNovoImovel.addEventListener('click', abrirModalNovoImovel);
+        console.log('Added click listener to empty state "Cria o teu primeiro imóvel" button');
+    }
+
+    // Error state new property button (for "No real estate entries found" scenario)
+    const errorStateNovoImovel = document.getElementById('errorStateNovoImovel');
+    if (errorStateNovoImovel) {
+        errorStateNovoImovel.addEventListener('click', abrirModalNovoImovel);
+        console.log('Added click listener to error state "Cria o teu primeiro imóvel" button');
     }
 }
 
@@ -78,30 +95,85 @@ async function fetchImoveis() {
             credentials: 'include'
         });
 
-        // Check if response is ok
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+        // Handle 200 OK response
+        if (response.ok) {
+            const contentType = response.headers.get('content-type');
+
+            // Handle JSON response
+            if (contentType && contentType.includes('application/json')) {
+                const data = await response.json();
+                console.log('API Response:', data);
+
+                // Check for error message indicating no properties found
+                if (typeof data === 'string' && data.includes('No real estate entries found')) {
+                    console.log('API reported no properties found - showing empty state with "Cria o teu primeiro imóvel" button');
+                    imoveis = [];
+                    showState('empty');
+                    return;
+                }
+
+                // Store properties (handling both array and single object responses)
+                imoveis = Array.isArray(data) ? data : [data];
+                console.log('Imóveis processados:', imoveis.length > 0 ? imoveis : 'Nenhum imóvel encontrado');
+
+                // Update UI
+                await renderImoveis();
+
+                // Calculate and update summary
+                await updateSummary();
+                return;
+            } else {
+                // Handle text response (200 OK with text content)
+                const textData = await response.text();
+                console.log('API Text Response:', textData);
+
+                // Check if text response contains "No real estate entries found"
+                if (textData.includes('No real estate entries found')) {
+                    console.log('API reported no properties found (text response) - showing empty state with "Cria o teu primeiro imóvel" button');
+                    imoveis = [];
+                    showState('empty');
+                    return;
+                }
+
+                // If it's not the expected "no entries" message, treat as error
+                throw new Error(`Unexpected text response: ${textData}`);
+            }
         }
 
-        // Parse response
-        const data = await response.json();
-
-        // Log the raw API response for debugging
-        console.log('API Response:', data);
-        console.log('Sample property structure:', data.length > 0 ? data[0] : 'No properties found');
-
-        // Store properties
-        imoveis = Array.isArray(data) ? data : [data];
-        console.log('Imóveis processados:', imoveis);
-
-        // Update UI
-        await renderImoveis();
-
-        // Calculate and update summary
-        await updateSummary();
+        // Handle non-OK response
+        if (!response.ok) {
+            const errorText = await response.text();
+            // Special handling for "No real estate entries found" message
+            if (errorText.includes('No real estate entries found')) {
+                console.log('No properties found (from error response) - showing empty state with "Cria o teu primeiro imóvel" button');
+                imoveis = [];
+                showState('empty');
+                return;
+            }
+            throw new Error(`HTTP error! Status: ${response.status} - ${errorText}`);
+        }
 
     } catch (error) {
         console.error('Error fetching real estate properties:', error);
+
+        // Check for "No real estate entries found" specific error message
+        if (error.message && error.message.toLowerCase().includes('no real estate entries found')) {
+            console.log('No properties found (from caught exception) - showing empty state with "Cria o teu primeiro imóvel" button');
+            imoveis = [];
+            showState('empty');
+            return;
+        }
+
+        // Show error state with appropriate message for other errors
+        if (elements.errorStateMessage) {
+            elements.errorStateMessage.textContent = 'Erro ao carregar imóveis';
+
+            // Hide the "Add Property" button for general errors
+            if (elements.errorStateNovoImovel) {
+                elements.errorStateNovoImovel.classList.add('hidden');
+            }
+        }
+
         showState('error');
     }
 }
@@ -130,8 +202,24 @@ async function fetchAssets() {
  */
 async function renderImoveis() {
     // Check if we have properties
-    if (!imoveis || imoveis.length === 0) {
+    if (!imoveis || imoveis.length === 0 || (imoveis.length === 1 && !imoveis[0].id)) {
+        console.log('No properties to display, showing empty state with "Cria o teu primeiro imóvel" button');
         showState('empty');
+
+        // Reset summary data when no properties
+        summaryData = {
+            valorTotal: 0,
+            rendaMensal: 0,
+            rendaAnual: 0,
+            imoveisAtivos: 0
+        };
+
+        // Update UI elements with zeros
+        if (elements.valorTotal) elements.valorTotal.textContent = '€0,00';
+        if (elements.rendaMensal) elements.rendaMensal.textContent = '€0,00';
+        if (elements.rendaAnual) elements.rendaAnual.textContent = '€0,00';
+        if (elements.imoveisAtivos) elements.imoveisAtivos.textContent = '0';
+
         return;
     }
 
@@ -143,8 +231,14 @@ async function renderImoveis() {
 
     // Render each property
     for (const imovel of imoveis) {
-        const card = await createImovelCard(imovel);
-        elements.imoveisGrid.appendChild(card);
+        if (imovel && imovel.id) { // Make sure the property has an ID
+            try {
+                const card = await createImovelCard(imovel);
+                elements.imoveisGrid.appendChild(card);
+            } catch (error) {
+                console.error(`Error rendering property card for imovel ID ${imovel.id}:`, error);
+            }
+        }
     }
 }
 
@@ -343,6 +437,8 @@ async function updateSummary() {
  * @param {string} state - The state to show (loading, error, empty, imoveis)
  */
 function showState(state) {
+    console.log(`Changing page state to: ${state}`);
+
     // Hide all states first
     const states = ['loading', 'error', 'empty'];
     states.forEach(s => {
@@ -375,12 +471,26 @@ function showState(state) {
             if (elements.emptyState) {
                 elements.emptyState.classList.remove('hidden');
                 elements.emptyState.classList.add('flex', 'flex-col');
+
+                // Make sure the button event listener is attached
+                if (elements.emptyStateNovoImovel) {
+                    // Remove any existing listeners to prevent duplicates
+                    elements.emptyStateNovoImovel.replaceWith(elements.emptyStateNovoImovel.cloneNode(true));
+                    elements.emptyStateNovoImovel = document.getElementById('emptyStateNovoImovel');
+
+                    // Attach new click listener
+                    elements.emptyStateNovoImovel.addEventListener('click', abrirModalNovoImovel);
+                    console.log('Added click event to "Cria o teu primeiro imóvel" button');
+                }
             }
             break;
         case 'imoveis':
             if (elements.imoveisContainer) {
                 elements.imoveisContainer.classList.remove('hidden');
             }
+            break;
+        default:
+            console.warn(`Unknown state: ${state}`);
             break;
     }
 }
