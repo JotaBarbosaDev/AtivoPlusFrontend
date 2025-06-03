@@ -321,6 +321,13 @@ async function fetchAllAssetData() {
             fetchImoveis()
         ]);
 
+        // Update global state
+        window.allAssetData.depositos = depositos;
+        window.allAssetData.fundos = fundos;
+        window.allAssetData.imoveis = imoveis;
+
+        console.log('All asset data loaded:', window.allAssetData);
+
         return {
             depositos,
             fundos,
@@ -346,37 +353,114 @@ async function getDetailedAssetInfo(ativo) {
         ...ativo,
         tipo: 'Desconhecido',
         lucro: 0,
+        lucroTotal: 0,
         valorAtual: 0,
-        detalhes: null
+        valorAtualTotal: 0,
+        valorInvestido: 0,
+        valorInvestidoTotal: 0,
+        detalhes: []
     };
 
-    // Check if it's a deposit
-    const deposito = window.allAssetData.depositos.find(d => d.ativoFinaceiroId === ativo.id);
-    if (deposito) {
+    // Check for deposits (multiple possible)
+    const depositos = window.allAssetData.depositos.filter(d =>
+        d.ativoFinaceiroId === ativo.id ||
+        d.ativoFinanceiroId === ativo.id ||
+        d.ativoId === ativo.id
+    );
+
+    if (depositos.length > 0) {
         detailedInfo.tipo = 'Depósito a Prazo';
-        detailedInfo.lucro = await calcularLucroDeposito(deposito);
-        detailedInfo.valorAtual = deposito.valorAtual || deposito.valorInvestido;
-        detailedInfo.detalhes = deposito;
+        detailedInfo.detalhes = depositos;
+
+        let totalLucro = 0;
+        let totalValorAtual = 0;
+        let totalValorInvestido = 0;
+
+        for (const deposito of depositos) {
+            const lucro = await calcularLucroDeposito(deposito);
+            const valorAtual = deposito.valorAtual || deposito.valorInvestido || 0;
+            const valorInvestido = deposito.valorInvestido || 0;
+
+            totalLucro += lucro;
+            totalValorAtual += valorAtual;
+            totalValorInvestido += valorInvestido;
+        }
+
+        detailedInfo.lucro = totalLucro;
+        detailedInfo.lucroTotal = totalLucro;
+        detailedInfo.valorAtual = totalValorAtual;
+        detailedInfo.valorAtualTotal = totalValorAtual;
+        detailedInfo.valorInvestido = totalValorInvestido;
+        detailedInfo.valorInvestidoTotal = totalValorInvestido;
+
         return detailedInfo;
     }
 
-    // Check if it's an investment fund
-    const fundo = window.allAssetData.fundos.find(f => f.ativoFinaceiroId === ativo.id);
-    if (fundo) {
+    // Check for investment funds (multiple possible)
+    const fundos = window.allAssetData.fundos.filter(f =>
+        f.ativoFinaceiroId === ativo.id ||
+        f.ativoFinanceiroId === ativo.id ||
+        f.ativoId === ativo.id
+    );
+
+    if (fundos.length > 0) {
         detailedInfo.tipo = 'Fundo de Investimento';
-        detailedInfo.lucro = await calcularLucroFundoInvestimento(fundo);
-        detailedInfo.valorAtual = fundo.montanteInvestido; // Assuming this is current value
-        detailedInfo.detalhes = fundo;
+        detailedInfo.detalhes = fundos;
+
+        let totalLucro = 0;
+        let totalValorAtual = 0;
+        let totalValorInvestido = 0;
+
+        for (const fundo of fundos) {
+            const lucro = await calcularLucroFundoInvestimento(fundo);
+            const valorInvestido = fundo.montanteInvestido || 0;
+
+            totalLucro += lucro;
+            totalValorAtual += valorInvestido; // Assuming current value same as invested for now
+            totalValorInvestido += valorInvestido;
+        }
+
+        detailedInfo.lucro = totalLucro;
+        detailedInfo.lucroTotal = totalLucro;
+        detailedInfo.valorAtual = totalValorAtual;
+        detailedInfo.valorAtualTotal = totalValorAtual;
+        detailedInfo.valorInvestido = totalValorInvestido;
+        detailedInfo.valorInvestidoTotal = totalValorInvestido;
+
         return detailedInfo;
     }
 
-    // Check if it's real estate
-    const imovel = window.allAssetData.imoveis.find(i => i.ativoFinaceiroId === ativo.id);
-    if (imovel) {
+    // Check for real estate (multiple possible)
+    const imoveis = window.allAssetData.imoveis.filter(i =>
+        i.ativoFinaceiroId === ativo.id ||
+        i.ativoFinanceiroId === ativo.id ||
+        i.ativoId === ativo.id
+    );
+
+    if (imoveis.length > 0) {
         detailedInfo.tipo = 'Imóvel Arrendado';
-        detailedInfo.lucro = await calcularLucroImovel(imovel);
-        detailedInfo.valorAtual = imovel.valorImovel;
-        detailedInfo.detalhes = imovel;
+        detailedInfo.detalhes = imoveis;
+
+        let totalLucro = 0;
+        let totalValorAtual = 0;
+        let totalValorInvestido = 0;
+
+        for (const imovel of imoveis) {
+            const lucro = await calcularLucroImovel(imovel);
+            const valorImovel = imovel.valorImovel || imovel.valorCompra || 0;
+
+            totalLucro += lucro;
+            totalValorAtual += valorImovel;
+            totalValorInvestido += valorImovel;
+        }
+
+        detailedInfo.lucro = totalLucro;
+        detailedInfo.lucroTotal = totalLucro;
+        detailedInfo.valorAtual = totalValorAtual;
+        detailedInfo.valorAtualTotal = totalValorAtual;
+        detailedInfo.valorInvestido = totalValorInvestido;
+        detailedInfo.valorInvestidoTotal = totalValorInvestido;
+
         return detailedInfo;
     }
 
@@ -441,14 +525,14 @@ async function calcularValorTotalDeposito(deposito) {
         }
 
         const response = await fetch(`/api/depositoprazo/getLucroById?depositoPrazoId=${deposito.id}`);
-        
+
         if (!response.ok) {
             console.error('Erro na API de lucro do depósito:', response.status);
             return deposito.valorAtual || deposito.valorInvestido || 0;
         }
 
         const data = await response.json();
-        
+
         // Check if response contains error message
         if (typeof data === 'string' || data.error) {
             console.error('Erro na resposta da API:', data);

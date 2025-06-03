@@ -48,8 +48,8 @@
                     </div>
                     <h3 class="text-xl font-semibold text-white mb-2">Fundos de Investimento</h3>
                     <p class="text-gray-400 text-sm mb-4">Gerencie seus investimentos em fundos e criptomoedas</p>
-                    <div class="text-2xl font-bold text-white">€2.500,00</div>
-                    <div class="text-sm text-green-400">+5.2%</div>
+                    <div id="fundosValue" class="text-2xl font-bold text-white">€-----</div>
+                    <div id="fundosChange" class="text-sm text-gray-500">-----</div>
                 </div>
             </a>
 
@@ -74,8 +74,8 @@
                     </div>
                     <h3 class="text-xl font-semibold text-white mb-2">Imóveis Arrendados</h3>
                     <p class="text-gray-400 text-sm mb-4">Propriedades e rendas de imóveis</p>
-                    <div class="text-2xl font-bold text-white">€85.000,00</div>
-                    <div class="text-sm text-green-400">+2.1%</div>
+                    <div id="imoveisValue" class="text-2xl font-bold text-white">€-----</div>
+                    <div id="imoveisChange" class="text-sm text-gray-500">-----</div>
                 </div>
             </a>
 
@@ -100,8 +100,8 @@
                     </div>
                     <h3 class="text-xl font-semibold text-white mb-2">Depósitos a Prazo</h3>
                     <p class="text-gray-400 text-sm mb-4">Depósitos bancários e investimentos seguros</p>
-                    <div class="text-2xl font-bold text-white">€15.000,00</div>
-                    <div class="text-sm text-green-400">+1.8%</div>
+                    <div id="depositosValue" class="text-2xl font-bold text-white">€-----</div>
+                    <div id="depositosChange" class="text-sm text-gray-500">-----</div>
                 </div>
             </a>
         </div>
@@ -141,51 +141,7 @@
             </div>
         </div>
 
-        <!-- Quick Actions -->
-        <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6">
-            <h2 class="text-2xl font-bold text-white mb-6">Ações Rápidas</h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <button id="novoAtivoBtn"
-                    class="flex items-center justify-center gap-3 p-4 bg-gray-800/50 rounded-xl hover:bg-gray-700/50 transition-colors">
-                    <svg class="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    <span class="text-white font-medium">Adicionar Novo Ativo</span>
-                </button>
-
-                <button id="btnRelatorioPorAtivo" onclick="exibirRelatorioPorAtivo()"
-                    class="flex items-center justify-center gap-3 p-4 bg-gray-800/50 rounded-xl hover:bg-gray-700/50 transition-colors">
-                    <svg class="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
-                        </path>
-                    </svg>
-                    <span class="text-white font-medium">Lucros por Ativo</span>
-                </button>
-
-                <button id="btnRelatorioTipos" onclick="showToast('Funcionalidade em desenvolvimento', 'info')"
-                    class="flex items-center justify-center gap-3 p-4 bg-gray-800/50 rounded-xl hover:bg-gray-700/50 transition-colors">
-                    <svg class="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
-                    </svg>
-                    <span class="text-white font-medium">Análise por Tipo</span>
-                </button>
-
-                <button
-                    class="flex items-center justify-center gap-3 p-4 bg-gray-800/50 rounded-xl hover:bg-gray-700/50 transition-colors">
-                    <svg class="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                    </svg>
-                    <span class="text-white font-medium">Exportar Dados</span>
-                </button>
-            </div>
-        </div>
 
     </div>
 </div>
@@ -363,6 +319,134 @@
     </div>
 </div>
 
+<!-- Modal for Asset Details -->
+<div id="detalhesAtivoModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-50 hidden">
+    <div
+        class="bg-gray-900/95 backdrop-blur-xl border border-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div id="detalhesAtivoIcon"
+                        class="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 id="detalhesAtivoTitulo" class="text-2xl font-bold text-white">Detalhes do Ativo</h2>
+                        <p id="detalhesAtivoSubtitulo" class="text-gray-400">Informações detalhadas</p>
+                    </div>
+                </div>
+                <button id="fecharModalDetalhesAtivo" class="text-gray-400 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Asset Basic Information -->
+                <div class="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
+                    <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Informações Gerais
+                    </h3>
+                    <div id="detalhesAtivoInfo" class="space-y-3">
+                        <!-- Asset details will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Financial Summary -->
+                <div class="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
+                    <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1">
+                            </path>
+                        </svg>
+                        Resumo Financeiro
+                    </h3>
+                    <div id="detalhesAtivoFinanceiro" class="space-y-3">
+                        <!-- Financial summary will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Related Investments Section -->
+            <div class="mt-6">
+                <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                        </path>
+                    </svg>
+                    Investimentos Relacionados
+                </h3>
+
+                <!-- Tabs for different investment types -->
+                <div class="flex space-x-1 bg-gray-800/50 rounded-lg p-1 mb-4">
+                    <button id="tabDepositos"
+                        class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors text-gray-400 hover:text-white">
+                        Depósitos a Prazo
+                    </button>
+                    <button id="tabFundos"
+                        class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors text-gray-400 hover:text-white">
+                        Fundos de Investimento
+                    </button>
+                    <button id="tabImoveis"
+                        class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors text-gray-400 hover:text-white">
+                        Imóveis Arrendados
+                    </button>
+                </div>
+
+                <!-- Tab Contents -->
+                <div id="contentDepositos" class="tab-content hidden">
+                    <div id="listaDepositos" class="space-y-3">
+                        <!-- Deposits will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div id="contentFundos" class="tab-content hidden">
+                    <div id="listaFundos" class="space-y-3">
+                        <!-- Funds will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div id="contentImoveis" class="tab-content hidden">
+                    <div id="listaImoveis" class="space-y-3">
+                        <!-- Real estate will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Empty state -->
+                <div id="emptyInvestments" class="text-center py-8 hidden">
+                    <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4">
+                            </path>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-medium text-white mb-2">Nenhum investimento encontrado</h4>
+                    <p class="text-gray-400">Este ativo ainda não tem investimentos específicos associados.</p>
+                </div>
+            </div>
+
+            <div class="flex justify-end mt-8 pt-6 border-t border-gray-700">
+                <button id="fecharBtnDetalhesAtivo"
+                    class="bg-gray-700 text-white px-6 py-3 rounded-xl hover:bg-gray-600 transition-all duration-200 font-medium">
+                    Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Toast Notifications Container -->
 <div id="toast-container" class="fixed top-20 right-4 z-50 space-y-2"></div>
 
@@ -393,6 +477,10 @@
         document.getElementById('cancelarTransferirAtivo')?.addEventListener('click', fecharModalTransferirAtivo);
         document.getElementById('confirmarTransferirAtivo')?.addEventListener('click', confirmarTransferirAtivo);
 
+        // Event listeners para o modal de detalhes
+        document.getElementById('fecharModalDetalhesAtivo')?.addEventListener('click', fecharModalDetalhesAtivo);
+        document.getElementById('fecharBtnDetalhesAtivo')?.addEventListener('click', fecharModalDetalhesAtivo);
+
         // Fechar modais ao clicar fora deles
         document.getElementById('novoAtivoModal')?.addEventListener('click', function (e) {
             if (e.target === this) fecharModalNovoAtivo();
@@ -404,6 +492,10 @@
 
         document.getElementById('transferirAtivoModal')?.addEventListener('click', function (e) {
             if (e.target === this) fecharModalTransferirAtivo();
+        });
+
+        document.getElementById('detalhesAtivoModal')?.addEventListener('click', function (e) {
+            if (e.target === this) fecharModalDetalhesAtivo();
         });
 
         // Definir data padrão para hoje
@@ -575,7 +667,7 @@
                     <span class="text-white text-sm font-medium">${formatter.format(detailedInfo.valorAtual)}</span>
                 </div>
                 ` : ''}
-                ${detailedInfo.detalhes && detailedInfo.detalhes.length > 1 ? `
+                ${detailedInfo.detalhes && detailedInfo.detalhes.length >= 1 ? `
                 <div class="pt-3 mt-2 border-t border-gray-700">
                     <div class="flex justify-between items-center">
                         <span class="text-purple-400 text-sm font-medium">Totais Agregados:</span>
@@ -606,13 +698,10 @@
         const formatter = new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' });
 
         // Update the overview cards with real data
-        const cards = document.querySelectorAll('.grid .group');
-
-        if (cards.length >= 3 && window.allAssetData) {
+        if (window.allAssetData) {
             // Update Fundos de Investimento card
-            const fundosCard = cards[0];
-            const fundosValue = fundosCard.querySelector('.text-2xl');
-            const fundosChange = fundosCard.querySelector('.text-green-400');
+            const fundosValue = document.getElementById('fundosValue');
+            const fundosChange = document.getElementById('fundosChange');
             if (fundosValue && fundosChange) {
                 const totalFundos = window.allAssetData.fundos.reduce((sum, fundo) => sum + (fundo.montanteInvestido || 0), 0);
 
@@ -632,13 +721,18 @@
                 console.log(`Total de lucro dos fundos: ${formatter.format(totalFundosProfit)}`);
 
                 fundosValue.textContent = formatter.format(totalFundos);
-                fundosChange.textContent = `+${formatter.format(totalFundosProfit)} lucro`;
+                if (totalFundosProfit >= 0) {
+                    fundosChange.textContent = `+${formatter.format(totalFundosProfit)} lucro`;
+                    fundosChange.className = 'text-sm text-green-400';
+                } else {
+                    fundosChange.textContent = `${formatter.format(totalFundosProfit)} lucro`;
+                    fundosChange.className = 'text-sm text-red-400';
+                }
             }
 
             // Update Imóveis Arrendados card
-            const imoveisCard = cards[1];
-            const imoveisValue = imoveisCard.querySelector('.text-2xl');
-            const imoveisChange = imoveisCard.querySelector('.text-green-400');
+            const imoveisValue = document.getElementById('imoveisValue');
+            const imoveisChange = document.getElementById('imoveisChange');
             if (imoveisValue && imoveisChange) {
                 const totalImoveis = window.allAssetData.imoveis.reduce((sum, imovel) => sum + (imovel.valorImovel || imovel.valorCompra || 0), 0);
 
@@ -654,13 +748,18 @@
                 }
 
                 imoveisValue.textContent = formatter.format(totalImoveis);
-                imoveisChange.textContent = `+${formatter.format(totalImoveisProfit)} lucro`;
+                if (totalImoveisProfit >= 0) {
+                    imoveisChange.textContent = `+${formatter.format(totalImoveisProfit)} lucro`;
+                    imoveisChange.className = 'text-sm text-green-400';
+                } else {
+                    imoveisChange.textContent = `${formatter.format(totalImoveisProfit)} lucro`;
+                    imoveisChange.className = 'text-sm text-red-400';
+                }
             }
 
             // Update Depósitos a Prazo card
-            const depositosCard = cards[2];
-            const depositosValue = depositosCard.querySelector('.text-2xl');
-            const depositosChange = depositosCard.querySelector('.text-green-400');
+            const depositosValue = document.getElementById('depositosValue');
+            const depositosChange = document.getElementById('depositosChange');
             if (depositosValue && depositosChange) {
                 const totalDepositos = window.allAssetData.depositos.reduce((sum, deposito) => sum + (deposito.valorAtual || deposito.valorInvestido || 0), 0);
 
@@ -676,7 +775,13 @@
                 }
 
                 depositosValue.textContent = formatter.format(totalDepositos);
-                depositosChange.textContent = `+${formatter.format(totalDepositosProfit)} lucro`;
+                if (totalDepositosProfit >= 0) {
+                    depositosChange.textContent = `+${formatter.format(totalDepositosProfit)} lucro`;
+                    depositosChange.className = 'text-sm text-green-400';
+                } else {
+                    depositosChange.textContent = `${formatter.format(totalDepositosProfit)} lucro`;
+                    depositosChange.className = 'text-sm text-red-400';
+                }
             }
         }
 
@@ -763,7 +868,9 @@
             });
 
             if (!response.ok) {
-                throw new Error('Erro ao adicionar ativo');
+                const errorText = await response.text();
+                console.error('Backend error response:', errorText);
+                throw new Error(errorText || `HTTP error! Status: ${response.status}`);
             }
 
             showToast('Ativo adicionado com sucesso!', 'success');
@@ -774,14 +881,422 @@
 
         } catch (error) {
             console.error('Erro ao adicionar ativo:', error);
-            showToast('Erro ao adicionar ativo. Tente novamente.', 'error');
+            const errorMessage = error.message || 'Erro ao adicionar ativo. Tente novamente.';
+            showToast(errorMessage, 'error');
         }
     }
 
     function verDetalhesAtivo(ativoId) {
-        // Placeholder para ver detalhes do ativo
-        console.log('Ver detalhes do ativo:', ativoId);
-        alert(`Funcionalidade em desenvolvimento - Ativo ID: ${ativoId}`);
+        const ativo = ativos.find(a => a.id === ativoId);
+
+        if (!ativo) {
+            showToast('Ativo não encontrado.', 'error');
+            return;
+        }
+
+        // Encontrar a carteira do ativo
+        const carteira = carteiras.find(c => c.id === ativo.carteiraId);
+        const nomeCarteira = carteira ? carteira.nome : 'Carteira não encontrada';
+
+        // Formatar valores monetários
+        const formatter = new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' });
+
+        // Formatar data
+        const dataInicio = new Date(ativo.dataInicio).toLocaleDateString('pt-PT');
+        const dataInicioCompleta = new Date(ativo.dataInicio).toLocaleString('pt-PT');
+
+        // Calcular data de fim se tiver duração
+        let dataFim = 'Sem prazo definido';
+        if (ativo.duracaoMeses > 0) {
+            const dataFimDate = new Date(ativo.dataInicio);
+            dataFimDate.setMonth(dataFimDate.getMonth() + ativo.duracaoMeses);
+            dataFim = dataFimDate.toLocaleDateString('pt-PT');
+        }
+
+        // Atualizar título e subtítulo do modal
+        document.getElementById('detalhesAtivoTitulo').textContent = ativo.nome;
+        document.getElementById('detalhesAtivoSubtitulo').textContent = `📁 ${nomeCarteira}`;
+
+        // Preencher informações básicas
+        document.getElementById('detalhesAtivoInfo').innerHTML = `
+            <div class="flex justify-between items-center">
+                <span class="text-gray-400">ID do Ativo:</span>
+                <span class="text-white font-medium">${ativo.id}</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-gray-400">Nome:</span>
+                <span class="text-white font-medium">${ativo.nome}</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-gray-400">ID da Carteira:</span>
+                <span class="text-white font-medium">${ativo.carteiraId}</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-gray-400">Carteira:</span>
+                <span class="text-primary-400 font-medium">${nomeCarteira}</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-gray-400">Data de Início:</span>
+                <span class="text-white font-medium">${dataInicio}</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-gray-400">Data/Hora Completa:</span>
+                <span class="text-white font-medium text-sm">${dataInicioCompleta}</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-gray-400">Duração:</span>
+                <span class="text-white font-medium">${ativo.duracaoMeses} meses</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-gray-400">Data de Fim:</span>
+                <span class="text-white font-medium">${dataFim}</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-gray-400">Taxa de Imposto:</span>
+                <span class="text-white font-medium">${ativo.taxaImposto}%</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-gray-400">User ID:</span>
+                <span class="text-white font-medium">${ativo.userId}</span>
+            </div>
+        `;
+
+        // Carregar informações financeiras e investimentos relacionados
+        carregarInformacoesFinanceiras(ativoId);
+        carregarInvestimentosRelacionados(ativoId);
+
+        // Mostrar o modal
+        const modal = document.getElementById('detalhesAtivoModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    async function carregarInformacoesFinanceiras(ativoId) {
+        try {
+            const detailedInfo = await getDetailedAssetInfo(ativos.find(a => a.id === ativoId));
+            const formatter = new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' });
+
+            // Calcular informações financeiras
+            const valorInvestido = detailedInfo.valorInvestidoTotal || detailedInfo.valorInvestido || 0;
+            const valorAtual = detailedInfo.valorAtualTotal || detailedInfo.valorAtual || 0;
+            const lucro = detailedInfo.lucroTotal || detailedInfo.lucro || 0;
+            const lucroPercentual = valorInvestido > 0 ? (lucro / valorInvestido * 100) : 0;
+
+            const lucroClass = lucro >= 0 ? 'text-green-400' : 'text-red-400';
+
+            document.getElementById('detalhesAtivoFinanceiro').innerHTML = `
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-400">Tipo de Investimento:</span>
+                    <span class="text-blue-400 font-medium">${detailedInfo.tipo}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-400">Valor Investido:</span>
+                    <span class="text-white font-medium">${formatter.format(valorInvestido)}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-400">Valor Atual:</span>
+                    <span class="text-white font-medium">${formatter.format(valorAtual)}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-400">Lucro/Prejuízo:</span>
+                    <span class="${lucroClass} font-bold">${formatter.format(lucro)}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-400">Rentabilidade:</span>
+                    <span class="${lucroClass} font-bold">${lucroPercentual.toFixed(2)}%</span>
+                </div>
+                ${detailedInfo.detalhes && detailedInfo.detalhes.length >= 1 ? `
+                <div class="pt-3 mt-3 border-t border-gray-600">
+                    <div class="flex justify-between items-center">
+                        <span class="text-purple-400 font-medium">Total de Investimentos:</span>
+                        <span class="text-purple-400 font-bold">${detailedInfo.detalhes.length}</span>
+                    </div>
+                </div>
+                ` : ''}
+            `;
+        } catch (error) {
+            console.error('Erro ao carregar informações financeiras:', error);
+            document.getElementById('detalhesAtivoFinanceiro').innerHTML = `
+                <div class="text-center text-red-400">
+                    Erro ao carregar informações financeiras
+                </div>
+            `;
+        }
+    }
+
+    function carregarInvestimentosRelacionados(ativoId) {
+        // Debug: Log all asset data and the target ativo ID
+        console.log('===== DEBUG: Procurando investimentos para Ativo ID:', ativoId, '=====');
+        console.log('Todos os depósitos disponíveis:', window.allAssetData?.depositos);
+        console.log('Todos os fundos disponíveis:', window.allAssetData?.fundos);
+        console.log('Todos os imóveis disponíveis:', window.allAssetData?.imoveis);
+
+        // Check field names in actual data
+        if (window.allAssetData?.depositos?.length > 0) {
+            console.log('Exemplo de depósito - propriedades:', Object.keys(window.allAssetData.depositos[0]));
+        }
+        if (window.allAssetData?.fundos?.length > 0) {
+            console.log('Exemplo de fundo - propriedades:', Object.keys(window.allAssetData.fundos[0]));
+        }
+        if (window.allAssetData?.imoveis?.length > 0) {
+            console.log('Exemplo de imóvel - propriedades:', Object.keys(window.allAssetData.imoveis[0]));
+        }
+
+        // Try multiple possible field names for filtering
+        const depositosRelacionados = window.allAssetData?.depositos?.filter(d =>
+            d.ativoFinaceiroId === ativoId ||
+            d.ativoFinanceiroId === ativoId ||
+            d.ativoId === ativoId
+        ) || [];
+
+        const fundosRelacionados = window.allAssetData?.fundos?.filter(f =>
+            f.ativoFinaceiroId === ativoId ||
+            f.ativoFinanceiroId === ativoId ||
+            f.ativoId === ativoId
+        ) || [];
+
+        const imoveisRelacionados = window.allAssetData?.imoveis?.filter(i =>
+            i.ativoFinaceiroId === ativoId ||
+            i.ativoFinanceiroId === ativoId ||
+            i.ativoId === ativoId
+        ) || [];
+
+        console.log('Investimentos relacionados encontrados para ativo ID:', ativoId, {
+            depositos: depositosRelacionados.length,
+            fundos: fundosRelacionados.length,
+            imoveis: imoveisRelacionados.length
+        });
+
+        // Log the found related investments
+        console.log('Depósitos relacionados:', depositosRelacionados);
+        console.log('Fundos relacionados:', fundosRelacionados);
+        console.log('Imóveis relacionados:', imoveisRelacionados);
+
+        // Configurar tabs
+        setupInvestmentTabs(depositosRelacionados, fundosRelacionados, imoveisRelacionados);
+
+        // Preencher conteúdo das tabs
+        preencherListaDepositos(depositosRelacionados);
+        preencherListaFundos(fundosRelacionados);
+        preencherListaImoveis(imoveisRelacionados);
+
+        // Mostrar tab apropriada baseada no que tem conteúdo
+        const hasDepositos = depositosRelacionados.length > 0;
+        const hasFundos = fundosRelacionados.length > 0;
+        const hasImoveis = imoveisRelacionados.length > 0;
+
+        if (hasDepositos) {
+            showTab('Depositos');
+        } else if (hasFundos) {
+            showTab('Fundos');
+        } else if (hasImoveis) {
+            showTab('Imoveis');
+        } else {
+            showEmptyInvestments();
+        }
+    }
+
+    function setupInvestmentTabs(depositos, fundos, imoveis) {
+        const tabDepositos = document.getElementById('tabDepositos');
+        const tabFundos = document.getElementById('tabFundos');
+        const tabImoveis = document.getElementById('tabImoveis');
+
+        // Atualizar texto dos tabs com contagem
+        tabDepositos.textContent = `Depósitos a Prazo (${depositos.length})`;
+        tabFundos.textContent = `Fundos de Investimento (${fundos.length})`;
+        tabImoveis.textContent = `Imóveis Arrendados (${imoveis.length})`;
+
+        // Remover event listeners existentes e adicionar novos
+        tabDepositos.replaceWith(tabDepositos.cloneNode(true));
+        tabFundos.replaceWith(tabFundos.cloneNode(true));
+        tabImoveis.replaceWith(tabImoveis.cloneNode(true));
+
+        // Obter referências aos novos elementos
+        const newTabDepositos = document.getElementById('tabDepositos');
+        const newTabFundos = document.getElementById('tabFundos');
+        const newTabImoveis = document.getElementById('tabImoveis');
+
+        // Adicionar event listeners
+        newTabDepositos.addEventListener('click', () => showTab('Depositos'));
+        newTabFundos.addEventListener('click', () => showTab('Fundos'));
+        newTabImoveis.addEventListener('click', () => showTab('Imoveis'));
+    }
+
+    function showTab(tabName) {
+        // Esconder todos os conteúdos
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.add('hidden');
+        });
+        document.getElementById('emptyInvestments').classList.add('hidden');
+
+        // Remover classe ativa de todos os tabs
+        document.querySelectorAll('#tabDepositos, #tabFundos, #tabImoveis').forEach(tab => {
+            tab.classList.remove('bg-primary-600', 'text-white');
+            tab.classList.add('text-gray-400');
+        });
+
+        // Mostrar conteúdo selecionado e ativar tab
+        const contentId = `content${tabName}`;
+        const tabId = `tab${tabName}`;
+
+        document.getElementById(contentId).classList.remove('hidden');
+        const activeTab = document.getElementById(tabId);
+        activeTab.classList.add('bg-primary-600', 'text-white');
+        activeTab.classList.remove('text-gray-400');
+    }
+
+    function showEmptyInvestments() {
+        // Esconder todos os conteúdos
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.add('hidden');
+        });
+
+        // Mostrar estado vazio
+        document.getElementById('emptyInvestments').classList.remove('hidden');
+    }
+
+    function preencherListaDepositos(depositos) {
+        const lista = document.getElementById('listaDepositos');
+        const formatter = new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' });
+
+        if (depositos.length === 0) {
+            lista.innerHTML = `
+                <div class="text-center py-4">
+                    <p class="text-gray-400">Nenhum depósito a prazo encontrado para este ativo.</p>
+                </div>
+            `;
+            return;
+        }
+
+        lista.innerHTML = depositos.map(deposito => {
+            const dataCriacao = deposito.dataCriacao ?
+                new Date(deposito.dataCriacao).toLocaleDateString('pt-PT') : 'Não definido';
+
+            return `
+            <div class="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                <div class="flex justify-between items-start mb-3">
+                <h4 class="text-white font-medium">Depósito a Prazo</h4>
+                <span class="text-blue-400 text-sm">ID: ${deposito.id}</span>
+                </div>
+                <div class="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                    <span class="text-gray-400">Valor Investido:</span>
+                    <div class="text-white font-medium">${formatter.format(deposito.valorInvestido || 0)}</div>
+                </div>
+                <div>
+                    <span class="text-gray-400">Valor Atual:</span>
+                    <div class="text-white font-medium">${formatter.format(deposito.valorAtual || 0)}</div>
+                </div>
+                <div>
+                    <span class="text-gray-400">Taxa de Juro Anual:</span>
+                    <div class="text-white font-medium">${deposito.taxaJuroAnual || 0}%</div>
+                </div>
+                <div>
+                    <span class="text-gray-400">Data de Criação:</span>
+                    <div class="text-white font-medium">${dataCriacao}</div>
+                </div>
+                </div>
+            </div>
+            `;
+        }).join('');
+    }
+
+    function preencherListaFundos(fundos) {
+        const lista = document.getElementById('listaFundos');
+        const formatter = new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' });
+
+        if (fundos.length === 0) {
+            lista.innerHTML = `
+                <div class="text-center py-4">
+                    <p class="text-gray-400">Nenhum fundo de investimento encontrado para este ativo.</p>
+                </div>
+            `;
+            return;
+        }
+
+        lista.innerHTML = fundos.map(fundo => {
+            const dataCompra = fundo.dataCriacao ?
+                new Date(fundo.dataCriacao).toLocaleDateString('pt-PT') : 'Não definido';
+
+            return `
+                <div class="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                    <div class="flex justify-between items-start mb-3">
+                        <h4 class="text-white font-medium">${fundo.ativoSigla || 'Fundo de Investimento'}</h4>
+                        <span class="text-green-400 text-sm">ID: ${fundo.id}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 text-sm">
+                        <div>
+                            <span class="text-gray-400">Montante Investido:</span>
+                            <div class="text-white font-medium">${formatter.format(fundo.montanteInvestido || 0)}</div>
+                        </div>
+                        <div>
+                            <span class="text-gray-400">Data de Compra:</span>
+                            <div class="text-white font-medium">${dataCompra}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function preencherListaImoveis(imoveis) {
+        const lista = document.getElementById('listaImoveis');
+        const formatter = new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' });
+
+        if (imoveis.length === 0) {
+            lista.innerHTML = `
+                <div class="text-center py-4">
+                    <p class="text-gray-400">Nenhum imóvel arrendado encontrado para este ativo.</p>
+                </div>
+            `;
+            return;
+        }
+
+        lista.innerHTML = imoveis.map(imovel => {
+            const dataCompra = imovel.dataCriacao ?
+                new Date(imovel.dataCriacao).toLocaleDateString('pt-PT') : 'Não definido';
+
+            return `
+                <div class="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                    <div class="flex justify-between items-start mb-3">
+                        <h4 class="text-white font-medium">${imovel.endereco || 'Imóvel Arrendado'}</h4>
+                        <span class="text-orange-400 text-sm">ID: ${imovel.id}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 text-sm">
+                        <div>
+                            <span class="text-gray-400">Valor do Imóvel:</span>
+                            <div class="text-white font-medium">${formatter.format(imovel.valorImovel || imovel.valorCompra || 0)}</div>
+                        </div>
+                        <div>
+                            <span class="text-gray-400">Renda Mensal:</span>
+                            <div class="text-white font-medium">${formatter.format(imovel.valorRenda || 0)}</div>
+                        </div>
+                        <div>
+                            <span class="text-gray-400">Data de Compra:</span>
+                            <div class="text-white font-medium">${dataCompra}</div>
+                        </div>
+                        ${imovel.endereco ? `
+                        <div class="col-span-2">
+                            <span class="text-gray-400">Endereço:</span>
+                            <div class="text-white font-medium">${imovel.endereco}</div>
+                        </div>
+                        ` : ''}
+                        ${imovel.observacoes ? `
+                        <div class="col-span-2">
+                            <span class="text-gray-400">Observações:</span>
+                            <div class="text-white font-medium">${imovel.observacoes}</div>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function fecharModalDetalhesAtivo() {
+        const modal = document.getElementById('detalhesAtivoModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
     }
 
     // Variáveis para operações com ativos
@@ -812,21 +1327,21 @@
         // Verifica o tipo específico de ativo para mostrar informações detalhadas
         if (window.allAssetData) {
             // Check for deposit
-            const deposito = window.allAssetData.depositos.find(d => d.ativoFinanceiroId === ativoId);
+            const deposito = window.allAssetData.depositos.find(d => d.ativoFinaceiroId === ativoId);
             if (deposito) {
                 tipoAtivo = 'Depósito a Prazo';
                 valorAtual = deposito.valorAtual || deposito.valorInvestido || 0;
             }
 
             // Check for fund
-            const fundo = window.allAssetData.fundos.find(f => f.ativoFinanceiroId === ativoId);
+            const fundo = window.allAssetData.fundos.find(f => f.ativoFinaceiroId === ativoId);
             if (fundo) {
                 tipoAtivo = 'Fundo de Investimento';
                 valorAtual = fundo.montanteInvestido || 0;
             }
 
             // Check for real estate
-            const imovel = window.allAssetData.imoveis.find(i => i.ativoFinanceiroId === ativoId);
+            const imovel = window.allAssetData.imoveis.find(i => i.ativoFinaceiroId === ativoId);
             if (imovel) {
                 tipoAtivo = 'Imóvel Arrendado';
                 valorAtual = imovel.valorImovel || imovel.valorCompra || 0;
@@ -935,21 +1450,21 @@
         // Verifica o tipo específico de ativo para mostrar informações detalhadas
         if (window.allAssetData) {
             // Check for deposit
-            const deposito = window.allAssetData.depositos.find(d => d.ativoFinanceiroId === ativoId);
+            const deposito = window.allAssetData.depositos.find(d => d.ativoFinaceiroId === ativoId);
             if (deposito) {
                 tipoAtivo = 'Depósito a Prazo';
                 valorAtual = deposito.valorAtual || deposito.valorInvestido || 0;
             }
 
             // Check for fund
-            const fundo = window.allAssetData.fundos.find(f => f.ativoFinanceiroId === ativoId);
+            const fundo = window.allAssetData.fundos.find(f => f.ativoFinaceiroId === ativoId);
             if (fundo) {
                 tipoAtivo = 'Fundo de Investimento';
                 valorAtual = fundo.montanteInvestido || 0;
             }
 
             // Check for real estate
-            const imovel = window.allAssetData.imoveis.find(i => i.ativoFinanceiroId === ativoId);
+            const imovel = window.allAssetData.imoveis.find(i => i.ativoFinaceiroId === ativoId);
             if (imovel) {
                 tipoAtivo = 'Imóvel Arrendado';
                 valorAtual = imovel.valorImovel || imovel.valorCompra || 0;
@@ -1199,7 +1714,7 @@
             let specificAsset = null;
 
             // Check if it's a deposit
-            specificAsset = window.allAssetData.depositos.find(d => d.ativoFinanceiroId === ativo.id);
+            specificAsset = window.allAssetData.depositos.find(d => d.ativoFinaceiroId === ativo.id);
             if (specificAsset) {
                 detailedInfo.tipo = 'Depósito a Prazo';
                 const profit = await calcularLucroDeposito(specificAsset);
@@ -1212,7 +1727,7 @@
             }
 
             // Check if it's a fund
-            specificAsset = window.allAssetData.fundos.find(f => f.ativoFinanceiroId === ativo.id);
+            specificAsset = window.allAssetData.fundos.find(f => f.ativoFinaceiroId === ativo.id);
             if (specificAsset) {
                 detailedInfo.tipo = 'Fundo de Investimento';
                 console.log(`Found fund asset for ${ativo.nome}:`, specificAsset);
@@ -1242,7 +1757,7 @@
             }
 
             // Check if it's real estate
-            specificAsset = window.allAssetData.imoveis.find(i => i.ativoFinanceiroId === ativo.id);
+            specificAsset = window.allAssetData.imoveis.find(i => i.ativoFinaceiroId === ativo.id);
             if (specificAsset) {
                 detailedInfo.tipo = 'Imóvel Arrendado';
                 const profit = await calcularLucroImovel(specificAsset);
