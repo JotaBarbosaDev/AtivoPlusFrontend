@@ -94,11 +94,24 @@ async function calcularPorcentagemLucroFundoInvestimento(fundo) {
         const response = await fetch(`/api/fundoinvestimento/getLucroById?fundoInvestimentoId=${fundo.id}`);
 
         if (!response.ok) {
+            const data = await response.text();
+            if (data.includes("Nao temos acesso com a api gratis symbol")) {
+                const symbol = fundo.symbol || fundo.simbolo || 'unknown';
+                console.error(`Nao temos acesso com a api gratis symbol ${symbol}`);
+                return -69;
+            }
             console.error('Erro na API de lucro do fundo:', response.status);
             return 0;
         }
 
         const data = await response.json();
+
+        // Check if response contains error message
+        if (typeof data === 'string' && data.includes("Nao temos acesso com a api gratis symbol")) {
+            const symbol = fundo.symbol || fundo.simbolo || 'unknown';
+            console.error(`Nao temos acesso com a api gratis symbol ${symbol}`);
+            return -69;
+        }
 
         // Check if response contains error message
         if (typeof data === 'string' || data.error) {
@@ -130,6 +143,12 @@ async function calcularLucroFundoInvestimento(fundo) {
         const response = await fetch(`/api/fundoinvestimento/getLucroById?fundoInvestimentoId=${fundo.id}`);
 
         if (!response.ok) {
+            const data = await response.text();
+            if (data.includes("Nao temos acesso com a api gratis symbol")) {
+                const symbol = fundo.symbol || fundo.simbolo || 'unknown';
+                console.error(`Nao temos acesso com a api gratis symbol ${symbol}`);
+                return -69;
+            }
             console.error('Erro na API de lucro do fundo:', response.status);
             return 0;
         }
@@ -137,6 +156,11 @@ async function calcularLucroFundoInvestimento(fundo) {
         const data = await response.json();
 
         // Check if response contains error message
+        if (typeof data === 'string' && data.includes("Nao temos acesso com a api gratis symbol")) {
+            const symbol = fundo.symbol || fundo.simbolo || 'unknown';
+            console.error(`Nao temos acesso com a api gratis symbol ${symbol}`);
+            return -69;
+        }
         if (typeof data === 'string' || data.error) {
             console.error('Erro na resposta da API:', data);
             return 0;
