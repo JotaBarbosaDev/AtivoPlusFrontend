@@ -191,21 +191,62 @@
           </div>
 
           <!-- Address -->
-          <div class="space-y-2">
-            <label for="morada" class="block text-sm font-medium text-gray-300">
-              <div class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                Morada
+          <div class="space-y-4">
+            <h3 class="text-lg font-medium text-gray-300 border-b border-gray-700 pb-2">Morada</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <label for="rua" class="block text-sm font-medium text-gray-300">Rua</label>
+                <input type="text" name="rua" id="rua" placeholder="Nome da rua"
+                  class="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
+                  required>
               </div>
-            </label>
-            <input type="text" name="morada" id="morada" placeholder="Rua, nº, cidade"
-              class="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
-              required>
+
+              <div class="space-y-2">
+                <label for="numeroPorta" class="block text-sm font-medium text-gray-300">Nº Porta</label>
+                <input type="text" name="numeroPorta" id="numeroPorta" placeholder="123"
+                  class="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
+                  required>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="space-y-2">
+                <label for="piso" class="block text-sm font-medium text-gray-300">Piso</label>
+                <input type="text" name="piso" id="piso" placeholder="1º (opcional)"
+                  class="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200">
+              </div>
+
+              <div class="space-y-2">
+                <label for="localidade" class="block text-sm font-medium text-gray-300">Localidade</label>
+                <input type="text" name="localidade" id="localidade" placeholder="Vila/Cidade"
+                  class="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
+                  required>
+              </div>
+
+              <div class="space-y-2">
+                <label for="codPostal" class="block text-sm font-medium text-gray-300">Cód. Postal</label>
+                <input type="text" name="codPostal" id="codPostal" placeholder="1234-567"
+                  class="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
+                  required>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <label for="concelho" class="block text-sm font-medium text-gray-300">Concelho</label>
+                <input type="text" name="concelho" id="concelho" placeholder="Nome do concelho"
+                  class="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
+                  required>
+              </div>
+
+              <div class="space-y-2">
+                <label for="distrito" class="block text-sm font-medium text-gray-300">Distrito</label>
+                <input type="text" name="distrito" id="distrito" placeholder="Nome do distrito"
+                  class="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-200"
+                  required>
+              </div>
+            </div>
           </div>
 
           <!-- IBAN -->
@@ -330,14 +371,25 @@
       }
 
       const data = {
-        id: -1,
-        nome: document.getElementById('username').value,
-        email: document.getElementById('email').value,
-        telefone: document.getElementById('telefone').value,
-        morada: document.getElementById('morada').value,
-        nif: document.getElementById('nif').value,
-        dateTime: new Date().toISOString(),
-        iban: document.getElementById('iban').value
+        userInfoRequest: {
+          id: -1,
+          nome: document.getElementById('username').value,
+          email: document.getElementById('email').value,
+          telefone: document.getElementById('telefone').value,
+          morada_id: 0,
+          nif: document.getElementById('nif').value,
+          dateTime: new Date().toISOString(),
+          iban: document.getElementById('iban').value
+        },
+        moradaRequest: {
+          rua: document.getElementById('rua').value,
+          piso: document.getElementById('piso').value || "",
+          numeroPorta: document.getElementById('numeroPorta').value,
+          concelho: document.getElementById('concelho').value,
+          distrito: document.getElementById('distrito').value,
+          localidade: document.getElementById('localidade').value,
+          codPostal: document.getElementById('codPostal').value
+        }
       };
 
       const user = {
@@ -357,6 +409,18 @@
         });
 
         if (response.ok) {
+          //logar o utilizador com as mesmas credenciais
+          const loginResponse = await fetch('/api/user/logar', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(user)
+          });
+          if (!loginResponse.ok) {
+            showToast('Erro ao iniciar sessão após criação de conta.', 'error');
+            return;
+          }
           try {
             const response2 = await fetch('/api/userinfo/setInfo', {
               method: 'PUT',
@@ -388,7 +452,19 @@
 
 </body>
 
-</html>
-
-
-        
+</html> 
+ 
+ 
+ 
+ 
+ 
+  
+ 
+ 
+  
+   
+ 
+   
+ ); 
+  
+  
