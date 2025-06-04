@@ -412,8 +412,8 @@ async function getDetailedAssetInfo(ativo) {
 
         for (const deposito of depositos) {
             const lucro = await calcularLucroDeposito(deposito);
-            const valorAtual = deposito.valorAtual || deposito.valorInvestido || 0;
             const valorInvestido = deposito.valorInvestido || 0;
+            const valorAtual = valorInvestido + lucro; // Current value = invested + profit
 
             totalLucro += lucro;
             totalValorAtual += valorAtual;
@@ -448,9 +448,10 @@ async function getDetailedAssetInfo(ativo) {
         for (const fundo of fundos) {
             const lucro = await calcularLucroFundoInvestimento(fundo);
             const valorInvestido = fundo.montanteInvestido || 0;
+            const valorAtual = valorInvestido + lucro; // Current value = invested + profit
 
             totalLucro += lucro;
-            totalValorAtual += valorInvestido; // Assuming current value same as invested for now
+            totalValorAtual += valorAtual;
             totalValorInvestido += valorInvestido;
         }
 
