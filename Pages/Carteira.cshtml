@@ -25,45 +25,8 @@
       </button>
     </div>
 
-    <!-- Portfolio Summary Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-      <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h3 class="text-lg font-semibold text-white">Total Investido</h3>
-            <p class="text-gray-400 text-sm">Todas as carteiras</p>
-          </div>
-          <div class="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center">
-            <svg class="w-6 h-6 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <span id="totalInvestido" class="text-2xl font-bold text-white">€0,00</span>
-        </div>
-      </div>
-
-      <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h3 class="text-lg font-semibold text-white">Retorno Total</h3>
-            <p class="text-gray-400 text-sm">Ganhos/Perdas</p>
-          </div>
-          <div class="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
-            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-            </svg>
-          </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <span id="retornoTotal" class="text-2xl font-bold text-green-400">+€0,00</span>
-          <span id="percentualTotal" class="text-green-400 text-sm">+0%</span>
-        </div>
-      </div>
-
+    <!-- Portfolio Summary -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
       <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6">
         <div class="flex items-center justify-between mb-4">
           <div>
@@ -80,6 +43,25 @@
         <div class="flex items-center gap-2">
           <span id="totalCarteiras" class="text-2xl font-bold text-white">0</span>
           <span class="text-blue-400 text-sm">carteiras</span>
+        </div>
+      </div>
+
+      <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-white">Total de Ativos</h3>
+            <p class="text-gray-400 text-sm">Em todas as carteiras</p>
+          </div>
+          <div class="w-12 h-12 bg-primary-500/10 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="totalAtivos" class="text-2xl font-bold text-white">0</span>
+          <span class="text-primary-400 text-sm">ativos</span>
         </div>
       </div>
     </div>
@@ -192,90 +174,11 @@
         </div>
       </div>
 
-      <!-- Tabs -->
-      <div class="px-6 pt-4 border-b border-gray-800 flex">
-        <button id="tabVisaoGeral" class="px-4 py-2 font-medium text-primary-400 border-b-2 border-primary-400">
-          Visão Geral
-        </button>
-        <button id="tabAtivos" class="px-4 py-2 font-medium text-gray-400 hover:text-white transition-colors">
-          Ativos
-        </button>
-      </div>
-
       <!-- Content -->
       <div class="p-6 overflow-y-auto max-h-96">
-        <!-- Visão Geral Tab -->
+        <!-- Unified Content - Overview and Assets together -->
         <div id="conteudoVisaoGeral">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-gray-800/50 rounded-xl p-6">
-              <h4 class="text-lg font-semibold text-white mb-4">Resumo Financeiro</h4>
-              <div class="space-y-4">
-                <div class="flex justify-between">
-                  <span class="text-gray-400">Valor Total:</span>
-                  <span id="resumoValorTotal" class="text-white font-semibold">€0,00</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-400">Retorno Total:</span>
-                  <span id="resumoRetornoTotal" class="text-green-400 font-semibold">0%</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-400">Número de Ativos:</span>
-                  <span id="resumoNumAtivos" class="text-white font-semibold">0</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-400">Data de Criação:</span>
-                  <span id="resumoDataCriacao" class="text-white font-semibold">-</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="bg-gray-800/50 rounded-xl p-6">
-              <h4 class="text-lg font-semibold text-white mb-4">Distribuição por Tipo</h4>
-              <div class="space-y-3">
-                <div class="flex justify-between items-center">
-                  <span class="text-gray-400">Ações</span>
-                  <div class="flex items-center gap-2">
-                    <div class="w-16 bg-gray-700 rounded-full h-2">
-                      <div class="bg-blue-500 h-2 rounded-full" style="width: 60%"></div>
-                    </div>
-                    <span class="text-white text-sm">60%</span>
-                  </div>
-                </div>
-                <div class="flex justify-between items-center">
-                  <span class="text-gray-400">ETFs</span>
-                  <div class="flex items-center gap-2">
-                    <div class="w-16 bg-gray-700 rounded-full h-2">
-                      <div class="bg-green-500 h-2 rounded-full" style="width: 30%"></div>
-                    </div>
-                    <span class="text-white text-sm">30%</span>
-                  </div>
-                </div>
-                <div class="flex justify-between items-center">
-                  <span class="text-gray-400">Crypto</span>
-                  <div class="flex items-center gap-2">
-                    <div class="w-16 bg-gray-700 rounded-full h-2">
-                      <div class="bg-yellow-500 h-2 rounded-full" style="width: 10%"></div>
-                    </div>
-                    <span class="text-white text-sm">10%</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Ativos Tab -->
-        <div id="conteudoAtivos" class="hidden">
-          <div class="text-center py-8">
-            <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-            </div>
-            <p class="text-gray-400">Nenhum ativo encontrado nesta carteira</p>
-            <p class="text-gray-500 text-sm mt-2">Vá para a página de Ativos para adicionar investimentos</p>
-          </div>
+          <!-- Content will be loaded here by JavaScript -->
         </div>
       </div>
     </div>
@@ -284,7 +187,7 @@
   <!-- Modal Confirmação Apagar -->
   <div id="confirmarApagarModal"
     class="fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-50 hidden">
-    <div class="bg-gr ay-900/95 backdrop-blur-xl border border-gray-800 rounded-2xl p-8 shadow-2xl w-full max-w-md mx-4">
+    <div class="bg-gray-900/95 backdrop-blur-xl border border-gray-800 rounded-2xl p-8 shadow-2xl w-full max-w-md mx-4">
       <div class="text-center">
         <div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
           <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -307,52 +210,18 @@
           </button>
         </div>
       </div>
+    </div>
   </div>
+
+  <!-- Toast Notifications -->
+  <div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
 </div>
 
-<!-- Toast Notifications -->
-<div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
-</div>
+<!-- Load required JavaScript files -->
+<script src="~/js/ativosCalculos.js"></script>
+<script src="~/js/carteira.js"></script>
 
 <script>
-  let carteiraAtualId = null;
-
-  // Toast notification function
-  function showToast(message, type = "info") {
-    const toast = document.createElement("div");
-    let iconSVG, bgClass;
-
-    switch (type) {
-      case "success":
-        bgClass = "bg-green-500/10 border-green-500/20";
-        iconSVG = `<svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414L8.414 15l-4.121-4.121a1 1 0 111.414-1.414L8.414 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-    </svg>`;
-        break;
-      case "error":
-        bgClass = "bg-red-500/10 border-red-500/20";
-        iconSVG = `<svg class="w-5 h-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-    </svg>`;
-        break;
-      default:
-        bgClass = "bg-primary-500/10 border-primary-500/20";
-        iconSVG = `<svg class="w-5 h-5 text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-    </svg>`;
-    }
-
-    toast.className = `flex items-center p-4 space-x-3 ${bgClass} border backdrop-blur-xl rounded-xl shadow-lg text-white animate-slide-up`;
-    toast.innerHTML = `${iconSVG}<div class="text-sm font-medium">${message}</div>`;
-
-    document.getElementById("toast-container").appendChild(toast);
-
-    setTimeout(() => {
-      toast.classList.add("opacity-0", "transition-opacity", "duration-300");
-      setTimeout(() => toast.remove(), 300);
-    }, 3000);
-  }
-
   // Modal functions
   function abrirModal() {
     const modal = document.getElementById('novaCarteiraModal');
@@ -366,20 +235,6 @@
     modal.classList.add('hidden');
     modal.classList.remove('flex');
     document.getElementById('formNovaCarteira').reset();
-  }
-
-  function abrirModalDetalhes(carteiraId, nome, tipo, percentual, valor) {
-    carteiraAtualId = carteiraId;
-
-    document.getElementById('modalCarteiraNome').textContent = nome;
-    document.getElementById('resumoValorTotal').textContent = valor || '€0,00';
-    document.getElementById('resumoRetornoTotal').textContent = percentual || '0%';
-    document.getElementById('resumoNumAtivos').textContent = '0';
-    document.getElementById('resumoDataCriacao').textContent = new Date().toLocaleDateString('pt-PT');
-
-    const modal = document.getElementById('detalhesCarteiraModal');
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
   }
 
   function fecharModalDetalhes() {
@@ -424,7 +279,7 @@
       document.getElementById('modalCarteiraNome').textContent = novoNome;
       esconderEditarNome();
       showToast("Nome da carteira atualizado com sucesso!", "success");
-      carregarCarteiras();
+      await refreshPortfolioData();
     } catch (error) {
       console.error(error);
       showToast("Erro ao atualizar nome da carteira.", "error");
@@ -455,187 +310,78 @@
       showToast("Carteira apagada com sucesso!", "success");
       esconderConfirmacaoApagar();
       fecharModalDetalhes();
-      carregarCarteiras();
+      await refreshPortfolioData();
     } catch (error) {
       console.error(error);
       showToast("Erro ao apagar carteira.", "error");
     }
   }
 
-  async function carregarCarteiras() {
-    try {
-      const response = await fetch("/api/carteira/ver?userIdFromCarteira=-1", {
-        credentials: 'include'
-      });
-
-      if (!response.ok) throw new Error("Erro ao carregar carteiras.");
-
-      const data = await response.json();
-      const container = document.getElementById('carteirasContainer');
-      const emptyState = document.getElementById('emptyState');
-
-      container.innerHTML = '';
-
-      if (!Array.isArray(data) || data.length === 0) {
-        emptyState.classList.remove('hidden');
-        document.getElementById('totalCarteiras').textContent = '0';
-        return;
-      }
-
-      emptyState.classList.add('hidden');
-      document.getElementById('totalCarteiras').textContent = data.length;
-
-      const gradients = [
-        'from-blue-500 to-purple-500',
-        'from-green-500 to-teal-500',
-        'from-yellow-500 to-orange-500',
-        'from-purple-500 to-pink-500',
-        'from-red-500 to-pink-500',
-        'from-indigo-500 to-blue-500'
-      ];
-
-      const icons = ['💼', '📊', '💰', '📈', '🏦', '💎'];
-
-      data.forEach((carteira, index) => {
-        const nome = carteira.nome || "Nova Carteira";
-        const tipo = carteira.tipo || "Mista";
-        const percentual = carteira.percentual || "0%";
-        const valor = carteira.valor || "€0,00";
-        const isPositive = !percentual.startsWith('-');
-
-        const gradient = gradients[index % gradients.length];
-        const icon = icons[index % icons.length];
-
-        const card = `
-      <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl overflow-hidden hover:border-primary-500/30 transition-all duration-300 group cursor-pointer">
-        <div class="relative h-32 bg-gradient-to-br ${gradient} p-6">
-          <div class="absolute top-4 right-4">
-            <span class="text-2xl">${icon}</span>
-          </div>
-          <div class="absolute bottom-4 left-6">
-            <h3 class="text-xl font-bold text-white">${nome}</h3>
-            <span class="text-white/80 text-sm">${tipo}</span>
-          </div>
-        </div>
-        
-        <div class="p-6">
-          <div class="flex justify-between items-center mb-4">
-            <div class="text-2xl font-bold text-white">${valor}</div>
-            <div class="flex items-center gap-1">
-              <svg class="w-4 h-4 ${isPositive ? 'text-green-400' : 'text-red-400'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${isPositive ? 'M7 11l5-5m0 0l5 5m-5-5v12' : 'M17 13l-5 5m0 0l-5-5m5 5V6'}"/>
-              </svg>
-              <span class="${isPositive ? 'text-green-400' : 'text-red-400'} font-semibold">${percentual}</span>
-            </div>
-          </div>
-          
-          <button onclick="abrirModalDetalhes('${carteira.id}', '${nome}', '${tipo}', '${percentual}', '${valor}')"
-            class="w-full py-2 bg-primary-600/20 hover:bg-primary-600/30 text-primary-400 rounded-lg transition-colors duration-200 text-sm font-medium">
-            Ver Detalhes
-          </button>
-        </div>
-      </div>
-    `;
-
-        container.insertAdjacentHTML('beforeend', card);
-      });
-
-      showToast("Carteiras carregadas com sucesso!", "success");
-    } catch (error) {
-      console.error(error);
-      showToast("Erro ao carregar carteiras.", "error");
-    }
-  }
-
-  // Event listeners
+  // Initialize page when DOM is loaded
   document.addEventListener('DOMContentLoaded', function () {
-    // Load portfolios on page load
-    carregarCarteiras();
+    // Initialize page
+    initCarteiras();
 
     // Modal event listeners
-    document.getElementById('novaCarteiraBtn').addEventListener('click', abrirModal);
-    document.getElementById('fecharModalBtn').addEventListener('click', fecharModal);
-    document.getElementById('cancelarBtn').addEventListener('click', fecharModal);
+    const novaCarteiraBtn = document.getElementById('novaCarteiraBtn');
+    const fecharModalBtn = document.getElementById('fecharModalBtn');
+    const cancelarBtn = document.getElementById('cancelarBtn');
+    const formNovaCarteira = document.getElementById('formNovaCarteira');
+    const fecharDetalhesBtn = document.getElementById('fecharDetalhesBtn');
+    const editarNomeBtn = document.getElementById('editarNomeBtn');
+    const salvarNomeBtn = document.getElementById('salvarNomeBtn');
+    const cancelarEditarNomeBtn = document.getElementById('cancelarEditarNomeBtn');
+    const apagarCarteiraBtn = document.getElementById('apagarCarteiraBtn');
+    const confirmarApagarBtn = document.getElementById('confirmarApagarBtn');
+    const cancelarApagarBtn = document.getElementById('cancelarApagarBtn');
+
+    if (novaCarteiraBtn) novaCarteiraBtn.addEventListener('click', abrirModal);
+    if (fecharModalBtn) fecharModalBtn.addEventListener('click', fecharModal);
+    if (cancelarBtn) cancelarBtn.addEventListener('click', fecharModal);
+    if (fecharDetalhesBtn) fecharDetalhesBtn.addEventListener('click', fecharModalDetalhes);
+    if (editarNomeBtn) editarNomeBtn.addEventListener('click', mostrarEditarNome);
+    if (salvarNomeBtn) salvarNomeBtn.addEventListener('click', salvarNovoNome);
+    if (cancelarEditarNomeBtn) cancelarEditarNomeBtn.addEventListener('click', esconderEditarNome);
+    if (apagarCarteiraBtn) apagarCarteiraBtn.addEventListener('click', mostrarConfirmacaoApagar);
+    if (confirmarApagarBtn) confirmarApagarBtn.addEventListener('click', apagarCarteira);
+    if (cancelarApagarBtn) cancelarApagarBtn.addEventListener('click', esconderConfirmacaoApagar);
 
     // Form submission
-    document.getElementById('formNovaCarteira').addEventListener('submit', async function (e) {
-      e.preventDefault();
+    if (formNovaCarteira) {
+      formNovaCarteira.addEventListener('submit', async function (e) {
+        e.preventDefault();
 
-      const nome = document.getElementById('nomeCarteira').value.trim();
-      if (!nome) {
-        showToast("Por favor, insira um nome para a carteira.", "error");
-        return;
-      }
+        const nome = document.getElementById('nomeCarteira').value.trim();
+        if (!nome) {
+          showToast("Por favor, insira um nome para a carteira.", "error");
+          return;
+        }
 
-      try {
-        const response = await fetch('/api/carteira/adicionar', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            id: -1,
-            userId: -1,
-            nome: nome,
-            tipo: "Mista",
-            percentual: "0%",
-            valor: "€0,00"
-          })
-        });
+        try {
+          const response = await fetch('/api/carteira/adicionar', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              id: -1,
+              userId: -1,
+              nome: nome,
+              tipo: "Mista",
+              percentual: "0%",
+              valor: "€0,00"
+            })
+          });
 
-        if (!response.ok) throw new Error("Erro ao criar carteira.");
+          if (!response.ok) throw new Error("Erro ao criar carteira.");
 
-        showToast("Carteira criada com sucesso!", "success");
-        fecharModal();
-        carregarCarteiras();
-      } catch (error) {
-        console.error(error);
-        showToast("Erro ao criar carteira.", "error");
-      }
-    });
-
-    // Details modal event listeners
-    document.getElementById('fecharDetalhesBtn').addEventListener('click', fecharModalDetalhes);
-    document.getElementById('editarNomeBtn').addEventListener('click', mostrarEditarNome);
-    document.getElementById('cancelarEditarNomeBtn').addEventListener('click', esconderEditarNome);
-    document.getElementById('salvarNomeBtn').addEventListener('click', salvarNovoNome);
-    document.getElementById('apagarCarteiraBtn').addEventListener('click', mostrarConfirmacaoApagar);
-
-    // Delete confirmation modal
-    document.getElementById('cancelarApagarBtn').addEventListener('click', esconderConfirmacaoApagar);
-    document.getElementById('confirmarApagarBtn').addEventListener('click', apagarCarteira);
-
-    // Tab switching
-    document.getElementById('tabVisaoGeral').addEventListener('click', function () {
-      document.getElementById('tabVisaoGeral').classList.add('text-primary-400', 'border-b-2', 'border-primary-400');
-      document.getElementById('tabVisaoGeral').classList.remove('text-gray-400');
-      document.getElementById('tabAtivos').classList.add('text-gray-400');
-      document.getElementById('tabAtivos').classList.remove('text-primary-400', 'border-b-2', 'border-primary-400');
-
-      document.getElementById('conteudoVisaoGeral').classList.remove('hidden');
-      document.getElementById('conteudoAtivos').classList.add('hidden');
-    });
-
-    document.getElementById('tabAtivos').addEventListener('click', function () {
-      document.getElementById('tabAtivos').classList.add('text-primary-400', 'border-b-2', 'border-primary-400');
-      document.getElementById('tabAtivos').classList.remove('text-gray-400');
-      document.getElementById('tabVisaoGeral').classList.add('text-gray-400');
-      document.getElementById('tabVisaoGeral').classList.remove('text-primary-400', 'border-b-2', 'border-primary-400');
-
-      document.getElementById('conteudoAtivos').classList.remove('hidden');
-      document.getElementById('conteudoVisaoGeral').classList.add('hidden');
-    });
-
-    // Close modals when clicking outside
-    document.getElementById('novaCarteiraModal').addEventListener('click', function (e) {
-      if (e.target === this) fecharModal();
-    });
-
-    document.getElementById('detalhesCarteiraModal').addEventListener('click', function (e) {
-      if (e.target === this) fecharModalDetalhes();
-    });
-
-    document.getElementById('confirmarApagarModal').addEventListener('click', function (e) {
-      if (e.target === this) esconderConfirmacaoApagar();
-    });
+          showToast("Carteira criada com sucesso!", "success");
+          fecharModal();
+          await refreshPortfolioData();
+        } catch (error) {
+          console.error(error);
+          showToast("Erro ao criar carteira.", "error");
+        }
+      });
+    }
   });
 </script>

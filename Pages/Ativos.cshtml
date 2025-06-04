@@ -547,6 +547,9 @@
             await atualizarResumoAtivos();
             console.log('Atualização do resumo concluída');
 
+            // Check if we need to show specific ativo details from navigation
+            verificarNavegacaoParaAtivo();
+
         } catch (error) {
             console.error('Erro ao carregar dados:', error);
             mostrarErro();
@@ -1292,6 +1295,50 @@
         const modal = document.getElementById('detalhesAtivoModal');
         modal.classList.add('hidden');
         modal.classList.remove('flex');
+    }
+
+    /**
+     * Verifica se há uma navegação pendente da página de carteiras
+     * e automaticamente abre os detalhes do ativo solicitado
+     */
+    function verificarNavegacaoParaAtivo() {
+        try {
+            // Verificar se há dados de navegação no sessionStorage
+            const navegacaoData = sessionStorage.getItem('navegarParaAtivo');
+            
+            if (navegacaoData) {
+                console.log('Navegação detectada da página de carteiras');
+                
+                const ativoData = JSON.parse(navegacaoData);
+                const ativoId = ativoData.id;
+                
+                console.log('Tentando mostrar detalhes do ativo:', ativoId);
+                
+                // Limpar o sessionStorage para não repetir a ação
+                sessionStorage.removeItem('navegarParaAtivo');
+                
+                // Aguardar um pouco para garantir que a página foi totalmente carregada
+                setTimeout(() => {
+                    // Verificar se o ativo existe na lista carregada
+                    const ativo = ativos.find(a => a.id === ativoId);
+                    
+                    if (ativo) {
+                        console.log('Ativo encontrado, abrindo modal de detalhes');
+                        verDetalhesAtivo(ativoId);
+                        
+                        // Mostrar toast de confirmação
+                        showToast(`Exibindo detalhes do ativo "${ativo.nome}"`, 'success');
+                    } else {
+                        console.warn('Ativo não encontrado na lista:', ativoId);
+                        showToast('Ativo não encontrado', 'error');
+                    }
+                }, 500);
+            }
+        } catch (error) {
+            console.error('Erro ao verificar navegação para ativo:', error);
+            // Limpar sessionStorage em caso de erro
+            sessionStorage.removeItem('navegarParaAtivo');
+        }
     }
 
     // Variáveis para operações com ativos
