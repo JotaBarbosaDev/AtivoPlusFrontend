@@ -30,7 +30,7 @@
             <div class="text-center">
                 <h1
                     class="text-6xl font-black bg-gradient-to-r from-blue-300 via-indigo-300 to-cyan-300 bg-clip-text text-transparent mb-4 tracking-tight">
-                    💎 Dashboard Geral
+                    💎 AtivoPlus
                 </h1>
                 <p class="text-gray-200 text-xl font-medium mb-4">Visão completa dos seus investimentos e performance em
                     tempo real</p>
@@ -263,145 +263,145 @@
         document.addEventListener('DOMContentLoaded', function () {
             const style = document.createElement('style');
             style.textContent = `
-                                    .dark-glass-card {
-                                        background: rgba(3, 7, 18, 0.4);
-                                        backdrop-filter: blur(25px);
-                                        border: 1px solid rgba(255, 255, 255, 0.03);
-                                        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-                                    }
+                                        .dark-glass-card {
+                                            background: rgba(3, 7, 18, 0.4);
+                                            backdrop-filter: blur(25px);
+                                            border: 1px solid rgba(255, 255, 255, 0.03);
+                                            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+                                        }
                 
-                                    .dark-glass-card:hover {
-                                        background: rgba(3, 7, 18, 0.6);
-                                        border: 1px solid rgba(255, 255, 255, 0.08);
-                                        box-shadow: 0 35px 70px -12px rgba(0, 0, 0, 0.9);
-                                        transform: translateY(-8px);
-                                    }
+                                        .dark-glass-card:hover {
+                                            background: rgba(3, 7, 18, 0.6);
+                                            border: 1px solid rgba(255, 255, 255, 0.08);
+                                            box-shadow: 0 35px 70px -12px rgba(0, 0, 0, 0.9);
+                                            transform: translateY(-8px);
+                                        }
 
-                                    .glass-card {
-                                        background: rgba(3, 7, 18, 0.25);
-                                        backdrop-filter: blur(20px);
-                                        border: 1px solid rgba(255, 255, 255, 0.02);
-                                        box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.7);
-                                    }
+                                        .glass-card {
+                                            background: rgba(3, 7, 18, 0.25);
+                                            backdrop-filter: blur(20px);
+                                            border: 1px solid rgba(255, 255, 255, 0.02);
+                                            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.7);
+                                        }
                 
-                                    .glass-card:hover {
-                                        background: rgba(3, 7, 18, 0.4);
-                                        border: 1px solid rgba(255, 255, 255, 0.06);
-                                        transform: translateY(-4px);
-                                        box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.8);
-                                    }
+                                        .glass-card:hover {
+                                            background: rgba(3, 7, 18, 0.4);
+                                            border: 1px solid rgba(255, 255, 255, 0.06);
+                                            transform: translateY(-4px);
+                                            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.8);
+                                        }
                 
-                                    /* Loading animations */
-                                    .loading-indicator {
-                                        opacity: 0.7;
-                                        animation: pulse 2s infinite;
-                                    }
+                                        /* Loading animations */
+                                        .loading-indicator {
+                                            opacity: 0.7;
+                                            animation: pulse 2s infinite;
+                                        }
                 
-                                    @@keyframes pulse {
-                                        0%, 100% { opacity: 0.7; }
-                                        50% { opacity: 1; }
-                                    }
+                                        @@keyframes pulse {
+                                            0%, 100% { opacity: 0.7; }
+                                            50% { opacity: 1; }
+                                        }
                 
-                                    /* Gradient text animation */
-                                    .bg-gradient-to-r {
-                                        background-size: 200% 200%;
-                                        animation: gradient 3s ease infinite;
-                                    }
+                                        /* Gradient text animation */
+                                        .bg-gradient-to-r {
+                                            background-size: 200% 200%;
+                                            animation: gradient 3s ease infinite;
+                                        }
                 
-                                    @@keyframes gradient {
-                                        0% { background-position: 0% 50%; }
-                                        50% { background-position: 100% 50%; }
-                                        100% { background-position: 0% 50%; }
-                                    }
+                                        @@keyframes gradient {
+                                            0% { background-position: 0% 50%; }
+                                            50% { background-position: 100% 50%; }
+                                            100% { background-position: 0% 50%; }
+                                        }
 
-                                    /* Floating particles effect */
-                                    @@keyframes float {
-                                        0%, 100% { transform: translateY(0px); }
-                                        50% { transform: translateY(-20px); }
-                                    }
+                                        /* Floating particles effect */
+                                        @@keyframes float {
+                                            0%, 100% { transform: translateY(0px); }
+                                            50% { transform: translateY(-20px); }
+                                        }
 
-                                    .floating-particle {
-                                        animation: float 6s ease-in-out infinite;
-                                    }
+                                        .floating-particle {
+                                            animation: float 6s ease-in-out infinite;
+                                        }
                 
-                                    /* Auto-refresh indicator */
-                                    .refresh-indicator {
-                                        position: fixed;
-                                        top: 120px;
-                                        right: 20px;
-                                        background: linear-gradient(135deg, #10b981, #059669);
-                                        color: white;
-                                        padding: 12px 20px;
-                                        border-radius: 25px;
-                                        font-size: 14px;
-                                        font-weight: 600;
-                                        z-index: 1000;
-                                        transform: translateX(120%);
-                                        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                                        box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
-                                    }
+                                        /* Auto-refresh indicator */
+                                        .refresh-indicator {
+                                            position: fixed;
+                                            top: 120px;
+                                            right: 20px;
+                                            background: linear-gradient(135deg, #10b981, #059669);
+                                            color: white;
+                                            padding: 12px 20px;
+                                            border-radius: 25px;
+                                            font-size: 14px;
+                                            font-weight: 600;
+                                            z-index: 1000;
+                                            transform: translateX(120%);
+                                            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                                            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+                                        }
                 
-                                    .refresh-indicator.show {
-                                        transform: translateX(0);
-                                    }
+                                        .refresh-indicator.show {
+                                            transform: translateX(0);
+                                        }
 
-                                    /* Enhanced glowing effects */
-                                    .glow-emerald {
-                                        box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
-                                    }
+                                        /* Enhanced glowing effects */
+                                        .glow-emerald {
+                                            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+                                        }
 
-                                    .glow-blue {
-                                        box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-                                    }
+                                        .glow-blue {
+                                            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+                                        }
 
-                                    .glow-blue2 {
-                                        box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-                                    }
+                                        .glow-blue2 {
+                                            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+                                        }
 
-                                    .glow-orange {
-                                        box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
-                                    }
+                                        .glow-orange {
+                                            box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
+                                        }
 
-                                    /* Neon card effects */
-                                    .neon-emerald {
-                                        box-shadow: 
-                                            0 0 5px rgba(16, 185, 129, 0.4),
-                                            0 0 25px rgba(16, 185, 129, 0.2),
-                                            0 0 50px rgba(16, 185, 129, 0.1);
-                                    }
+                                        /* Neon card effects */
+                                        .neon-emerald {
+                                            box-shadow: 
+                                                0 0 5px rgba(16, 185, 129, 0.4),
+                                                0 0 25px rgba(16, 185, 129, 0.2),
+                                                0 0 50px rgba(16, 185, 129, 0.1);
+                                        }
 
-                                    .neon-blue {
-                                        box-shadow: 
-                                            0 0 5px rgba(59, 130, 246, 0.4),
-                                            0 0 25px rgba(59, 130, 246, 0.2),
-                                            0 0 50px rgba(59, 130, 246, 0.1);
-                                    }
+                                        .neon-blue {
+                                            box-shadow: 
+                                                0 0 5px rgba(59, 130, 246, 0.4),
+                                                0 0 25px rgba(59, 130, 246, 0.2),
+                                                0 0 50px rgba(59, 130, 246, 0.1);
+                                        }
 
-                                    .neon-indigo {
-                                        box-shadow: 
-                                            0 0 5px rgba(99, 102, 241, 0.4),
-                                            0 0 25px rgba(99, 102, 241, 0.2),
-                                            0 0 50px rgba(99, 102, 241, 0.1);
-                                    }
+                                        .neon-indigo {
+                                            box-shadow: 
+                                                0 0 5px rgba(99, 102, 241, 0.4),
+                                                0 0 25px rgba(99, 102, 241, 0.2),
+                                                0 0 50px rgba(99, 102, 241, 0.1);
+                                        }
 
-                                    .neon-orange {
-                                        box-shadow: 
-                                            0 0 5px rgba(249, 115, 22, 0.4),
-                                            0 0 25px rgba(249, 115, 22, 0.2),
-                                            0 0 50px rgba(249, 115, 22, 0.1);
-                                    }
+                                        .neon-orange {
+                                            box-shadow: 
+                                                0 0 5px rgba(249, 115, 22, 0.4),
+                                                0 0 25px rgba(249, 115, 22, 0.2),
+                                                0 0 50px rgba(249, 115, 22, 0.1);
+                                        }
 
-                                    /* Enhanced dark glass cards with neon effects */
-                                    .dark-glass-card:hover .neon-emerald,
-                                    .dark-glass-card:hover .neon-blue,
-                                    .dark-glass-card:hover .neon-indigo,
-                                    .dark-glass-card:hover .neon-orange {
-                                        box-shadow: 
-                                            0 0 10px rgba(var(--glow-color), 0.6),
-                                            0 0 40px rgba(var(--glow-color), 0.4),
-                                            0 0 80px rgba(var(--glow-color), 0.2);
-                                    }
-                                `;
+                                        /* Enhanced dark glass cards with neon effects */
+                                        .dark-glass-card:hover .neon-emerald,
+                                        .dark-glass-card:hover .neon-blue,
+                                        .dark-glass-card:hover .neon-indigo,
+                                        .dark-glass-card:hover .neon-orange {
+                                            box-shadow: 
+                                                0 0 10px rgba(var(--glow-color), 0.6),
+                                                0 0 40px rgba(var(--glow-color), 0.4),
+                                                0 0 80px rgba(var(--glow-color), 0.2);
+                                        }
+                                    `;
             document.head.appendChild(style);
 
             // Initialize dashboard with debugging
