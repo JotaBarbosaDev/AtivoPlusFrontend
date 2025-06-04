@@ -723,7 +723,7 @@
     }
 
     /**
-     * Render candlestick chart with ApexCharts
+     * Render candlestick chart with ApexCharts including volume
      */
     function renderCandlestickChart(candleData) {
         // Hide loading state, show chart
@@ -746,6 +746,12 @@
             ]
         })).sort((a, b) => a.x - b.x);  // Sort by date ascending
 
+        // Format volume data
+        const volumeData = candleData.map(candle => ({
+            x: new Date(candle.dateTime),
+            y: candle.volume || 0
+        })).sort((a, b) => a.x - b.x);
+
         // Calculate percentage changes for colors
         const seriesData = formattedData.map((data, index, array) => {
             // Start with default candle color
@@ -757,18 +763,27 @@
         const minPrice = Math.min(...prices) * 0.995; // 0.5% lower
         const maxPrice = Math.max(...prices) * 1.005; // 0.5% higher
 
+        // Calculate volume range
+        const volumes = candleData.map(candle => candle.volume || 0);
+        const maxVolume = Math.max(...volumes);
+
         // Destroy previous chart if exists
         if (candlestickChart) {
             candlestickChart.destroy();
         }
 
-        // Chart options
+        // Chart options with mixed chart type
         const options = {
             series: [
                 {
                     name: 'Preço',
                     type: 'candlestick',
                     data: seriesData
+                },
+                {
+                    name: 'Volume',
+                    type: 'column',
+                    data: volumeData
                 }
             ],
             chart: {
@@ -806,7 +821,14 @@
                     }
                 },
                 bar: {
-                    columnWidth: '60%'
+                    columnWidth: '40%',  // Reduced from 60% to 40%
+                    colors: {
+                        ranges: [{
+                            from: 0,
+                            to: maxVolume,
+                            color: '#1e3a8a'  // Dark blue for volume bars
+                        }]
+                    }
                 }
             },
             xaxis: {
@@ -829,25 +851,65 @@
                     color: '#1f2937'  // Gray-800
                 }
             },
-            yaxis: {
-                labels: {
-                    style: {
-                        colors: '#9ca3af'  // Gray-400
+            yaxis: [
+                {
+                    seriesName: 'Preço',
+                    labels: {
+                        style: {
+                            colors: '#9ca3af'  // Gray-400
+                        },
+                        formatter: (value) => {
+                            return value.toFixed(2);
+                        }
                     },
-                    formatter: (value) => {
-                        return value.toFixed(2);
+                    min: minPrice,
+                    max: maxPrice,
+                    tickAmount: 6,
+                    axisBorder: {
+                        color: '#1f2937'  // Gray-800
+                    },
+                    axisTicks: {
+                        color: '#1f2937'  // Gray-800
+                    },
+                    title: {
+                        text: 'Preço',
+                        style: {
+                            color: '#9ca3af'
+                        }
                     }
                 },
-                min: minPrice,
-                max: maxPrice,
-                tickAmount: 6,
-                axisBorder: {
-                    color: '#1f2937'  // Gray-800
-                },
-                axisTicks: {
-                    color: '#1f2937'  // Gray-800
+                {
+                    seriesName: 'Volume',
+                    opposite: true,
+                    labels: {
+                        style: {
+                            colors: '#9ca3af'  // Gray-400
+                        },
+                        formatter: (value) => {
+                            if (value >= 1000000) {
+                                return `${(value / 1000000).toFixed(1)}M`;
+                            } else if (value >= 1000) {
+                                return `${(value / 1000).toFixed(1)}K`;
+                            }
+                            return value.toFixed(0);
+                        }
+                    },
+                    min: 0,
+                    max: maxVolume * 3, // Increased from 1.2 to 3 to make bars smaller
+                    axisBorder: {
+                        color: '#1f2937'  // Gray-800
+                    },
+                    axisTicks: {
+                        color: '#1f2937'  // Gray-800
+                    },
+                    title: {
+                        text: 'Volume',
+                        style: {
+                            color: '#9ca3af'
+                        }
+                    }
                 }
-            },
+            ],
             grid: {
                 show: true,
                 borderColor: '#1f2937',  // Gray-800
@@ -881,17 +943,23 @@
                     format: 'dd MMM yyyy'
                 },
                 y: {
-                    formatter: (value) => {
-                        if (Array.isArray(value)) {
-                            return `Open: ${value[0].toFixed(2)}<br>
-                                High: ${value[1].toFixed(2)}<br>
-                                Low: ${value[2].toFixed(2)}<br>
-                                Close: ${value[3].toFixed(2)}`
+                    formatter: (value, { seriesIndex }) => {
+                        if (seriesIndex === 0) { // Candlestick data
+                            if (Array.isArray(value)) {
+                                return `Open: ${value[0].toFixed(2)}<br>
+                                    High: ${value[1].toFixed(2)}<br>
+                                    Low: ${value[2].toFixed(2)}<br>
+                                    Close: ${value[3].toFixed(2)}`
+                            }
+                            return value.toFixed(2);
+                        } else { // Volume data
+                            if (value >= 1000000) {
+                                return `${(value / 1000000).toFixed(2)}M`;
+                            } else if (value >= 1000) {
+                                return `${(value / 1000).toFixed(2)}K`;
+                            }
+                            return value.toFixed(0);
                         }
-                        if (value > 1000000) {
-                            return `${(value / 1000000).toFixed(2)}M`;
-                        }
-                        return value.toFixed(2);
                     }
                 }
             },
@@ -909,11 +977,15 @@
                 {
                     breakpoint: 1000,
                     options: {
-                        yaxis: {
+                        yaxis: [{
                             labels: {
                                 show: true
                             }
-                        }
+                        }, {
+                            labels: {
+                                show: true
+                            }
+                        }]
                     }
                 }
             ],
@@ -1278,3 +1350,6 @@
 
 <!-- Add ApexCharts -->
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+
+
