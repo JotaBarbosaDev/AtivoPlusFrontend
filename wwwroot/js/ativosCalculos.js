@@ -45,7 +45,7 @@ async function calcularPorcentagemLucroDeposito(deposito) {
 }
 
 /**
- * Calculate direct profit value for deposit investments using API
+ * Calculate direct profit value for deposit investments using API with caching
  * @param {Object} deposito - The deposit data
  * @returns {Promise<number>} - The calculated profit value
  */
@@ -53,6 +53,11 @@ async function calcularLucroDeposito(deposito) {
     try {
         if (!deposito || !deposito.id) {
             return 0;
+        }
+
+        // Check cache first
+        if (profitCache.isValid() && profitCache.depositos.has(deposito.id)) {
+            return profitCache.depositos.get(deposito.id);
         }
 
         const response = await fetch(`/api/depositoprazo/getLucroById?depositoPrazoId=${deposito.id}`);
@@ -71,8 +76,13 @@ async function calcularLucroDeposito(deposito) {
         }
 
         const profitValue = data.lucro || 0;
-        console.log(`Lucro direto do depósito ${deposito.id}: ${profitValue}`);
-        return Math.round(profitValue * 100) / 100;
+        const roundedProfit = Math.round(profitValue * 100) / 100;
+
+        // Cache the result
+        profitCache.depositos.set(deposito.id, roundedProfit);
+        profitCache.update();
+
+        return roundedProfit;
 
     } catch (error) {
         console.error('Erro ao calcular lucro direto do depósito:', error);
@@ -135,7 +145,7 @@ async function calcularPorcentagemLucroFundoInvestimento(fundo) {
 }
 
 /**
- * Calculate direct profit value for investment funds using API
+ * Calculate direct profit value for investment funds using API with caching
  * @param {Object} fundo - The fund data
  * @returns {Promise<number>} - The calculated direct profit value    
  * @throws {Error} - Throws error with message "Nao temos acesso com a api gratis symbol" when API access is not available
@@ -146,14 +156,25 @@ async function calcularLucroFundoInvestimento(fundo) {
             return 0;
         }
 
+        // Check cache first
+        if (profitCache.isValid() && profitCache.fundos.has(fundo.id)) {
+            const cachedResult = profitCache.fundos.get(fundo.id);
+            if (cachedResult.error) {
+                throw new Error(cachedResult.error);
+            }
+            return cachedResult.value;
+        }
+
         const response = await fetch(`/api/fundoinvestimento/getLucroById?fundoInvestimentoId=${fundo.id}`);
 
         if (!response.ok) {
             const data = await response.text();
             if (data.includes("Nao temos acesso com a api gratis symbol")) {
-                const symbol = fundo.symbol || fundo.simbolo || 'unknown';
-                console.error(`Nao temos acesso com a api gratis symbol ${symbol}`);
-                throw new Error("Nao temos acesso com a api gratis symbol");
+                const error = "Nao temos acesso com a api gratis symbol";
+                // Cache the error
+                profitCache.fundos.set(fundo.id, { error, value: 0 });
+                profitCache.update();
+                throw new Error(error);
             }
             console.error('Erro na API de lucro do fundo:', response.status);
             return 0;
@@ -163,9 +184,11 @@ async function calcularLucroFundoInvestimento(fundo) {
 
         // Check if response contains error message
         if (typeof data === 'string' && data.includes("Nao temos acesso com a api gratis symbol")) {
-            const symbol = fundo.symbol || fundo.simbolo || 'unknown';
-            console.error(`Nao temos acesso com a api gratis symbol ${symbol}`);
-            throw new Error("Nao temos acesso com a api gratis symbol");
+            const error = "Nao temos acesso com a api gratis symbol";
+            // Cache the error
+            profitCache.fundos.set(fundo.id, { error, value: 0 });
+            profitCache.update();
+            throw new Error(error);
         }
         if (typeof data === 'string' || data.error) {
             console.error('Erro na resposta da API:', data);
@@ -173,8 +196,13 @@ async function calcularLucroFundoInvestimento(fundo) {
         }
 
         const profitValue = data.lucro || 0;
-        console.log(`Lucro direto do fundo ${fundo.id}: ${profitValue}`);
-        return Math.round(profitValue * 100) / 100;
+        const roundedProfit = Math.round(profitValue * 100) / 100;
+
+        // Cache the successful result
+        profitCache.fundos.set(fundo.id, { value: roundedProfit });
+        profitCache.update();
+
+        return roundedProfit;
 
     } catch (error) {
         // Re-throw API access errors
@@ -223,7 +251,7 @@ async function calcularPorcentagemLucroImovel(imovel) {
 }
 
 /**
- * Calculate direct profit value for real estate properties using API
+ * Calculate direct profit value for real estate properties using API with caching
  * @param {Object} imovel - The property data
  * @returns {Promise<number>} - The calculated profit value
  */
@@ -231,6 +259,11 @@ async function calcularLucroImovel(imovel) {
     try {
         if (!imovel || !imovel.id) {
             return 0;
+        }
+
+        // Check cache first
+        if (profitCache.isValid() && profitCache.imoveis.has(imovel.id)) {
+            return profitCache.imoveis.get(imovel.id);
         }
 
         const response = await fetch(`/api/imovelarrendado/getLucroById?imovelArrendadoId=${imovel.id}`);
@@ -249,8 +282,13 @@ async function calcularLucroImovel(imovel) {
         }
 
         const profitValue = data.lucro || 0;
-        console.log(`Lucro direto do imóvel ${imovel.id}: ${profitValue}`);
-        return Math.round(profitValue * 100) / 100;
+        const roundedProfit = Math.round(profitValue * 100) / 100;
+
+        // Cache the result
+        profitCache.imoveis.set(imovel.id, roundedProfit);
+        profitCache.update();
+
+        return roundedProfit;
 
     } catch (error) {
         console.error('Erro ao calcular lucro direto do imóvel:', error);
@@ -267,6 +305,29 @@ window.allAssetData = {
     imoveis: [],
     ativos: [],
     carteiras: []
+};
+
+/**
+ * Cache for profit calculations to avoid repeated API calls
+ */
+const profitCache = {
+    depositos: new Map(),
+    fundos: new Map(),
+    imoveis: new Map(),
+    lastUpdated: null,
+    isValid: function () {
+        // Cache is valid for 5 minutes
+        return this.lastUpdated && (Date.now() - this.lastUpdated) < 300000;
+    },
+    clear: function () {
+        this.depositos.clear();
+        this.fundos.clear();
+        this.imoveis.clear();
+        this.lastUpdated = null;
+    },
+    update: function () {
+        this.lastUpdated = Date.now();
+    }
 };
 
 /**

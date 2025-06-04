@@ -212,7 +212,7 @@
     <!-- Market Sections -->
     @{
         RenderMarketSection("Stocks", 
-            "<svg class='w-8 h-8 text-white' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'/></svg>",
+            "<svg class='w-8 h-8 text-white' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'/></svg>",
             "Ações de empresas cotadas em bolsa");
         
         RenderMarketSection("ETFs", 
@@ -224,6 +224,64 @@
             "Criptomoedas e ativos digitais");
     }
 
+  </div>
+</div>
+
+<!-- Candlestick Chart Modal -->
+<div id="candlestickModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-50 hidden">
+  <div class="bg-gray-900/95 backdrop-blur-xl border border-gray-800 rounded-2xl p-6 shadow-2xl w-full max-w-6xl mx-4 max-h-[90vh] transform transition-all duration-300 flex flex-col">
+    <div class="flex justify-between items-center mb-6">
+      <div>
+        <h2 id="chartTitle" class="text-2xl font-bold text-white">Gráfico de Candles</h2>
+        <p id="chartSubtitle" class="text-gray-400">Visualize os dados históricos do ativo</p>
+      </div>
+      <div class="flex flex-col items-end gap-3">
+        <button id="fecharCandlestickModal" class="text-gray-400 hover:text-white transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        <div class="flex items-center gap-4">
+          <!-- Interval Selector -->
+          <div class="flex items-center rounded-lg bg-gray-800 p-1">
+            <button id="interval1d" class="px-3 py-1.5 rounded-md text-sm font-medium text-white bg-primary-600 transition-colors">1D</button>
+            <button id="interval1w" class="px-3 py-1.5 rounded-md text-sm font-medium text-white transition-colors">1S</button>
+          </div>
+          
+          <!-- Period Selector -->
+          <div class="flex items-center rounded-lg bg-gray-800 p-1">
+            <button id="period30" class="px-3 py-1.5 rounded-md text-sm font-medium text-white bg-primary-600 transition-colors">30D</button>
+            <button id="period60" class="px-3 py-1.5 rounded-md text-sm font-medium text-white transition-colors">60D</button>
+            <button id="period90" class="px-3 py-1.5 rounded-md text-sm font-medium text-white transition-colors">90D</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart Container -->
+    <div class="flex-1 bg-gray-800/50 rounded-xl relative min-h-[400px] overflow-hidden">
+      <div id="chartLoadingState" class="absolute inset-0 flex items-center justify-center">
+        <div class="text-center">
+          <div class="w-16 h-16 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mb-4">
+          </div>
+          <p class="text-gray-400">Carregando dados do gráfico...</p>
+        </div>
+      </div>
+      <div id="chartErrorState" class="absolute inset-0 items-center justify-center hidden">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-4">
+            <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <p class="text-red-400 font-semibold mb-2">Erro ao carregar gráfico</p>
+          <p class="text-gray-400 text-center max-w-md">Não foi possível carregar os dados do gráfico para este
+            símbolo.</p>
+        </div>
+      </div>
+      <div id="candlestickChart" class="w-full h-full hidden"></div>
+    </div>
   </div>
 </div>
 
@@ -502,6 +560,14 @@ function displayMarketSymbolSearchResults(results) {
 }
 
 /**
+ * Current selected symbol data
+ */
+let currentSymbolData = null;
+let currentChartInterval = '1day';
+let currentPeriod = 30; // Default to 30 days
+let candlestickChart = null;
+
+/**
  * Select a symbol from search results
  */
 function selectMarketSymbol(symbolData) {
@@ -511,15 +577,467 @@ function selectMarketSymbol(symbolData) {
         marketSymbolInput.value = `${symbolData.symbol} - ${symbolData.instrument_name || symbolData.symbol}`;
     }
 
+    // Store the selected symbol data
+    currentSymbolData = symbolData;
+
     // Hide search results
     hideMarketSymbolSearchResults();
 
-    // Here you can add additional functionality like:
-    // - Display detailed information about the selected symbol
-    // - Add to watchlist
-    // - Show price chart
-    console.log('Selected market symbol:', symbolData);
+    // Show candlestick chart modal for this symbol
+    openCandlestickModal(symbolData);
 }
+
+/**
+ * Open candlestick chart modal
+ */
+function openCandlestickModal(symbolData) {
+    if (!symbolData) return;
+
+    console.log('Opening modal for symbol:', symbolData.symbol);
+    
+    // Store the selected symbol data
+    currentSymbolData = symbolData;
+    
+    const modal = document.getElementById('candlestickModal');
+    const chartTitle = document.getElementById('chartTitle');
+    const chartSubtitle = document.getElementById('chartSubtitle');
+    
+    if (!modal) return;
+    
+    // Set chart title and subtitle
+    if (chartTitle) {
+        chartTitle.textContent = symbolData.instrument_name || symbolData.symbol;
+    }
+    
+    if (chartSubtitle) {
+        chartSubtitle.textContent = `${symbolData.symbol} • ${symbolData.exchange || 'Exchange N/A'}`;
+    }
+    
+    // Show modal
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    
+    // Load candlestick chart data
+    console.log('Loading chart with interval:', currentChartInterval);
+    loadCandlestickChart(symbolData.symbol, currentChartInterval);
+    
+    // Set up close modal button
+    const closeButton = document.getElementById('fecharCandlestickModal');
+    if (closeButton) {
+        closeButton.addEventListener('click', closeCandlestickModal);
+    }
+    
+    // Set up interval buttons
+    setupIntervalButtons();
+    
+    // Ensure proper modal sizing after a brief delay
+    setTimeout(() => {
+        if (candlestickChart) {
+            candlestickChart.updateOptions({}, false, true);
+        }
+    }, 200);
+}
+
+/**
+ * Setup interval buttons for chart
+ */
+function setupIntervalButtons() {
+    console.log('Setting up interval buttons...');
+    
+    const intervals = [
+        { id: 'interval1d', value: '1day' },
+        { id: 'interval1w', value: '1week' }
+    ];
+    
+    intervals.forEach(interval => {
+        const button = document.getElementById(interval.id);
+        if (button) {
+            console.log('Setting up button:', interval.id, 'with value:', interval.value);
+            
+            // Remove all existing event listeners by cloning the node
+            const newButton = button.cloneNode(true);
+            button.parentNode.replaceChild(newButton, button);
+            
+            // Add new event listener
+            newButton.addEventListener('click', () => {
+                console.log('Button clicked:', interval.id, 'switching to interval:', interval.value);
+                
+                // Update active button styling
+                intervals.forEach(i => {
+                    const btn = document.getElementById(i.id);
+                    if (btn) {
+                        if (i.id === interval.id) {
+                            btn.classList.add('bg-primary-600');
+                        } else {
+                            btn.classList.remove('bg-primary-600');
+                        }
+                    }
+                });
+                
+                // Update chart with new interval
+                currentChartInterval = interval.value;
+                console.log('Interval changed to:', currentChartInterval, 'for symbol:', currentSymbolData?.symbol);
+                if (currentSymbolData) {
+                    // Make sure to pass the new interval to the API request
+                    loadCandlestickChart(currentSymbolData.symbol, interval.value);
+                }
+            });
+        } else {
+            console.warn('Button not found:', interval.id);
+        }
+    });
+    
+    // Set up period buttons
+    console.log('Setting up period buttons...');
+    const periods = [
+        { id: 'period30', days: 30 },
+        { id: 'period60', days: 60 },
+        { id: 'period90', days: 90 }
+    ];
+    
+    periods.forEach(period => {
+        const button = document.getElementById(period.id);
+        if (button) {
+            console.log('Setting up period button:', period.id, 'with days:', period.days);
+            
+            // Remove all existing event listeners by cloning the node
+            const newButton = button.cloneNode(true);
+            button.parentNode.replaceChild(newButton, button);
+            
+            // Add new event listener
+            newButton.addEventListener('click', () => {
+                console.log('Period button clicked:', period.id, 'switching to:', period.days, 'days');
+                
+                // Update active button styling
+                periods.forEach(p => {
+                    const btn = document.getElementById(p.id);
+                    if (btn) {
+                        if (p.id === period.id) {
+                            btn.classList.add('bg-primary-600');
+                        } else {
+                            btn.classList.remove('bg-primary-600');
+                        }
+                    }
+                });
+                
+                // Update chart with new period
+                currentPeriod = period.days;
+                console.log('Period changed to:', currentPeriod, 'days for symbol:', currentSymbolData?.symbol);
+                if (currentSymbolData) {
+                    loadCandlestickChart(currentSymbolData.symbol, currentChartInterval);
+                }
+            });
+        } else {
+            console.warn('Period button not found:', period.id);
+        }
+    });
+}
+
+/**
+ * Close candlestick chart modal
+ */
+function closeCandlestickModal() {
+    const modal = document.getElementById('candlestickModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+    
+    // Destroy chart instance to prevent memory leaks
+    if (candlestickChart) {
+        candlestickChart.destroy();
+        candlestickChart = null;
+    }
+}
+
+/**
+ * Load candlestick chart data
+ */
+async function loadCandlestickChart(symbol, interval = '1day') {
+    console.log('loadCandlestickChart called with symbol:', symbol, 'interval:', interval, 'currentPeriod:', currentPeriod);
+    
+    // Store the current interval in the global variable
+    currentChartInterval = interval;
+    
+    // Show loading state
+    const chartLoadingState = document.getElementById('chartLoadingState');
+    const chartErrorState = document.getElementById('chartErrorState');
+    const chartContainer = document.getElementById('candlestickChart');
+    
+    if (chartLoadingState) chartLoadingState.classList.remove('hidden');
+    if (chartErrorState) chartErrorState.classList.add('hidden');
+    if (chartContainer) chartContainer.classList.add('hidden');
+    
+    try {
+        // Get current date for API
+        const currentDate = new Date();
+        const daysAgo = new Date();
+        daysAgo.setDate(currentDate.getDate() - currentPeriod); // Use currentPeriod (30/60/90 days)
+        const formattedDate = daysAgo.toISOString().split('T')[0];
+        
+        // Encode symbol for URL
+        const encodedSymbol = encodeURIComponent(symbol);
+        
+        // Call API to get candle data
+        const apiUrl = `/api/candle/time/${formattedDate}/${encodedSymbol}/${interval}`;
+        console.log('Request URL:', apiUrl);
+        console.log('Using interval:', interval, 'currentChartInterval:', currentChartInterval);
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch candle data: ${response.status}`);
+        }
+        
+        const candleData = await response.json();
+        
+        if (!candleData || candleData.length === 0) {
+            throw new Error('No candle data available');
+        }
+        
+        // Render chart
+        renderCandlestickChart(candleData);
+        
+    } catch (error) {
+        console.error('Error loading candlestick data:', error);
+        
+        // Show error state
+        if (chartLoadingState) chartLoadingState.classList.add('hidden');
+        if (chartErrorState) chartErrorState.classList.remove('hidden');
+        if (chartContainer) chartContainer.classList.add('hidden');
+    }
+}
+
+/**
+ * Render candlestick chart with ApexCharts
+ */
+function renderCandlestickChart(candleData) {
+    // Hide loading state, show chart
+    const chartLoadingState = document.getElementById('chartLoadingState');
+    const chartErrorState = document.getElementById('chartErrorState');
+    const chartContainer = document.getElementById('candlestickChart');
+    
+    if (chartLoadingState) chartLoadingState.classList.add('hidden');
+    if (chartErrorState) chartErrorState.classList.add('hidden');
+    if (chartContainer) chartContainer.classList.remove('hidden');
+    
+    // Format data for ApexCharts
+    const formattedData = candleData.map(candle => ({
+        x: new Date(candle.dateTime),
+        y: [
+            candle.open,
+            candle.high,
+            candle.low,
+            candle.close
+        ]
+    })).sort((a, b) => a.x - b.x);  // Sort by date ascending
+    
+    // Calculate percentage changes for colors
+    const seriesData = formattedData.map((data, index, array) => {
+        // Start with default candle color
+        return data;
+    });
+    
+    // Calculate min and max values for y-axis scale
+    const prices = candleData.flatMap(candle => [candle.high, candle.low]);
+    const minPrice = Math.min(...prices) * 0.995; // 0.5% lower
+    const maxPrice = Math.max(...prices) * 1.005; // 0.5% higher
+    
+    // Destroy previous chart if exists
+    if (candlestickChart) {
+        candlestickChart.destroy();
+    }
+    
+    // Chart options
+    const options = {
+        series: [
+            {
+                name: 'Preço',
+                type: 'candlestick',
+                data: seriesData
+            }
+        ],
+        chart: {
+            type: 'candlestick',
+            height: '100%',
+            width: '100%',
+            toolbar: {
+                show: true,
+                tools: {
+                    download: true,
+                    selection: true,
+                    zoom: true,
+                    zoomin: true,
+                    zoomout: true,
+                    pan: true,
+                    reset: true
+                }
+            },
+            background: 'transparent',
+            animations: {
+                enabled: false
+            },
+            parentHeightOffset: 0,
+            offsetX: 0,
+            offsetY: 0
+        },
+        plotOptions: {
+            candlestick: {
+                colors: {
+                    upward: '#22c55e',  // Green
+                    downward: '#ef4444'  // Red
+                },
+                wick: {
+                    useFillColor: true
+                }
+            },
+            bar: {
+                columnWidth: '60%'
+            }
+        },
+        xaxis: {
+            type: 'datetime',
+            labels: {
+                style: {
+                    colors: '#9ca3af'  // Gray-400
+                },
+                datetimeFormatter: {
+                    year: 'yyyy',
+                    month: 'MMM \'yy',
+                    day: 'dd MMM',
+                    hour: 'HH:mm'
+                }
+            },
+            axisBorder: {
+                color: '#1f2937'  // Gray-800
+            },
+            axisTicks: {
+                color: '#1f2937'  // Gray-800
+            }
+        },
+        yaxis: {
+            labels: {
+                style: {
+                    colors: '#9ca3af'  // Gray-400
+                },
+                formatter: (value) => {
+                    return value.toFixed(2);
+                }
+            },
+            min: minPrice,
+            max: maxPrice,
+            tickAmount: 6,
+            axisBorder: {
+                color: '#1f2937'  // Gray-800
+            },
+            axisTicks: {
+                color: '#1f2937'  // Gray-800
+            }
+        },
+        grid: {
+            show: true,
+            borderColor: '#1f2937',  // Gray-800
+            strokeDashArray: 2,
+            position: 'back',
+            xaxis: {
+                lines: {
+                    show: false
+                }
+            },
+            yaxis: {
+                lines: {
+                    show: true
+                }
+            },
+            padding: {
+                top: 10,
+                right: 10,
+                bottom: 10,
+                left: 10
+            }
+        },
+        tooltip: {
+            enabled: true,
+            theme: 'dark',
+            style: {
+                fontSize: '12px',
+                fontFamily: 'inherit'
+            },
+            x: {
+                format: 'dd MMM yyyy'
+            },
+            y: {
+                formatter: (value) => {
+                    if (Array.isArray(value)) {
+                        return `Open: ${value[0].toFixed(2)}<br>
+                                High: ${value[1].toFixed(2)}<br>
+                                Low: ${value[2].toFixed(2)}<br>
+                                Close: ${value[3].toFixed(2)}`
+                    }
+                    if (value > 1000000) {
+                        return `${(value / 1000000).toFixed(2)}M`;
+                    }
+                    return value.toFixed(2);
+                }
+            }
+        },
+        stroke: {
+            width: [1, 0],
+            curve: 'smooth'
+        },
+        legend: {
+            show: true,
+            labels: {
+                colors: '#d1d5db'  // Gray-300
+            }
+        },
+        responsive: [
+            {
+                breakpoint: 1000,
+                options: {
+                    yaxis: {
+                        labels: {
+                            show: true
+                        }
+                    }
+                }
+            }
+        ],
+        theme: {
+            mode: 'dark',
+            palette: 'palette1'
+        }
+    };
+    
+    // Create and render the chart
+    candlestickChart = new ApexCharts(document.getElementById('candlestickChart'), options);
+    candlestickChart.render().then(() => {
+        // Ensure proper sizing after render
+        setTimeout(() => {
+            if (candlestickChart) {
+                candlestickChart.updateOptions({}, false, true);
+            }
+        }, 100);
+    });
+}
+
+// Initialize modal events when document is ready
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize keyboard events for modal
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeCandlestickModal();
+        }
+    });
+    
+    // Initialize click outside to close
+    const modal = document.getElementById('candlestickModal');
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeCandlestickModal();
+            }
+        });
+    }
+});
 
 /**
  * Show/hide search spinner
@@ -545,3 +1063,6 @@ function hideMarketSymbolSearchResults() {
     }
 }
 </script>
+
+<!-- Add ApexCharts -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>

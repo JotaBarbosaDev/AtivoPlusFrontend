@@ -10,10 +10,18 @@ let carteiraAtualId = null;
 // Initialize the carteira page
 async function initCarteiras() {
     try {
+        console.log('Iniciando carregamento de carteiras e ativos...');
+
+        // Load carteiras and ativos in parallel, but don't render until both are loaded
         await Promise.all([
-            carregarCarteiras(),
+            carregarCarteiras(false), // Pass false to prevent immediate rendering
             carregarAtivos()
         ]);
+
+        console.log('Dados carregados - Carteiras:', carteiras.length, 'Ativos:', ativos.length);
+
+        // Now render carteiras with complete ativo data
+        renderizarCarteiras();
         atualizarResumo();
     } catch (error) {
         console.error('Erro ao inicializar carteiras:', error);
@@ -22,7 +30,7 @@ async function initCarteiras() {
 }
 
 // Load carteiras from API
-async function carregarCarteiras() {
+async function carregarCarteiras(shouldRender = true) {
     try {
         const response = await fetch('/api/carteira/ver?userIdFromCarteira=-1', {
             method: 'GET',
@@ -34,11 +42,19 @@ async function carregarCarteiras() {
         }
 
         carteiras = await response.json();
-        renderizarCarteiras();
+
+        // Only render immediately if shouldRender is true
+        if (shouldRender) {
+            renderizarCarteiras();
+        }
     } catch (error) {
         console.error('Erro ao carregar carteiras:', error);
         carteiras = [];
-        renderizarCarteiras();
+
+        // Only render immediately if shouldRender is true
+        if (shouldRender) {
+            renderizarCarteiras();
+        }
     }
 }
 
@@ -142,6 +158,9 @@ function renderizarCarteiras() {
     const container = document.getElementById('carteirasContainer');
     const emptyState = document.getElementById('emptyState');
 
+    console.log('Renderizando carteiras:', carteiras.length);
+    console.log('Ativos disponíveis:', ativos.length);
+
     if (!carteiras || carteiras.length === 0) {
         container.innerHTML = '';
         emptyState.classList.remove('hidden');
@@ -153,6 +172,8 @@ function renderizarCarteiras() {
     const carteirasHtml = carteiras.map(carteira => {
         const ativosNaCarteira = ativos.filter(ativo => ativo.carteiraId === carteira.id);
         const numAtivos = ativosNaCarteira.length;
+
+        console.log(`Carteira ${carteira.nome}: ${numAtivos} ativos`);
 
         return `
             <div class="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6 hover:border-primary-500/50 transition-all duration-300 card-hover cursor-pointer"

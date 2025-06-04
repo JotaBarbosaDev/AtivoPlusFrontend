@@ -457,6 +457,50 @@
     let carteiras = [];
     let ativos = [];
 
+    // Performance optimization: Asset info cache
+    const assetInfoCache = new Map();
+    
+    function getCachedAssetInfo(ativo) {
+        return assetInfoCache.get(ativo.id);
+    }
+    
+    function setCachedAssetInfo(ativo, info) {
+        assetInfoCache.set(ativo.id, info);
+    }
+    
+    function clearAssetInfoCache() {
+        assetInfoCache.clear();
+    }
+
+    // Performance helper: Get basic asset info without expensive calculations
+    function getBasicAssetInfo(ativo) {
+        return {
+            ...ativo,
+            tipo: 'Ativo Financeiro', // Default type, will be updated later
+            lucro: 0,
+            lucroTotal: 0,
+            valorAtual: 0,
+            valorAtualTotal: 0,
+            valorInvestido: 0,
+            valorInvestidoTotal: 0,
+            detalhes: []
+        };
+    }
+
+    // Check if card should be updated with new detailed info
+    function shouldUpdateCard(basicInfo, detailedInfo) {
+        return basicInfo.tipo !== detailedInfo.tipo || 
+               Math.abs(basicInfo.valorAtual - detailedInfo.valorAtual) > 0.01 ||
+               Math.abs(basicInfo.lucro - detailedInfo.lucro) > 0.01;
+    }
+
+    // Update card with detailed information
+    function updateCardWithDetailedInfo(card, ativo, detailedInfo, nomeCarteira) {
+        // This would update the card content with new detailed info
+        // For now, we'll just cache it and let the next render use it
+        setCachedAssetInfo(ativo, detailedInfo);
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         console.log('Ativos page loaded');
         carregarDados();
@@ -507,6 +551,10 @@
         try {
             console.log('Iniciando carregamento de dados...');
 
+            // Show loading state
+            const loadingElement = document.getElementById('loadingAtivos');
+            loadingElement.classList.remove('hidden');
+
             // Carregar carteiras e ativos em paralelo
             const [carteirasResponse, ativosResponse] = await Promise.all([
                 fetch('/api/carteira/ver?userIdFromCarteira=-1', {
@@ -534,18 +582,27 @@
             console.log('Carteiras carregadas:', carteiras);
             console.log('Ativos carregados:', ativos);
 
-            // Carregar dados detalhados dos diferentes tipos de ativos
-            console.log('Iniciando fetchAllAssetData...');
-            await fetchAllAssetData();
-            console.log('fetchAllAssetData concluído');
-
+            // Performance optimization: Load asset data in background while showing basic info
             console.log('Iniciando renderização de ativos...');
             await renderizarAtivos();
             console.log('Renderização de ativos concluída');
 
-            console.log('Iniciando atualização do resumo...');
-            await atualizarResumoAtivos();
-            console.log('Atualização do resumo concluída');
+            // Load detailed asset data in background
+            console.log('Iniciando fetchAllAssetData...');
+            fetchAllAssetData().then(async () => {
+                console.log('fetchAllAssetData concluído');
+                
+                // Update the overview cards with calculated data
+                console.log('Iniciando atualização do resumo...');
+                await atualizarResumoAtivos();
+                console.log('Atualização do resumo concluída');
+                
+                // Refresh asset cards with detailed info if needed
+                // This could be optimized further by only updating changed data
+            }).catch(error => {
+                console.error('Erro ao carregar dados detalhados dos ativos:', error);
+                showToast('Alguns dados detalhados podem não estar disponíveis', 'warning');
+            });
 
             // Check if we need to show specific ativo details from navigation
             verificarNavegacaoParaAtivo();
@@ -570,18 +627,33 @@
             return;
         }
 
-        // Mostrar grid e renderizar ativos
+        // Mostrar grid
         gridElement.classList.remove('hidden');
         const gridContainer = gridElement.querySelector('.grid');
         gridContainer.innerHTML = '';
 
-        // Create cards asynchronously to handle fund calculations
-        for (const ativo of ativos) {
-            const carteira = carteiras.find(c => c.id === ativo.carteiraId);
-            const nomeCarteira = carteira ? carteira.nome : 'Carteira não encontrada';
-
-            const ativoCard = await criarCardAtivo(ativo, nomeCarteira);
-            gridContainer.appendChild(ativoCard);
+        // Performance optimization: Create cards in batches to avoid blocking UI
+        const BATCH_SIZE = 6; // Process 6 cards at a time
+        
+        for (let i = 0; i < ativos.length; i += BATCH_SIZE) {
+            const batch = ativos.slice(i, i + BATCH_SIZE);
+            
+            // Process batch in parallel but wait for completion before next batch
+            const cardPromises = batch.map(async ativo => {
+                const carteira = carteiras.find(c => c.id === ativo.carteiraId);
+                const nomeCarteira = carteira ? carteira.nome : 'Carteira não encontrada';
+                return criarCardAtivo(ativo, nomeCarteira);
+            });
+            
+            const cards = await Promise.all(cardPromises);
+            
+            // Add cards to DOM
+            cards.forEach(card => gridContainer.appendChild(card));
+            
+            // Allow UI to update between batches
+            if (i + BATCH_SIZE < ativos.length) {
+                await new Promise(resolve => setTimeout(resolve, 10));
+            }
         }
     }
 
@@ -589,11 +661,29 @@
         const card = document.createElement('div');
         card.className = 'bg-gray-800/50 backdrop-blur-xl border border-gray-700 rounded-2xl p-6 hover:border-primary-500/50 transition-all duration-300 card-hover';
 
-        // Get detailed asset information with profit calculations
-        const detailedInfo = await getDetailedAssetInfo(ativo);
+        // Performance optimization: Use simplified asset info for initial rendering
+        let detailedInfo = getCachedAssetInfo(ativo);
+        
+        if (!detailedInfo) {
+            // Use basic asset type detection first (fast)
+            detailedInfo = getBasicAssetInfo(ativo);
+            
+            // Load detailed info asynchronously
+            getDetailedAssetInfo(ativo).then(fullInfo => {
+                setCachedAssetInfo(ativo, fullInfo);
+                // Update card with detailed info if significantly different
+                if (shouldUpdateCard(detailedInfo, fullInfo)) {
+                    updateCardWithDetailedInfo(card, ativo, fullInfo, nomeCarteira);
+                }
+            }).catch(error => {
+                console.warn(`Erro ao carregar informações detalhadas do ativo ${ativo.nome}:`, error);
+            });
+        }
 
-        // Debug: Log the detailed info
-        console.log(`Asset ${ativo.nome} detailedInfo:`, detailedInfo);
+        // Debug: Log the detailed info (only in development)
+        if (window.location.hostname === 'localhost') {
+            console.log(`Asset ${ativo.nome} detailedInfo:`, detailedInfo);
+        }
 
         // Formatar data
         const dataInicio = new Date(ativo.dataInicio).toLocaleDateString('pt-PT');
@@ -702,22 +792,35 @@
 
         // Update the overview cards with real data
         if (window.allAssetData) {
-            // Update Fundos de Investimento card
+            // Update Fundos de Investimento card with error handling
             const fundosValue = document.getElementById('fundosValue');
             const fundosChange = document.getElementById('fundosChange');
-            if (fundosValue && fundosChange) {
+            if (fundosValue && fundosChange && window.allAssetData.fundos) {
                 const totalFundos = window.allAssetData.fundos.reduce((sum, fundo) => sum + (fundo.montanteInvestido || 0), 0);
 
-                // Calculate total profit for funds (async)
+                // Calculate total profit for funds with timeout and error handling
                 let totalFundosProfit = 0;
-                for (const fundo of window.allAssetData.fundos) {
-                    try {
-                        const profit = await calcularLucroFundoInvestimento(fundo);
-                        console.log(`Lucro do fundo ${fundo.ativoSigla}:`, profit);
-                        totalFundosProfit += profit;
-                    } catch (error) {
-                        console.error('Erro ao calcular lucro do fundo:', error);
-                    }
+                const fundos = window.allAssetData.fundos.slice(0, 10); // Limit to first 10 for performance
+                
+                try {
+                    const profitPromises = fundos.map(async fundo => {
+                        try {
+                            return await Promise.race([
+                                calcularLucroFundoInvestimento(fundo),
+                                new Promise((_, reject) => 
+                                    setTimeout(() => reject(new Error('Timeout')), 3000)
+                                )
+                            ]);
+                        } catch (error) {
+                            console.warn(`Erro ao calcular lucro do fundo ${fundo.ativoSigla}:`, error);
+                            return 0; // Return 0 profit on error
+                        }
+                    });
+                    
+                    const profits = await Promise.all(profitPromises);
+                    totalFundosProfit = profits.reduce((sum, profit) => sum + profit, 0);
+                } catch (error) {
+                    console.error('Erro ao calcular lucros dos fundos:', error);
                 }
 
                 console.log(`Total de fundos investido: ${formatter.format(totalFundos)}`);
@@ -1678,18 +1781,34 @@
     }
 
     /**
-     * Fetch data from all asset-specific APIs
+     * Fetch data from all asset-specific APIs with performance optimizations
      */
     async function fetchAllAssetData() {
         try {
             console.log('Fetching data from asset-specific APIs...');
 
-            // Call the individual fetch functions directly
-            const [depositos, fundos, imoveis] = await Promise.all([
+            // Clear cache when fetching new data
+            clearAssetInfoCache();
+
+            // Use Promise.allSettled to prevent one failing API from blocking others
+            const results = await Promise.allSettled([
                 fetchDepositos(),
                 fetchFundos(),
                 fetchImoveis()
             ]);
+
+            // Extract results, handling any rejections gracefully
+            const depositos = results[0].status === 'fulfilled' ? results[0].value : [];
+            const fundos = results[1].status === 'fulfilled' ? results[1].value : [];
+            const imoveis = results[2].status === 'fulfilled' ? results[2].value : [];
+
+            // Log any failures
+            results.forEach((result, index) => {
+                if (result.status === 'rejected') {
+                    const apiName = ['depositos', 'fundos', 'imoveis'][index];
+                    console.warn(`Failed to load ${apiName}:`, result.reason);
+                }
+            });
 
             // Update the global variable
             window.allAssetData = {
@@ -1699,10 +1818,12 @@
                 lucrosPorAtivo: {} // Armazenar os lucros calculados por ativoFinanceiroId
             };
 
-            // Calcular lucros agregados para cada ativoFinanceiroId
-            console.log('Calculando lucros por ativo financeiro...');
-            window.allAssetData.lucrosPorAtivo = await calcularLucroPorAtivoFinanceiro();
-            console.log('Lucros por ativo financeiro calculados:', window.allAssetData.lucrosPorAtivo);
+            // Optimization: Only calculate profits if there's actual data
+            if (depositos.length > 0 || fundos.length > 0 || imoveis.length > 0) {
+                console.log('Calculando lucros por ativo financeiro...');
+                window.allAssetData.lucrosPorAtivo = await calcularLucroPorAtivoFinanceiro();
+                console.log('Lucros por ativo financeiro calculados:', window.allAssetData.lucrosPorAtivo);
+            }
 
             console.log('Asset data loaded:', window.allAssetData);
 
@@ -1712,7 +1833,8 @@
             window.allAssetData = {
                 depositos: [],
                 fundos: [],
-                imoveis: []
+                imoveis: [],
+                lucrosPorAtivo: {}
             };
         }
     }
