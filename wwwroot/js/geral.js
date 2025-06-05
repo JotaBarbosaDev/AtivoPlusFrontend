@@ -1,6 +1,6 @@
 /**
  * JavaScript for Geral page
- * Handles dashboard data aggregation and display using existing APIs
+ * Simplified functions for dashboard functionality
  */
 
 // Global variables
@@ -15,583 +15,639 @@ let dashboardData = {
     recentTransactions: []
 };
 
+// Banks data for deposit name generation
+let banks = [];
+
 // Initialize dashboard
 async function initDashboard() {
-    try {
-        console.log('🚀 Dashboard initialization started...');
-        showLoadingState();
+    console.log('🚀 Dashboard initialization started...');
+    showLoadingState();
 
-        // Load all data from existing APIs with timeout
-        const loadPromises = [
-            loadDepositosData(),
-            loadFundosData(),
-            loadImoveisData(),
-            loadCarteirasData()
-        ];
+    await Promise.all([
+        loadDepositosData(),
+        loadFundosData(),
+        loadImoveisData(),
+        loadCarteirasData(),
+        loadBanksData()
+    ]);
 
-        // Use Promise.allSettled to handle partial failures
-        const results = await Promise.allSettled(loadPromises);
+    await calculateDashboardMetrics();
+    await updateDashboardDisplay();
 
-        // Log results for debugging
-        results.forEach((result, index) => {
-            const dataType = ['depositos', 'fundos', 'imoveis', 'carteiras'][index];
-            if (result.status === 'rejected') {
-                console.warn(`⚠️ Failed to load ${dataType}:`, result.reason);
-            } else {
-                console.log(`✅ Successfully loaded ${dataType}`);
-            }
-        });
-
-        // Calculate and update dashboard metrics
-        await calculateDashboardMetrics();
-        await updateDashboardDisplay();
-
-        // Add some sample data if no real data is available
-        if (dashboardData.totalValue === 0) {
-            console.log('📊 No real data found, using sample data for demonstration');
-            addSampleData();
-            await calculateDashboardMetrics();
-            await updateDashboardDisplay();
-        }
-
-        hideLoadingState();
-        console.log('✅ Dashboard initialization completed successfully');
-    } catch (error) {
-        console.error('❌ Error initializing dashboard:', error);
-        showErrorState();
-        // Try to load sample data as fallback
-        addSampleData();
-        await calculateDashboardMetrics();
-        await updateDashboardDisplay();
-        hideLoadingState();
-    }
+    hideLoadingState();
+    console.log('✅ Dashboard initialization completed');
+    console.log(dashboardData)
 }
 
-// Load depositos data using existing API
+// Load depositos data
 async function loadDepositosData() {
+    console.log('🏦 Loading depositos data...');
     try {
-        console.log('🏦 Loading depositos data...');
-        const response = await fetch('/api/depositoprazo/getAll', {
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (response.ok) {
-            dashboardData.depositos = await response.json();
-            console.log('✅ Depositos loaded:', dashboardData.depositos.length, 'items');
-        } else {
-            console.warn('⚠️ Failed to load depositos:', response.status);
-        }
+        dashboardData.depositos = await fetchDepositos();
     } catch (error) {
         console.error('❌ Error loading depositos:', error);
-        // Use mock data for testing
-        dashboardData.depositos = [
-            { id: 1, valorInicial: 10000, valorAtual: 10500 },
-            { id: 2, valorInicial: 5000, valorAtual: 5250 }
-        ];
-        console.log('🔄 Using mock depositos data');
+        dashboardData.depositos = [];
     }
+    return 0;
 }
 
-// Load fundos data using existing API
+// Load fundos data
 async function loadFundosData() {
+    console.log('📈 Loading fundos data...');
     try {
-        console.log('📈 Loading fundos data...');
-        const response = await fetch('/api/fundoinvestimento/getAll', {
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (response.ok) {
-            dashboardData.fundos = await response.json();
-            console.log('✅ Fundos loaded:', dashboardData.fundos.length, 'items');
-        } else {
-            console.warn('⚠️ Failed to load fundos:', response.status);
-        }
+        dashboardData.fundos = await fetchFundos();
+        console.log(`✅ Loaded ${dashboardData.fundos.length} fundos`);
     } catch (error) {
         console.error('❌ Error loading fundos:', error);
-        // Use mock data for testing
-        dashboardData.fundos = [
-            { id: 1, designacao: 'Fundo A', valorInicial: 15000, valorAtual: 16200 },
-            { id: 2, designacao: 'Fundo B', valorInicial: 8000, valorAtual: 8400 }
-        ];
-        console.log('🔄 Using mock fundos data');
+        dashboardData.fundos = [];
     }
+    return 0;
 }
 
-// Load imoveis data using existing API
+// Load imoveis data
 async function loadImoveisData() {
+    console.log('🏠 Loading imoveis data...');
     try {
-        console.log('🏠 Loading imoveis data...');
-        const response = await fetch('/api/imovelarrendado/getAll', {
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (response.ok) {
-            dashboardData.imoveis = await response.json();
-            console.log('✅ Imoveis loaded:', dashboardData.imoveis.length, 'items');
-        } else {
-            console.warn('⚠️ Failed to load imoveis:', response.status);
-        }
+        dashboardData.imoveis = await fetchImoveis();
+        console.log(`✅ Loaded ${dashboardData.imoveis.length} imoveis`);
     } catch (error) {
         console.error('❌ Error loading imoveis:', error);
-        // Use mock data for testing
-        dashboardData.imoveis = [
-            { id: 1, designacao: 'Apartamento Lisboa', valorCompra: 200000, valorAtual: 220000 },
-            { id: 2, designacao: 'Casa Porto', valorCompra: 150000, valorAtual: 165000 }
-        ];
-        console.log('🔄 Using mock imoveis data');
+        dashboardData.imoveis = [];
     }
+    return 0;
 }
 
-// Load carteiras data using existing API
+// Load carteiras data
 async function loadCarteirasData() {
+    console.log('💼 Loading carteiras data...');
     try {
-        console.log('💼 Loading carteiras data...');
-        const response = await fetch('/api/carteira/getAll', {
+        const response = await fetch('/api/carteira/ver?userIdFromCarteira=-1', {
             method: 'GET',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            credentials: 'include'
         });
 
-        if (response.ok) {
-            dashboardData.carteiras = await response.json();
-            console.log('✅ Carteiras loaded:', dashboardData.carteiras.length, 'items');
-        } else {
-            console.warn('⚠️ Failed to load carteiras:', response.status);
+        if (!response.ok) {
+            throw new Error('Erro ao carregar carteiras');
         }
+
+        carteiras = await response.json();
+
     } catch (error) {
-        console.error('❌ Error loading carteiras:', error);
-        // Use mock data for testing
-        dashboardData.carteiras = [
-            { id: 1, nome: 'Carteira Principal' },
-            { id: 2, nome: 'Carteira Secundária' }
-        ];
-        console.log('🔄 Using mock carteiras data');
+        console.error('Erro ao carregar carteiras:', error);
+        carteiras = [];
     }
+    return 0;
 }
 
-// Calculate dashboard metrics using existing calculation functions
-async function calculateDashboardMetrics() {
+// Load banks data for deposit name generation
+async function loadBanksData() {
+    console.log('🏦 Loading banks data...');
     try {
-        console.log('🧮 Calculating dashboard metrics...');
-        let totalProfit = 0;
-        let totalValue = 0;
-        let assets = [];
-
-        // Calculate depositos profits
-        console.log('💰 Processing depositos...');
-        for (const deposito of dashboardData.depositos) {
-            try {
-                let profit = 0;
-                let totalDeposito = deposito.valorInicial || 0;
-
-                // Try to use calculation function if available
-                if (typeof calcularLucroDeposito === 'function') {
-                    profit = await calcularLucroDeposito(deposito);
-                } else {
-                    // Fallback calculation
-                    profit = (deposito.valorAtual || deposito.valorInicial || 0) - (deposito.valorInicial || 0);
-                }
-
-                if (typeof calcularValorTotalDeposito === 'function') {
-                    totalDeposito = await calcularValorTotalDeposito(deposito);
-                } else {
-                    totalDeposito = deposito.valorAtual || deposito.valorInicial || 0;
-                }
-
-                totalProfit += profit;
-                totalValue += totalDeposito;
-
-                assets.push({
-                    name: `Depósito ${deposito.id}`,
-                    type: 'Depósito',
-                    profit: profit,
-                    value: totalDeposito,
-                    icon: '💰'
-                });
-            } catch (error) {
-                console.error('Error calculating deposito profit:', error);
-            }
-        }
-
-        // Calculate fundos profits
-        console.log('📈 Processing fundos...');
-        for (const fundo of dashboardData.fundos) {
-            try {
-                let profit = 0;
-
-                // Try to use calculation function if available
-                if (typeof calcularLucroFundoInvestimento === 'function') {
-                    profit = await calcularLucroFundoInvestimento(fundo);
-                } else {
-                    // Fallback calculation
-                    profit = (fundo.valorAtual || fundo.valorInicial || 0) - (fundo.valorInicial || 0);
-                }
-
-                const currentValue = (fundo.valorAtual || fundo.valorInicial || 0);
-
-                totalProfit += profit;
-                totalValue += currentValue;
-
-                assets.push({
-                    name: fundo.designacao || `Fundo ${fundo.id}`,
-                    type: 'Fundo',
-                    profit: profit,
-                    value: currentValue,
-                    icon: '🏦'
-                });
-            } catch (error) {
-                console.error('Error calculating fundo profit:', error);
-            }
-        }
-
-        // Calculate imoveis profits
-        console.log('🏠 Processing imoveis...');
-        for (const imovel of dashboardData.imoveis) {
-            try {
-                let profit = 0;
-
-                // Try to use calculation function if available
-                if (typeof calcularLucroImovel === 'function') {
-                    profit = await calcularLucroImovel(imovel);
-                } else {
-                    // Fallback calculation
-                    profit = (imovel.valorAtual || imovel.valorCompra || 0) - (imovel.valorCompra || 0);
-                }
-
-                const currentValue = imovel.valorAtual || imovel.valorCompra || 0;
-
-                totalProfit += profit;
-                totalValue += currentValue;
-
-                assets.push({
-                    name: imovel.designacao || `Imóvel ${imovel.id}`,
-                    type: 'Imóvel',
-                    profit: profit,
-                    value: currentValue,
-                    icon: '🏠'
-                });
-            } catch (error) {
-                console.error('Error calculating imovel profit:', error);
-            }
-        }
-
-        // Store calculated values
-        dashboardData.totalProfit = totalProfit;
-        dashboardData.totalValue = totalValue;
-
-        // Sort assets by profit (top performers)
-        assets.sort((a, b) => b.profit - a.profit);
-        dashboardData.topAssets = assets.slice(0, 5);
-
-        console.log('✅ Dashboard metrics calculated:', {
-            totalProfit: totalProfit,
-            totalValue: totalValue,
-            topAssets: dashboardData.topAssets.length
+        const response = await fetch('/api/banco/ver', {
+            method: 'GET',
+            credentials: 'include'
         });
 
+        if (!response.ok) {
+            throw new Error('Erro ao carregar bancos');
+        }
+
+        banks = await response.json();
+        console.log(`✅ Loaded ${banks.length} banks`);
+    } catch (error) {
+        console.error('❌ Error loading banks:', error);
+        banks = [];
+    }
+    return 0;
+}
+
+// Get bank name by ID
+function getBankName(bancoId) {
+    const bank = banks.find(b => b.id === bancoId);
+    return bank ? bank.nome : `Banco ID: ${bancoId}`;
+}
+
+// Calculate dashboard metrics
+async function calculateDashboardMetrics() {
+    console.log('🧮 Calculating dashboard metrics...');
+
+    try {
+        let totalValue = 0;
+        let totalProfit = 0;
+        let totalInvested = 0;
+
+        // Calculate depositos metrics using API
+        if (dashboardData.depositos && Array.isArray(dashboardData.depositos)) {
+            console.log('💰 Calculating depositos metrics...');
+
+            for (const deposito of dashboardData.depositos) {
+                try {
+                    // Get current value (invested + profit)
+                    const valorAtual = await calcularValorTotalDeposito(deposito);
+                    const lucro = await calcularLucroDeposito(deposito);
+                    const valorInvestido = deposito.valorInvestido || 0;
+
+                    // Update deposito object with calculated values
+                    deposito.valorAtual = valorAtual;
+                    deposito.lucro = lucro;
+
+                    // Add to totals
+                    totalValue += valorAtual;
+                    totalProfit += lucro;
+                    totalInvested += valorInvestido;
+
+                    console.log(`📊 Depósito ${deposito.id}: Investido €${valorInvestido}, Atual €${valorAtual}, Lucro €${lucro}`);
+                } catch (error) {
+                    console.error(`❌ Error calculating deposito ${deposito.id}:`, error);
+                    // Fallback to stored values
+                    const valorInvestido = deposito.valorInvestido || 0;
+                    totalValue += valorInvestido;
+                    totalInvested += valorInvestido;
+                }
+            }
+        }
+
+        // Calculate fundos metrics using API
+        if (dashboardData.fundos && Array.isArray(dashboardData.fundos)) {
+            console.log('📈 Calculating fundos metrics...');
+
+            for (const fundo of dashboardData.fundos) {
+                try {
+                    const lucro = await calcularLucroFundoInvestimento(fundo);
+                    const valorInvestido = fundo.montanteInvestido || 0;
+                    const valorAtual = valorInvestido + lucro;
+
+                    // Update fundo object with calculated values
+                    fundo.valorAtual = valorAtual;
+                    fundo.lucro = lucro;
+
+                    // Add to totals
+                    totalValue += valorAtual;
+                    totalProfit += lucro;
+                    totalInvested += valorInvestido;
+
+                    console.log(`📊 Fundo ${fundo.id}: Investido €${valorInvestido}, Atual €${valorAtual}, Lucro €${lucro}`);
+                } catch (error) {
+                    console.error(`❌ Error calculating fundo ${fundo.id}:`, error);
+                    // Check if it's an API access error
+                    if (error.message === "Nao temos acesso com a api gratis symbol") {
+                        console.warn(`⚠️ API access limited for fundo ${fundo.id}, using fallback values`);
+                    }
+                    // Fallback to stored values
+                    const valorInvestido = fundo.montanteInvestido || 0;
+                    totalValue += valorInvestido;
+                    totalInvested += valorInvestido;
+                }
+            }
+        }
+
+        // Calculate imoveis metrics using API
+        if (dashboardData.imoveis && Array.isArray(dashboardData.imoveis)) {
+            console.log('🏠 Calculating imoveis metrics...');
+
+            for (const imovel of dashboardData.imoveis) {
+                try {
+                    const lucro = await calcularLucroImovel(imovel);
+                    const valorInvestido = imovel.valorImovel || 0;
+                    const valorAtual = valorInvestido + lucro;
+
+                    // Update imovel object with calculated values
+                    imovel.valorAtual = valorAtual;
+                    imovel.lucro = lucro;
+
+                    // Add to totals
+                    totalValue += valorAtual;
+                    totalProfit += lucro;
+                    totalInvested += valorInvestido;
+
+                    console.log(`📊 Imóvel ${imovel.id}: Investido €${valorInvestido}, Atual €${valorAtual}, Lucro €${lucro}`);
+                } catch (error) {
+                    console.error(`❌ Error calculating imovel ${imovel.id}:`, error);
+                    // Fallback to stored values
+                    const valorInvestido = imovel.valorImovel || 0;
+                    totalValue += valorInvestido;
+                    totalInvested += valorInvestido;
+                }
+            }
+        }
+
+        // Update dashboard data
+        dashboardData.totalValue = totalValue;
+        dashboardData.totalProfit = totalProfit;
+        dashboardData.totalInvested = totalInvested;
+
+        // Calculate profit percentage
+        const profitPercentage = totalInvested > 0 ? (totalProfit / totalInvested) * 100 : 0;
+        dashboardData.profitPercentage = profitPercentage;
+
+        console.log(`✅ Calculated metrics - Total Invested: €${totalInvested}, Total Value: €${totalValue}, Total Profit: €${totalProfit}, Profit %: ${profitPercentage.toFixed(2)}%`);
     } catch (error) {
         console.error('❌ Error calculating dashboard metrics:', error);
+        dashboardData.totalValue = 0;
+        dashboardData.totalProfit = 0;
     }
+
+    return 0;
 }
 
-// Update dashboard display with calculated data
+// Update dashboard display
 async function updateDashboardDisplay() {
-    try {
-        console.log('🖥️ Updating dashboard display...');
-
-        // Update total profit
-        const totalProfitElement = document.getElementById('totalProfit');
-        if (totalProfitElement) {
-            totalProfitElement.textContent = formatCurrency(dashboardData.totalProfit);
-            totalProfitElement.classList.remove('loading-indicator');
-        }
-
-        // Update profit percentage
-        const profitPercentageElement = document.getElementById('profitPercentage');
-        if (profitPercentageElement && dashboardData.totalValue > 0) {
-            const invested = dashboardData.totalValue - dashboardData.totalProfit;
-            const percentage = invested > 0 ? (dashboardData.totalProfit / invested) * 100 : 0;
-            profitPercentageElement.textContent = `+${percentage.toFixed(1)}%`;
-            profitPercentageElement.classList.remove('loading-indicator');
-        }
-
-        // Update asset counts and summaries
-        updateSummaryCards();
-
-        // Update top assets
-        updateTopAssets();
-
-        console.log('✅ Dashboard display updated successfully');
-
-    } catch (error) {
-        console.error('❌ Error updating dashboard display:', error);
-    }
-}
-
-// Calculate imoveis profits
-for (const imovel of dashboardData.imoveis) {
-    try {
-        const profit = await calcularLucroImovel(imovel);
-        const currentValue = imovel.valorCompra + profit;
-
-        totalProfit += profit;
-        totalValue += currentValue;
-
-        assets.push({
-            name: imovel.designacao || `Imóvel ${imovel.id}`,
-            type: 'Imóvel',
-            profit: profit,
-            value: currentValue,
-            icon: '🏠'
-        });
-    } catch (error) {
-        console.error('Error calculating imovel profit:', error);
-    }
-}
-
-
-// Update dashboard display with calculated data
-async function updateDashboardDisplay() {
-    try {
-        // Update total profit
-        const totalProfitElement = document.getElementById('totalProfit');
-        if (totalProfitElement) {
-            totalProfitElement.textContent = formatCurrency(dashboardData.totalProfit);
-        }
-
-        // Update total value
-        const totalValueElement = document.getElementById('totalValue');
-        if (totalValueElement) {
-            totalValueElement.textContent = formatCurrency(dashboardData.totalValue);
-        }
-
-        // Update profit percentage
-        const profitPercentageElement = document.getElementById('profitPercentage');
-        if (profitPercentageElement && dashboardData.totalValue > 0) {
-            const percentage = ((dashboardData.totalProfit / (dashboardData.totalValue - dashboardData.totalProfit)) * 100);
-            profitPercentageElement.textContent = `+${percentage.toFixed(1)}%`;
-        }
-
-        // Update asset counts
-        updateAssetCounts();
-
-        // Update top assets
-        updateTopAssets();
-
-        // Update summary cards
-        updateSummaryCards();
-
-    } catch (error) {
-        console.error('Error updating dashboard display:', error);
-    }
+    console.log('🎨 Updating dashboard display...');
+    updateSummaryCards();
+    updateAssetCounts();
+    updateTopAssets();
+    updatePerformanceIndicators();
+    return 0;
 }
 
 // Update asset counts
 function updateAssetCounts() {
-    const totalAssets = dashboardData.depositos.length + dashboardData.fundos.length + dashboardData.imoveis.length;
-    const totalCarteiras = dashboardData.carteiras.length;
+    console.log('📊 Updating asset counts...');
 
-    const totalAssetsElement = document.getElementById('totalAssets');
-    if (totalAssetsElement) {
-        totalAssetsElement.textContent = totalAssets.toString();
-    }
-
-    const totalAssetsValueElement = document.getElementById('totalAssetsValue');
-    if (totalAssetsValueElement) {
-        totalAssetsValueElement.textContent = formatCurrency(dashboardData.totalValue);
-    }
-
-    const totalCarteirasElement = document.getElementById('totalCarteiras');
-    if (totalCarteirasElement) {
-        totalCarteirasElement.textContent = `${totalAssets} ativos em ${totalCarteiras} carteiras`;
-    }
-}
-
-// Update top assets display
-function updateTopAssets() {
-    const topAssetsContainer = document.getElementById('topAssetsContainer');
-    if (!topAssetsContainer || dashboardData.topAssets.length === 0) return;
-
-    const topAssetsHtml = dashboardData.topAssets.map(asset => `
-        <div class="flex justify-between items-center p-4 bg-gray-800 rounded-lg">
-            <div class="flex items-center">
-                <span class="text-2xl mr-3">${asset.icon}</span>
-                <span class="font-medium text-white">${asset.name}</span>
-            </div>
-            <div class="text-right">
-                <div class="text-green-400 font-semibold">${formatCurrency(asset.profit)}</div>
-                <div class="text-xs text-gray-400">${asset.type}</div>
-            </div>
-        </div>
-    `).join('');
-
-    topAssetsContainer.innerHTML = topAssetsHtml;
-}
-
-// Update summary cards with real data
-function updateSummaryCards() {
-    // Update depositos summary
-    const depositosCount = dashboardData.depositos.length;
-    const depositosTotal = dashboardData.depositos.reduce((sum, dep) => sum + (dep.valorInicial || 0), 0);
-
-    // Update fundos summary
-    const fundosCount = dashboardData.fundos.length;
-    const fundosTotal = dashboardData.fundos.reduce((sum, fund) => sum + (fund.valorInicial || 0), 0);
-
-    // Update imoveis summary
-    const imoveisCount = dashboardData.imoveis.length;
-    const imoveisTotal = dashboardData.imoveis.reduce((sum, imovel) => sum + (imovel.valorCompra || 0), 0);
-
-    // Update displays if elements exist
-    const summaryElements = {
-        // Main cards
-        depositosCount: document.getElementById('depositosCount'),
-        depositosTotal: document.getElementById('depositosTotal'),
-        fundosCount: document.getElementById('fundosCount'),
-        fundosTotal: document.getElementById('fundosTotal'),
-        imoveisCount: document.getElementById('imoveisCount'),
-        imoveisTotal: document.getElementById('imoveisTotal'),
-
-        // Secondary displays
-        depositosCount2: document.getElementById('depositosCount2'),
-        depositosTotal2: document.getElementById('depositosTotal2'),
-        fundosCount2: document.getElementById('fundosCount2'),
-        fundosTotal2: document.getElementById('fundosTotal2'),
-        imoveisCount2: document.getElementById('imoveisCount2'),
-        imoveisTotal2: document.getElementById('imoveisTotal2')
-    };
-
-    // Update main cards
-    if (summaryElements.depositosCount) summaryElements.depositosCount.textContent = depositosCount;
-    if (summaryElements.depositosTotal) summaryElements.depositosTotal.textContent = formatCurrency(depositosTotal);
-    if (summaryElements.fundosCount) summaryElements.fundosCount.textContent = fundosCount;
-    if (summaryElements.fundosTotal) summaryElements.fundosTotal.textContent = formatCurrency(fundosTotal);
-    if (summaryElements.imoveisCount) summaryElements.imoveisCount.textContent = imoveisCount;
-    if (summaryElements.imoveisTotal) summaryElements.imoveisTotal.textContent = formatCurrency(imoveisTotal);
-
-    // Update secondary displays
-    if (summaryElements.depositosCount2) summaryElements.depositosCount2.textContent = `${depositosCount} ativos`;
-    if (summaryElements.depositosTotal2) summaryElements.depositosTotal2.textContent = formatCurrency(depositosTotal);
-    if (summaryElements.fundosCount2) summaryElements.fundosCount2.textContent = `${fundosCount} ativos`;
-    if (summaryElements.fundosTotal2) summaryElements.fundosTotal2.textContent = formatCurrency(fundosTotal);
-    if (summaryElements.imoveisCount2) summaryElements.imoveisCount2.textContent = `${imoveisCount} ativos`;
-    if (summaryElements.imoveisTotal2) summaryElements.imoveisTotal2.textContent = formatCurrency(imoveisTotal);
-}
-
-// Helper function to calculate total value of a deposito (if not available in ativosCalculos.js)
-async function calcularValorTotalDeposito(deposito) {
     try {
-        // Calculate based on initial value + profit
-        const profit = await calcularLucroDeposito(deposito);
-        return (deposito.valorInicial || deposito.valorInvestido || 0) + profit;
+        // Update depositos count
+        const depositosCountEl = document.getElementById('depositosCount');
+        if (depositosCountEl && dashboardData.depositos) {
+            depositosCountEl.textContent = dashboardData.depositos.length;
+        }
+
+        // Update fundos count
+        const fundosCountEl = document.getElementById('fundosCount');
+        if (fundosCountEl && dashboardData.fundos) {
+            fundosCountEl.textContent = dashboardData.fundos.length;
+        }
+
+        // Update imoveis count
+        const imoveisCountEl = document.getElementById('imoveisCount');
+        if (imoveisCountEl && dashboardData.imoveis) {
+            imoveisCountEl.textContent = dashboardData.imoveis.length;
+        }
+
+        console.log('✅ Asset counts updated');
+    } catch (error) {
+        console.error('❌ Error updating asset counts:', error);
+    }
+
+    return 0;
+}
+
+// Update top assets display - ordered by profit percentage
+async function updateTopAssets() {
+    console.log('🔝 Updating top assets by profit percentage...');
+
+    try {
+        const topAssetsContainer = document.getElementById('topAssetsContainer');
+        if (!topAssetsContainer) {
+            console.warn('Top assets container not found');
+            return 0;
+        }
+
+        // Show loading state
+        topAssetsContainer.innerHTML = `
+            <div class="text-center py-8">
+                <div class="animate-spin w-6 h-6 border-2 border-primary-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+                <p class="text-gray-400 text-sm">Calculando retornos...</p>
+            </div>
+        `;
+
+        // Calculate profit percentage for each asset
+        const assetsWithReturns = [];
+
+        // Process depositos
+        for (const deposito of dashboardData.depositos) {
+            try {
+                const lucro = await calcularLucroDeposito(deposito);
+                const valorInvestido = deposito.valorInvestido || 0;
+                const returnPercentage = valorInvestido > 0 ? (lucro / valorInvestido) * 100 : 0;
+
+                // Generate deposit name with bank information
+                const bankName = getBankName(deposito.bancoId);
+                const depositName = deposito.descricao || `Depósito ${deposito.id} em ${bankName}`;
+
+                assetsWithReturns.push({
+                    ...deposito,
+                    type: 'Depósito',
+                    icon: '🏦',
+                    lucro,
+                    valorInvestido,
+                    returnPercentage,
+                    nome: depositName
+                });
+            } catch (error) {
+                console.error('Error calculating deposito return:', error);
+            }
+        }
+
+        // Process fundos
+        for (const fundo of dashboardData.fundos) {
+            try {
+                const lucro = await calcularLucroFundoInvestimento(fundo);
+                const valorInvestido = fundo.montanteInvestido || 0;
+                const returnPercentage = valorInvestido > 0 ? (lucro / valorInvestido) * 100 : 0;
+
+                assetsWithReturns.push({
+                    ...fundo,
+                    type: 'Fundo',
+                    icon: '📈',
+                    lucro,
+                    valorInvestido,
+                    returnPercentage,
+                    nome: fundo.nome || `Fundo ${fundo.id}`
+                });
+            } catch (error) {
+                console.error('Error calculating fundo return:', error);
+                // For funds with API access issues, set 0% return
+                const valorInvestido = fundo.montanteInvestido || 0;
+                assetsWithReturns.push({
+                    ...fundo,
+                    type: 'Fundo',
+                    icon: '📈',
+                    lucro: 0,
+                    valorInvestido,
+                    returnPercentage: 0,
+                    nome: fundo.nome || `Fundo ${fundo.id}`
+                });
+            }
+        }
+
+        // Process imoveis
+        for (const imovel of dashboardData.imoveis) {
+            try {
+                const lucro = await calcularLucroImovel(imovel);
+                const valorInvestido = imovel.valorImovel || imovel.valorCompra || 0;
+                const returnPercentage = valorInvestido > 0 ? (lucro / valorInvestido) * 100 : 0;
+
+                assetsWithReturns.push({
+                    ...imovel,
+                    type: 'Imóvel',
+                    icon: '🏠',
+                    lucro,
+                    valorInvestido,
+                    returnPercentage,
+                    nome: imovel.descricao || `Imóvel ${imovel.id}`
+                });
+            } catch (error) {
+                console.error('Error calculating imovel return:', error);
+            }
+        }
+
+        // Sort by profit percentage (highest first)
+        assetsWithReturns.sort((a, b) => b.returnPercentage - a.returnPercentage);
+
+        // Take top 5
+        const topAssets = assetsWithReturns.slice(0, 5);
+
+        if (topAssets.length === 0) {
+            topAssetsContainer.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl">📊</span>
+                    </div>
+                    <p class="text-gray-400">Nenhum ativo encontrado</p>
+                    <p class="text-gray-500 text-sm mt-2">Adicione investimentos para ver o ranking</p>
+                </div>
+            `;
+            return 0;
+        }
+
+        // Create asset cards with profit percentage
+        let topAssetsHtml = '';
+        topAssets.forEach((asset, index) => {
+            const isPositive = asset.returnPercentage >= 0;
+            const percentageColor = isPositive ? 'text-green-400' : 'text-red-400';
+            const percentageSign = isPositive ? '+' : '';
+
+            // Get appropriate background color based on position
+            let bgColor = 'bg-gray-800/50';
+            if (index === 0) bgColor = 'bg-gradient-to-r from-yellow-500/10 to-yellow-600/5'; // Gold for 1st
+            else if (index === 1) bgColor = 'bg-gradient-to-r from-gray-400/10 to-gray-500/5'; // Silver for 2nd
+            else if (index === 2) bgColor = 'bg-gradient-to-r from-amber-600/10 to-amber-700/5'; // Bronze for 3rd
+
+            topAssetsHtml += `
+                <div class="flex items-center justify-between p-4 ${bgColor} rounded-lg hover:bg-gray-800/70 transition-all duration-300 border border-gray-700/50">
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                                <span class="text-lg">${asset.icon}</span>
+                            </div>
+                            <div class="absolute -top-1 -right-1 w-5 h-5 bg-gray-700 rounded-full flex items-center justify-center text-xs font-bold text-white">
+                                ${index + 1}
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-medium text-sm">${asset.nome}</h4>
+                            <p class="text-gray-400 text-xs">${asset.type}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="${percentageColor} font-bold text-sm">
+                            ${percentageSign}${asset.returnPercentage.toFixed(1)}%
+                        </p>
+                        <p class="text-gray-400 text-xs">
+                            ${formatCurrency(asset.lucro)} lucro
+                        </p>
+                        <p class="text-gray-500 text-xs">
+                            de ${formatCurrency(asset.valorInvestido)}
+                        </p>
+                    </div>
+                </div>
+            `;
+        });
+
+        topAssetsContainer.innerHTML = topAssetsHtml;
+        console.log('✅ Top assets by profit percentage updated');
+    } catch (error) {
+        console.error('❌ Error updating top assets:', error);
+        const topAssetsContainer = document.getElementById('topAssetsContainer');
+        if (topAssetsContainer) {
+            topAssetsContainer.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-2xl">⚠️</span>
+                    </div>
+                    <p class="text-red-400">Erro ao calcular retornos</p>
+                    <p class="text-gray-500 text-sm mt-2">Tente recarregar a página</p>
+                </div>
+            `;
+        }
+    }
+
+    return 0;
+}
+
+// Update summary cards
+function updateSummaryCards() {
+    console.log('📋 Updating summary cards...');
+
+    try {
+        // Calculate profit and invested values for each asset type
+        let depositosLucro = 0;
+        let depositosInvestido = 0;
+        let fundosLucro = 0;
+        let fundosInvestido = 0;
+        let imoveisLucro = 0;
+        let imoveisInvestido = 0;
+
+        // Calculate depositos profit and invested amounts
+        if (dashboardData.depositos && Array.isArray(dashboardData.depositos)) {
+            depositosLucro = dashboardData.depositos.reduce((sum, deposito) => {
+                return sum + (deposito.lucro || 0);
+            }, 0);
+            depositosInvestido = dashboardData.depositos.reduce((sum, deposito) => {
+                return sum + (deposito.valorInvestido || 0);
+            }, 0);
+        }
+
+        // Calculate fundos profit and invested amounts
+        if (dashboardData.fundos && Array.isArray(dashboardData.fundos)) {
+            fundosLucro = dashboardData.fundos.reduce((sum, fundo) => {
+                return sum + (fundo.lucro || 0);
+            }, 0);
+            fundosInvestido = dashboardData.fundos.reduce((sum, fundo) => {
+                return sum + (fundo.montanteInvestido || 0);
+            }, 0);
+        }
+
+        // Calculate imoveis profit and invested amounts
+        if (dashboardData.imoveis && Array.isArray(dashboardData.imoveis)) {
+            imoveisLucro = dashboardData.imoveis.reduce((sum, imovel) => {
+                return sum + (imovel.lucro || 0);
+            }, 0);
+            imoveisInvestido = dashboardData.imoveis.reduce((sum, imovel) => {
+                return sum + (imovel.valorImovel || 0);
+            }, 0);
+        }
+
+        // Update cards to show profit (large) and invested value (small)
+        // Card 1: Total Profit
+        const totalProfitEl = document.getElementById('totalProfit');
+        const totalProfitInvestedEl = document.getElementById('totalProfitInvested');
+        if (totalProfitEl) {
+            totalProfitEl.textContent = formatCurrency(dashboardData.totalProfit || 0);
+        }
+        if (totalProfitInvestedEl) {
+            totalProfitInvestedEl.textContent = `Investido: ${formatCurrency(dashboardData.totalInvested || 0)}`;
+        }
+
+        // Card 2: Depositos - Profit (large) and Invested (small)
+        const depositosTotalEl = document.getElementById('depositosTotal');
+        const depositosInvestedEl = document.getElementById('depositosInvested');
+        if (depositosTotalEl) {
+            depositosTotalEl.textContent = formatCurrency(depositosLucro);
+        }
+        if (depositosInvestedEl) {
+            depositosInvestedEl.textContent = `Investido: ${formatCurrency(depositosInvestido)}`;
+        }
+
+        // Card 3: Fundos - Profit (large) and Invested (small)
+        const fundosTotalEl = document.getElementById('fundosTotal');
+        const fundosInvestedEl = document.getElementById('fundosInvested');
+        if (fundosTotalEl) {
+            fundosTotalEl.textContent = formatCurrency(fundosLucro);
+        }
+        if (fundosInvestedEl) {
+            fundosInvestedEl.textContent = `Investido: ${formatCurrency(fundosInvestido)}`;
+        }
+
+        // Card 4: Imoveis - Profit (large) and Invested (small)
+        const imoveisTotalEl = document.getElementById('imoveisTotal');
+        const imoveisInvestedEl = document.getElementById('imoveisInvested');
+        if (imoveisTotalEl) {
+            imoveisTotalEl.textContent = formatCurrency(imoveisLucro);
+        }
+        if (imoveisInvestedEl) {
+            imoveisInvestedEl.textContent = `Investido: ${formatCurrency(imoveisInvestido)}`;
+        }
+
+        console.log('✅ Summary cards updated - Showing profits and invested amounts');
+        console.log(`📊 Depositos: Lucro €${depositosLucro}, Investido €${depositosInvestido}`);
+        console.log(`📊 Fundos: Lucro €${fundosLucro}, Investido €${fundosInvestido}`);
+        console.log(`📊 Imoveis: Lucro €${imoveisLucro}, Investido €${imoveisInvestido}`);
+    } catch (error) {
+        console.error('❌ Error updating summary cards:', error);
+    }
+
+    return 0;
+}
+
+// Update performance indicators
+function updatePerformanceIndicators() {
+    console.log('📈 Updating performance indicators...');
+
+    try {
+        // Use the calculated profit percentage from dashboard metrics
+        const profitPercentage = dashboardData.profitPercentage || 0;
+
+        // Update profit percentage indicator
+        const profitPercentageEl = document.getElementById('profitPercentage');
+        if (profitPercentageEl) {
+            const formattedPercentage = profitPercentage >= 0 ?
+                `+${profitPercentage.toFixed(1)}%` :
+                `${profitPercentage.toFixed(1)}%`;
+
+            profitPercentageEl.textContent = formattedPercentage;
+
+            // Update color based on profit/loss
+            if (profitPercentage >= 0) {
+                profitPercentageEl.className = profitPercentageEl.className.replace(/text-red-\d+/, 'text-emerald-300');
+            } else {
+                profitPercentageEl.className = profitPercentageEl.className.replace(/text-emerald-\d+/, 'text-red-300');
+            }
+        }
+
+        // Remove loading indicators
+        const loadingIndicators = document.querySelectorAll('.loading-indicator');
+        loadingIndicators.forEach(indicator => {
+            indicator.classList.remove('loading-indicator');
+        });
+
+        console.log('✅ Performance indicators updated');
+    } catch (error) {
+        console.error('❌ Error updating performance indicators:', error);
+    }
+
+    return 0;
+}
+
+// Calculate depositos performance
+function calculateDepositosPerformance() {
+    console.log('🏦 Calculating depositos performance...');
+    return 0;
+}
+
+// Calculate fundos performance
+function calculateFundosPerformance() {
+    console.log('📈 Calculating fundos performance...');
+    return 0;
+}
+
+// Calculate imoveis performance
+function calculateImoveisPerformance() {
+    console.log('🏠 Calculating imoveis performance...');
+    return 0;
+}
+
+// Helper function to calculate total value of a deposito
+async function calcularValorTotalDeposito(deposito) {
+    console.log('💰 Calculating deposito total value...');
+    try {
+        // Call the actual function from ativosCalculos.js
+        return await window.calcularValorTotalDeposito(deposito);
     } catch (error) {
         console.error('Error calculating deposito total value:', error);
-        return deposito.valorInicial || deposito.valorInvestido || 0;
+        return deposito.valorInvestido || 0;
     }
 }
 
-// Add sample data for demonstration when real data is not available
+// Add sample data
 function addSampleData() {
-    console.log('📊 Adding sample data for demonstration...');
-
-    dashboardData.depositos = [
-        { id: 1, valorInicial: 5000, taxaJuro: 2.5, dataInicio: '2024-01-01', dataFim: '2024-12-31' },
-        { id: 2, valorInicial: 10000, taxaJuro: 3.0, dataInicio: '2024-02-01', dataFim: '2025-02-01' }
-    ];
-
-    dashboardData.fundos = [
-        { id: 1, designacao: 'Fundo Global', valorInicial: 15000, dataCompra: '2024-01-15' },
-        { id: 2, designacao: 'Fundo Tecnologia', valorInicial: 8000, dataCompra: '2024-03-01' }
-    ];
-
-    dashboardData.imoveis = [
-        { id: 1, designacao: 'Apartamento T2 Lisboa', valorCompra: 150000, rendaAtual: 800, dataCompra: '2023-06-01' },
-        { id: 2, designacao: 'Casa T3 Porto', valorCompra: 200000, rendaAtual: 1200, dataCompra: '2023-09-15' }
-    ];
-
-    dashboardData.carteiras = [
-        { id: 1, designacao: 'Carteira Principal' },
-        { id: 2, designacao: 'Carteira Secundária' }
-    ];
+    console.log('📊 Adding sample data...');
+    return 0;
 }
-
-// Dashboard Manager object for global access
-window.DashboardManager = {
-    initDashboard: initDashboard,
-    refreshDashboard: async function () {
-        console.log('🔄 Refreshing dashboard data...');
-        await initDashboard();
-    },
-    getDashboardData: function () {
-        return dashboardData;
-    }
-};
-
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function () {
-    console.log('🚀 DOM loaded, checking for required functions...');
-
-    // Check if we have the required calculation functions
-    if (typeof calcularLucroDeposito === 'function' &&
-        typeof calcularLucroFundoInvestimento === 'function' &&
-        typeof calcularLucroImovel === 'function') {
-        console.log('✅ All calculation functions found, initializing dashboard...');
-        initDashboard();
-    } else {
-        console.warn('⚠️ Some calculation functions not found, initializing with sample data...');
-        // Create fallback functions if they don't exist
-        if (typeof calcularLucroDeposito !== 'function') {
-            window.calcularLucroDeposito = async function (deposito) {
-                // Simple calculation: 2.5% annual return
-                const monthsElapsed = 6; // Assume 6 months
-                return (deposito.valorInicial * (deposito.taxaJuro / 100) * monthsElapsed / 12);
-            };
-        }
-
-        if (typeof calcularLucroFundoInvestimento !== 'function') {
-            window.calcularLucroFundoInvestimento = async function (fundo) {
-                // Simple calculation: 5% return
-                return fundo.valorInicial * 0.05;
-            };
-        }
-
-        if (typeof calcularLucroImovel !== 'function') {
-            window.calcularLucroImovel = async function (imovel) {
-                // Simple calculation: rent for 12 months
-                return (imovel.rendaAtual || 800) * 12;
-            };
-        }
-
-        if (typeof calcularValorTotalDeposito !== 'function') {
-            window.calcularValorTotalDeposito = async function (deposito) {
-                const profit = await calcularLucroDeposito(deposito);
-                return deposito.valorInicial + profit;
-            };
-        }
-
-        // Initialize with fallback functions
-        setTimeout(initDashboard, 1000);
-    }
-});
 
 // Utility functions
 function formatCurrency(value) {
-    if (typeof value !== 'number' || isNaN(value)) return '€0,00';
-
+    if (typeof value !== 'number' || isNaN(value)) return '€0';
     return new Intl.NumberFormat('pt-PT', {
         style: 'currency',
         currency: 'EUR',
@@ -601,51 +657,44 @@ function formatCurrency(value) {
 }
 
 function showLoadingState() {
-    // Show loading indicators
-    const loadingElements = document.querySelectorAll('.loading-indicator');
-    loadingElements.forEach(el => el.classList.remove('hidden'));
+    console.log('⏳ Showing loading state...');
 }
 
 function hideLoadingState() {
-    // Hide loading indicators
-    const loadingElements = document.querySelectorAll('.loading-indicator');
-    loadingElements.forEach(el => el.classList.add('hidden'));
+    console.log('✅ Hiding loading state...');
 }
 
 function showErrorState() {
-    console.warn('Dashboard is in error state, using fallback display');
-    // Could show error message to user
+    console.log('⚠️ Showing error state...');
 }
 
 // Refresh dashboard data
 async function refreshDashboard() {
+    console.log('🔄 Refreshing dashboard...');
     await initDashboard();
     showToast('Dashboard atualizado com sucesso!', 'success');
 }
 
 // Show toast notification
 function showToast(message, type = 'info') {
-    const toast = document.createElement('div');
-    toast.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full`;
-
-    const bgColor = type === 'success' ? 'bg-green-600' : type === 'error' ? 'bg-red-600' : 'bg-blue-600';
-    toast.className += ` ${bgColor} text-white`;
-
-    toast.textContent = message;
-    document.body.appendChild(toast);
-
-    // Animate in
-    setTimeout(() => {
-        toast.classList.remove('translate-x-full');
-    }, 100);
-
-    // Remove after 3 seconds
-    setTimeout(() => {
-        toast.classList.add('translate-x-full');
-        setTimeout(() => {
-            document.body.removeChild(toast);
-        }, 300);
-    }, 3000);
+    console.log(`🔔 Toast: ${message} (${type})`);
+    return 0;
 }
 
-// Performance calculation functions have been removed as they are no longer needed
+// Dashboard Manager object for global access
+window.DashboardManager = {
+    initDashboard,
+    refreshDashboard,
+    getDashboardData: () => dashboardData,
+    dashboardData,
+    calculateDashboardMetrics,
+    updateDashboardDisplay
+};
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function () {
+    console.log('🚀 DOM loaded, initializing dashboard...');
+    initDashboard();
+});
+
+console.log('📊 Geral Dashboard Manager loaded successfully');
