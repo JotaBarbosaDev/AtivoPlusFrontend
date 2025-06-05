@@ -1942,7 +1942,7 @@
         }
     }
 
-    function calculateAssetSummary() {
+    async function calculateAssetSummary() {
         const summary = {
             totalValue: 0,
             totalProfit: 0,
@@ -1971,16 +1971,26 @@
 
             summary.totalValue = depositosValue + fundosValue + imoveisValue;
 
-            // Calculate total profit
-            const depositosProfit = window.allAssetData.depositos.reduce((sum, d) => {
-                const profit = calcularLucroDeposito(d);
-                return sum + profit;
-            }, 0);
+            // Calculate total profit (properly handle async functions)
+            let depositosProfit = 0;
+            for (const deposito of window.allAssetData.depositos) {
+                try {
+                    const profit = await calcularLucroDeposito(deposito);
+                    depositosProfit += profit;
+                } catch (error) {
+                    console.error('Error calculating deposito profit:', error);
+                }
+            }
 
-            const imoveisProfit = window.allAssetData.imoveis.reduce((sum, i) => {
-                const profit = calcularLucroImovel(i);
-                return sum + profit;
-            }, 0);
+            let imoveisProfit = 0;
+            for (const imovel of window.allAssetData.imoveis) {
+                try {
+                    const profit = await calcularLucroImovel(imovel);
+                    imoveisProfit += profit;
+                } catch (error) {
+                    console.error('Error calculating imovel profit:', error);
+                }
+            }
 
             summary.totalProfit = depositosProfit + imoveisProfit; // Funds profit calculated async
 

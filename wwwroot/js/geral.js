@@ -627,17 +627,7 @@ function calculateImoveisPerformance() {
     return 0;
 }
 
-// Helper function to calculate total value of a deposito
-async function calcularValorTotalDeposito(deposito) {
-    console.log('💰 Calculating deposito total value...');
-    try {
-        // Call the actual function from ativosCalculos.js
-        return await window.calcularValorTotalDeposito(deposito);
-    } catch (error) {
-        console.error('Error calculating deposito total value:', error);
-        return deposito.valorInvestido || 0;
-    }
-}
+// Note: calcularValorTotalDeposito function is implemented in ativosCalculos.js
 
 // Add sample data
 function addSampleData() {
@@ -672,7 +662,6 @@ function showErrorState() {
 async function refreshDashboard() {
     console.log('🔄 Refreshing dashboard...');
     await initDashboard();
-    showToast('Dashboard atualizado com sucesso!', 'success');
 }
 
 // Show toast notification

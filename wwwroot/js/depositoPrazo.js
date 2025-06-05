@@ -783,139 +783,378 @@ async function eliminarDeposito() {
  * @param {number} depositId - The ID of the deposit to show details for
  */
 async function abrirDetalhesDeposito(depositId) {
-    const deposit = deposits.find(d => d.id === depositId);
+    // Enhanced input validation
+    if (!depositId || isNaN(depositId)) {
+        showEnhancedErrorToast('ID do depósito inválido', 'Por favor, tente novamente');
+        return;
+    }
 
+    const deposit = deposits.find(d => d.id === depositId);
     if (!deposit) {
-        showToast('Depósito não encontrado.', 'error');
+        showEnhancedErrorToast('Depósito não encontrado', 'O depósito selecionado não existe ou foi removido');
         return;
     }
 
     try {
-        // Get calculated values from API
-        const [profitSoFar, profitPercentage, valorAtual] = await Promise.all([
-            calcularLucroDeposito(deposit),
-            calcularPorcentagemLucroDeposito(deposit),
-            calcularValorTotalDeposito(deposit)
-        ]);
+        // Enhanced modal element validation
+        const modalElements = {
+            modal: 'detalhesDepositoModal',
+            header: 'modalDepositoHeader',
+            banco: 'detalhesDepositoBanco',
+            conta: 'detalhesDepositoConta',
+            ativoNome: 'detalhesAtivoNome',
+            dataCriacao: 'detalhesDataCriacao',
+            dataVencimento: 'detalhesDataVencimento',
+            duracao: 'detalhesDuracao',
+            valorInvestido: 'detalhesValorInvestido',
+            valorAtual: 'detalhesValorAtual',
+            taxaJuro: 'detalhesTaxaJuro',
+            jurosAcumulados: 'detalhesJurosAcumulados',
+            lucroMensal: 'detalhesLucroMensal',
+            retorno: 'detalhesRetorno',
+            despesasAnuais: 'detalhesDespesasAnuais',
+            taxaImposto: 'detalhesTaxaImposto',
+            impostoEstimado: 'detalhesImpostoEstimado',
+            progressoPercentagem: 'detalhesProgressoPercentagem',
+            progressoBarra: 'detalhesProgressoBarra',
+            diasRestantes: 'detalhesDiasRestantes',
+            valorVencimento: 'detalhesValorVencimento'
+        };
 
-        // Get reference data
-        const bankName = getBankName(deposit.bancoId);
-        const asset = getAsset(deposit.ativoFinaceiroId);
-        const assetName = asset ? asset.nome : `Ativo ID: ${deposit.ativoFinaceiroId}`;
+        // Validate all required elements exist
+        const missingElements = [];
+        const elementRefs = {};
 
-        // Calculate doubling information using Rule of 72
-        const { yearsToDouble, isInfinite } = calculateTimeToDouble(deposit);
-        const progress = calculateDoublingProgress(deposit);
-        const monthlyProfit = calculateMonthlyProfit(deposit);
-
-        // Start date of deposit
-        const startDate = new Date(deposit.dataCriacao);
-
-        // Format dates and currency values
-        const formatter = new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' });
-        const dateFormatter = new Intl.DateTimeFormat('pt-PT');
-
-        // For doubling calculation (applies for all deposits)
-        const doublingDate = new Date(startDate);
-
-        // Convert years to days and add to the start date
-        const daysToDouble = Math.round(yearsToDouble * 365.25);
-        doublingDate.setDate(startDate.getDate() + daysToDouble);
-
-        // Calculate days remaining until doubling
-        const today = new Date();
-        const daysRemaining = Math.max(0, Math.ceil((doublingDate - today) / (1000 * 60 * 60 * 24)));
-
-        // Calculate estimated value at double (which is twice the initial investment)
-        const doubledValue = deposit.valorInvestido * 2;
-
-        // Set a gradient color for the header (similar to the card)
-        const gradients = [
-            'from-blue-500 to-cyan-500',
-            'from-green-500 to-emerald-500',
-            'from-purple-500 to-indigo-500',
-            'from-orange-500 to-red-500',
-            'from-pink-500 to-rose-500',
-            'from-yellow-500 to-amber-500'
-        ];
-        const gradientClass = gradients[deposit.id % gradients.length];
-        document.getElementById('modalDepositoHeader').className =
-            `bg-gradient-to-r ${gradientClass} p-6 rounded-xl text-center mb-6`;
-
-        // Populate modal with data
-        document.getElementById('detalhesDepositoBanco').textContent = bankName;
-        document.getElementById('detalhesDepositoConta').textContent = `Conta: ${deposit.numeroConta}`;
-        document.getElementById('detalhesAtivoNome').textContent = assetName;
-        document.getElementById('detalhesDataCriacao').textContent = dateFormatter.format(startDate);
-        document.getElementById('detalhesDataVencimento').textContent = isInfinite ? "∞" : dateFormatter.format(doublingDate);
-
-        // Format the doubling time in a more human-readable way
-        let durationText = "∞";
-        if (!isInfinite) {
-            if (yearsToDouble >= 100) {
-                durationText = "Mais de 100 anos";
-            } else if (yearsToDouble >= 50) {
-                durationText = "Mais de 50 anos";
+        for (const [key, elementId] of Object.entries(modalElements)) {
+            const element = document.getElementById(elementId);
+            if (!element) {
+                missingElements.push(elementId);
             } else {
-                const years = Math.floor(yearsToDouble);
-                const months = Math.round((yearsToDouble - years) * 12);
-                if (months > 0) {
-                    durationText = `${years} anos e ${months} meses`;
+                elementRefs[key] = element;
+            }
+        }
+
+        if (missingElements.length > 0) {
+            console.error('Modal elements missing:', missingElements);
+            showEnhancedErrorToast(
+                'Erro de interface do utilizador',
+                `Elementos em falta no modal: ${missingElements.join(', ')}`
+            );
+            return;
+        }
+
+        // Show loading state in modal if it exists
+        if (elementRefs.modal) {
+            const loadingDiv = createLoadingIndicator();
+            elementRefs.modal.appendChild(loadingDiv);
+            elementRefs.modal.classList.remove('hidden');
+            elementRefs.modal.classList.add('flex');
+        }
+
+        try {
+            // Get calculated values from API with individual error handling
+            let profitSoFar = 0;
+            let profitPercentage = 0;
+            let valorAtual = deposit.valorInvestido || 0;
+
+            try {
+                profitSoFar = await calcularLucroDeposito(deposit);
+            } catch (apiError) {
+                console.warn('Erro ao calcular lucro do depósito:', apiError);
+                profitSoFar = 0;
+            }
+
+            try {
+                profitPercentage = await calcularPorcentagemLucroDeposito(deposit);
+            } catch (apiError) {
+                console.warn('Erro ao calcular percentagem de lucro:', apiError);
+                profitPercentage = 0;
+            }
+
+            try {
+                valorAtual = await calcularValorTotalDeposito(deposit);
+            } catch (apiError) {
+                console.warn('Erro ao calcular valor total:', apiError);
+                valorAtual = deposit.valorInvestido || 0;
+            }
+
+            // Get reference data with fallbacks
+            const bankName = getBankName(deposit.bancoId) || `Banco ID: ${deposit.bancoId}`;
+            const asset = getAsset(deposit.ativoFinaceiroId);
+            const assetName = asset ? asset.nome : `Ativo ID: ${deposit.ativoFinaceiroId}`;
+
+            // Calculate doubling information using Rule of 72
+            const { yearsToDouble, isInfinite } = calculateTimeToDouble(deposit);
+            const progress = calculateDoublingProgress(deposit);
+            const monthlyProfit = calculateMonthlyProfit(deposit);
+
+            // Start date of deposit
+            const startDate = new Date(deposit.dataCriacao);
+
+            // Format dates and currency values
+            const formatter = new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' });
+            const dateFormatter = new Intl.DateTimeFormat('pt-PT');
+
+            // For doubling calculation (applies for all deposits)
+            const doublingDate = new Date(startDate);
+
+            // Convert years to days and add to the start date
+            const daysToDouble = Math.round(yearsToDouble * 365.25);
+            doublingDate.setDate(startDate.getDate() + daysToDouble);
+
+            // Calculate days remaining until doubling
+            const today = new Date();
+            const daysRemaining = Math.max(0, Math.ceil((doublingDate - today) / (1000 * 60 * 60 * 24)));
+
+            // Calculate estimated value at double (which is twice the initial investment)
+            const doubledValue = deposit.valorInvestido * 2;
+
+            // Remove loading indicator
+            const loadingDiv = elementRefs.modal.querySelector('.loading-indicator');
+            if (loadingDiv) {
+                loadingDiv.remove();
+            }
+
+            // Set a gradient color for the header (similar to the card)
+            const gradients = [
+                'from-blue-500 to-cyan-500',
+                'from-green-500 to-emerald-500',
+                'from-purple-500 to-indigo-500',
+                'from-orange-500 to-red-500',
+                'from-pink-500 to-rose-500',
+                'from-yellow-500 to-amber-500'
+            ];
+            const gradientClass = gradients[deposit.id % gradients.length];
+            elementRefs.header.className = `bg-gradient-to-r ${gradientClass} p-6 rounded-xl text-center mb-6`;
+
+            // Populate modal with data using the validated element references
+            elementRefs.banco.textContent = bankName;
+            elementRefs.conta.textContent = `Conta: ${deposit.numeroConta}`;
+            elementRefs.ativoNome.textContent = assetName;
+            elementRefs.dataCriacao.textContent = dateFormatter.format(startDate);
+            elementRefs.dataVencimento.textContent = isInfinite ? "∞" : dateFormatter.format(doublingDate);
+
+            // Format the doubling time in a more human-readable way
+            let durationText = "∞";
+            if (!isInfinite) {
+                if (yearsToDouble >= 100) {
+                    durationText = "Mais de 100 anos";
+                } else if (yearsToDouble >= 50) {
+                    durationText = "Mais de 50 anos";
                 } else {
-                    durationText = `${years} anos`;
+                    const years = Math.floor(yearsToDouble);
+                    const months = Math.round((yearsToDouble - years) * 12);
+                    if (months > 0) {
+                        durationText = `${years} anos e ${months} meses`;
+                    } else {
+                        durationText = `${years} anos`;
+                    }
                 }
             }
-        }
 
-        document.getElementById('detalhesDuracao').textContent = durationText;
+            elementRefs.duracao.textContent = durationText;
+            elementRefs.valorInvestido.textContent = formatter.format(deposit.valorInvestido);
+            elementRefs.valorAtual.textContent = formatter.format(valorAtual);
+            elementRefs.taxaJuro.textContent = `${deposit.taxaJuroAnual}%`;
+            elementRefs.jurosAcumulados.textContent = formatter.format(profitSoFar);
+            elementRefs.lucroMensal.textContent = formatter.format(monthlyProfit);
+            elementRefs.retorno.textContent = `${profitPercentage >= 0 ? '+' : ''}${profitPercentage.toFixed(1)}%`;
 
-        document.getElementById('detalhesValorInvestido').textContent = formatter.format(deposit.valorInvestido);
-        document.getElementById('detalhesValorAtual').textContent = formatter.format(valorAtual);
-        document.getElementById('detalhesTaxaJuro').textContent = `${deposit.taxaJuroAnual}%`;
-        document.getElementById('detalhesJurosAcumulados').textContent = formatter.format(profitSoFar);
-        document.getElementById('detalhesLucroMensal').textContent = formatter.format(monthlyProfit);
-        document.getElementById('detalhesRetorno').textContent = `${profitPercentage >= 0 ? '+' : ''}${profitPercentage.toFixed(1)}%`;
+            // Despesas e taxas (estimadas)
+            elementRefs.despesasAnuais.textContent = formatter.format(deposit.valorAnualDespesasEstimadas || 0);
+            elementRefs.taxaImposto.textContent = '28%'; // Standard Portuguese tax rate for deposits
+            const estimatedTax = profitSoFar * 0.28;
+            elementRefs.impostoEstimado.textContent = formatter.format(estimatedTax);
 
-        // Despesas e taxas (estimadas)
-        document.getElementById('detalhesDespesasAnuais').textContent = formatter.format(deposit.valorAnualDespesasEstimadas || 0);
-        document.getElementById('detalhesTaxaImposto').textContent = '28%'; // Standard Portuguese tax rate for deposits
-        const estimatedTax = profitSoFar * 0.28;
-        document.getElementById('detalhesImpostoEstimado').textContent = formatter.format(estimatedTax);
+            // Progress towards doubling the money
+            elementRefs.progressoPercentagem.textContent = `${progress.toFixed(1)}%`;
+            elementRefs.progressoBarra.style.width = `${Math.min(progress, 100)}%`;
 
-        // Progress towards doubling the money
-        document.getElementById('detalhesProgressoPercentagem').textContent = `${progress.toFixed(1)}%`;
-        document.getElementById('detalhesProgressoBarra').style.width = `${progress}%`;
-
-        // Format days remaining in a more user-friendly way
-        let daysRemainingText = "∞";
-        if (!isInfinite) {
-            if (daysRemaining > 36500) {  // More than 100 years
-                daysRemainingText = "Mais de 100 anos";
-            } else if (daysRemaining > 18250) { // More than 50 years
-                daysRemainingText = "Mais de 50 anos";
-            } else if (daysRemaining > 365) {
-                const years = Math.floor(daysRemaining / 365);
-                daysRemainingText = `${years} ano${years > 1 ? 's' : ''}`;
-            } else {
-                daysRemainingText = `${daysRemaining} dia${daysRemaining > 1 ? 's' : ''}`;
+            // Format days remaining in a more user-friendly way
+            let daysRemainingText = "∞";
+            if (!isInfinite) {
+                if (daysRemaining > 36500) {  // More than 100 years
+                    daysRemainingText = "Mais de 100 anos";
+                } else if (daysRemaining > 18250) { // More than 50 years
+                    daysRemainingText = "Mais de 50 anos";
+                } else if (daysRemaining > 365) {
+                    const years = Math.floor(daysRemaining / 365);
+                    daysRemainingText = `${years} ano${years > 1 ? 's' : ''}`;
+                } else {
+                    daysRemainingText = `${daysRemaining} dia${daysRemaining > 1 ? 's' : ''}`;
+                }
             }
+
+            elementRefs.diasRestantes.textContent = daysRemainingText;
+            elementRefs.valorVencimento.textContent = formatter.format(doubledValue);
+
+            // Store current deposit ID for potential editing
+            window.currentDepositId = depositId;
+
+        } catch (dataError) {
+            // Remove loading indicator if it exists
+            const loadingDiv = elementRefs.modal?.querySelector('.loading-indicator');
+            if (loadingDiv) {
+                loadingDiv.remove();
+            }
+
+            throw dataError; // Re-throw to be caught by outer catch
         }
-
-        document.getElementById('detalhesDiasRestantes').textContent = daysRemainingText;
-        document.getElementById('detalhesValorVencimento').textContent = formatter.format(doubledValue);
-
-        // Show modal
-        const modal = document.getElementById('detalhesDepositoModal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-
-        // Store current deposit ID for potential editing
-        window.currentDepositId = depositId;
 
     } catch (error) {
         console.error('Erro ao carregar detalhes do depósito:', error);
-        showToast('Erro ao carregar detalhes do depósito.', 'error');
+
+        // Close modal if it was opened
+        const modal = document.getElementById('detalhesDepositoModal');
+        if (modal && !modal.classList.contains('hidden')) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Show detailed error message based on error type
+        if (error.name === 'TypeError' && error.message.includes('null')) {
+            showEnhancedErrorToast(
+                'Erro de interface',
+                'Alguns elementos da interface não foram encontrados. Tente recarregar a página.'
+            );
+        } else if (error.message?.includes('API') || error.message?.includes('fetch')) {
+            showEnhancedErrorToast(
+                'Erro de conectividade',
+                'Não foi possível comunicar com o servidor. Verifique sua conexão.'
+            );
+        } else {
+            showEnhancedErrorToast(
+                'Erro inesperado',
+                `Ocorreu um erro ao carregar os detalhes: ${error.message || 'Erro desconhecido'}`
+            );
+        }
     }
+}
+
+/**
+ * Create a loading indicator element
+ * @returns {HTMLElement} Loading indicator element
+ */
+function createLoadingIndicator() {
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'loading-indicator absolute inset-0 bg-gray-900/80 backdrop-blur-sm flex items-center justify-center z-10';
+    loadingDiv.innerHTML = `
+        <div class="text-center">
+            <div class="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p class="text-white font-medium">A carregar detalhes...</p>
+        </div>
+    `;
+    return loadingDiv;
+}
+
+/**
+ * Show enhanced success toast with title and message
+ * @param {string} title - Toast title
+ * @param {string} message - Toast message  
+ */
+function showEnhancedSuccessToast(title, message) {
+    showEnhancedToast(title, message, 'success');
+}
+
+/**
+ * Show enhanced error toast with title and message
+ * @param {string} title - Toast title
+ * @param {string} message - Toast message
+ */
+function showEnhancedErrorToast(title, message) {
+    showEnhancedToast(title, message, 'error');
+}
+
+/**
+ * Show enhanced toast notification with title and message
+ * @param {string} title - Toast title
+ * @param {string} message - Toast message
+ * @param {string} type - Toast type ('success', 'error', 'info', 'warning')
+ */
+function showEnhancedToast(title, message, type = 'info') {
+    // Create toast container if it doesn't exist
+    let toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toast-container';
+        toastContainer.className = 'fixed top-4 right-4 z-50 space-y-2 max-w-sm';
+        document.body.appendChild(toastContainer);
+    }
+
+    // Create toast element
+    const toast = document.createElement('div');
+
+    // Define colors and icons for different types
+    const typeConfig = {
+        success: {
+            bgClass: 'bg-green-500/90 border-green-400/50',
+            iconColor: 'text-green-100',
+            icon: `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414L8.414 15l-4.121-4.121a1 1 0 111.414-1.414L8.414 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                   </svg>`
+        },
+        error: {
+            bgClass: 'bg-red-500/90 border-red-400/50',
+            iconColor: 'text-red-100',
+            icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                   </svg>`
+        },
+        warning: {
+            bgClass: 'bg-yellow-500/90 border-yellow-400/50',
+            iconColor: 'text-yellow-100',
+            icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                   </svg>`
+        },
+        info: {
+            bgClass: 'bg-blue-500/90 border-blue-400/50',
+            iconColor: 'text-blue-100',
+            icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                   </svg>`
+        }
+    };
+
+    const config = typeConfig[type] || typeConfig.info;
+
+    toast.className = `${config.bgClass} border backdrop-blur-xl rounded-xl shadow-2xl text-white p-4 transform transition-all duration-300 ease-in-out translate-x-full opacity-0`;
+
+    toast.innerHTML = `
+        <div class="flex items-start space-x-3">
+            <div class="${config.iconColor} flex-shrink-0 mt-0.5">
+                ${config.icon}
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="text-sm font-semibold text-white">${title}</div>
+                <div class="text-xs text-white/90 mt-1 leading-relaxed">${message}</div>
+            </div>
+            <button onclick="this.parentElement.parentElement.remove()" class="text-white/70 hover:text-white flex-shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+    `;
+
+    // Add to container
+    toastContainer.appendChild(toast);
+
+    // Show toast with animation
+    setTimeout(() => {
+        toast.classList.remove('translate-x-full', 'opacity-0');
+    }, 100);
+
+    // Auto-remove toast after delay (longer for errors)
+    const duration = type === 'error' ? 6000 : 4000;
+    setTimeout(() => {
+        toast.classList.add('translate-x-full', 'opacity-0');
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.remove();
+            }
+        }, 300);
+    }, duration);
 }
 
 /**

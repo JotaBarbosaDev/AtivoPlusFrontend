@@ -182,17 +182,54 @@
                 </div>
             </div>
             <div id="chartErrorState" class="absolute inset-0 items-center justify-center hidden">
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-4">
-                        <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
+                <div class="flex items-center justify-center min-h-full p-6">
+                    <!-- Enhanced error card with glass effect and animations -->
+                    <div
+                        class="bg-red-500/5 backdrop-blur-xl border border-red-500/20 rounded-2xl p-8 max-w-md w-full text-center shadow-2xl hover:shadow-3xl transition-all duration-300">
+                        <!-- Animated error icon with pulsing effect -->
+                        <div class="relative mb-6 flex items-center justify-center">
+                            <div
+                                class="absolute inset-0 w-20 h-20 mx-auto rounded-full border border-red-500/30 animate-ping">
+                            </div>
+                            <div class="absolute inset-2 w-16 h-16 mx-auto rounded-full border border-red-500/20 animate-ping"
+                                style="animation-delay: 0.5s;"></div>
+                            <div class="relative w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center">
+                                <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Enhanced error title with better typography -->
+                        <h3 class="text-xl font-bold text-red-400 mb-3">
+                            Erro ao carregar gráfico
+                        </h3>
+
+                        <!-- Enhanced error message with improved readability -->
+                        <p class="text-red-300/80 text-center mb-6 leading-relaxed">
+                            Não foi possível carregar os dados do gráfico para este símbolo.
+                        </p>
+
+                        <!-- Additional help text -->
+                        <p class="text-gray-400 text-sm mb-8">
+                            Verifique sua conexão com a internet ou tente novamente mais tarde
+                        </p>
+
+                        <!-- Enhanced retry button with gradient and hover effects -->
+                        <button onclick="loadCandlestickChart(currentSymbolData?.symbol, currentChartInterval)"
+                            class="group relative inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-red-500/25">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-r from-red-400 to-red-500 rounded-xl opacity-0 group-hover:opacity-20 transition-opacity duration-300">
+                            </div>
+                            <svg class="w-5 h-5 group-hover:rotate-180 transition-transform duration-300" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            <span>Tentar Novamente</span>
+                        </button>
                     </div>
-                    <p class="text-red-400 font-semibold mb-2">Erro ao carregar gráfico</p>
-                    <p class="text-gray-400 text-center max-w-md">Não foi possível carregar os dados do gráfico para
-                        este
-                        símbolo.</p>
                 </div>
             </div>
             <div id="candlestickChart" class="w-full h-full hidden"></div>
@@ -1067,7 +1104,41 @@
     document.addEventListener('DOMContentLoaded', function () {
         console.log('Loading market data...');
         loadMarketData();
+
+        // Check for URL parameters to auto-open chart
+        checkAndOpenChart();
     });
+
+    /**
+     * Check URL parameters and auto-open chart if requested
+     */
+    function checkAndOpenChart() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const openChart = urlParams.get('openChart');
+        const symbol = urlParams.get('symbol');
+        const name = urlParams.get('name');
+
+        // If openChart=true and we have symbol and name, open the chart modal
+        if (openChart === 'true' && symbol && name) {
+            console.log('Auto-opening chart for:', symbol, name);
+
+            // Create symbol data object similar to how it's done in the Market page
+            const symbolData = {
+                symbol: decodeURIComponent(symbol),
+                instrument_name: decodeURIComponent(name),
+                exchange: 'Fund Data',
+                currency: 'USD',
+                type: 'Fund'
+            };
+
+            // Open the chart modal
+            openCandlestickModal(symbolData);
+
+            // Clean up URL parameters (optional - removes them from browser history)
+            const cleanUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, cleanUrl);
+        }
+    }
 
     /**
      * Load market data for all categories
@@ -1275,8 +1346,27 @@
             </div>
             
             ${asset.error ?
-                `<div class="pt-3 border-t border-gray-800">
-                    <p class="text-red-400 text-xs">${asset.error}</p>
+                `<div class="pt-3 border-t border-red-500/20">
+                    <div class="bg-red-500/10 border border-red-500/20 rounded-lg p-3 backdrop-blur-sm">
+                        <div class="flex items-start gap-2">
+                            <div class="flex-shrink-0 mt-0.5">
+                                <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-red-300 text-xs font-medium mb-1">Erro de Carregamento</p>
+                                <p class="text-red-400/80 text-xs leading-relaxed">${asset.error}</p>
+                            </div>
+                        </div>
+                        <div class="mt-2 pt-2 border-t border-red-500/10">
+                            <button onclick="location.reload()" 
+                                    class="w-full text-xs text-red-300 hover:text-red-200 font-medium py-1 px-2 rounded bg-red-500/10 hover:bg-red-500/20 transition-colors duration-200">
+                                Tentar Novamente
+                            </button>
+                        </div>
+                    </div>
                 </div>` : ''
             }
         </div>
@@ -1307,23 +1397,59 @@
     }
 
     /**
-     * Show error state in container
+     * Show error state in container with enhanced styling
      */
     function showErrorState(containerId, message) {
         const container = document.getElementById(containerId);
         if (!container) return;
 
         container.innerHTML = `
-        <div class="col-span-full flex flex-col items-center justify-center py-12">
-            <div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-4">
-                <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 19c-.77.833.192 2.5 1.732 2.5z"/>
-                </svg>
+        <div class="col-span-full flex flex-col items-center justify-center py-16">
+            <!-- Enhanced error card with glass effect -->
+            <div class="bg-red-500/5 backdrop-blur-sm border border-red-500/20 rounded-2xl p-8 max-w-md w-full text-center shadow-2xl">
+                <!-- Animated error icon with glow effect -->
+                <div class="relative mb-6">
+                    <div class="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto border border-red-500/20 shadow-lg shadow-red-500/10">
+                        <svg class="w-10 h-10 text-red-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                    </div>
+                    <!-- Glow effect rings -->
+                    <div class="absolute inset-0 w-20 h-20 mx-auto rounded-full border border-red-500/30 animate-ping"></div>
+                    <div class="absolute inset-2 w-16 h-16 mx-auto rounded-full border border-red-500/20 animate-ping" style="animation-delay: 0.5s;"></div>
+                </div>
+
+                <!-- Error title -->
+                <h3 class="text-xl font-bold text-red-400 mb-3">
+                    Erro no Carregamento
+                </h3>
+
+                <!-- Error message with better typography -->
+                <p class="text-red-300/80 text-center mb-6 leading-relaxed">
+                    ${message}
+                </p>
+
+                <!-- Additional help text -->
+                <p class="text-gray-400 text-sm mb-8">
+                    Verifique sua conexão com a internet ou tente novamente mais tarde
+                </p>
+
+                <!-- Enhanced retry button with gradient and hover effects -->
+                <button onclick="loadMarketData()" 
+                    class="group relative w-full px-6 py-3 bg-gradient-to-r from-primary-600 to-blue-600 text-white font-semibold rounded-xl hover:from-primary-500 hover:to-blue-500 transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-primary-500/25 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-gray-900">
+                    
+                    <!-- Button background overlay for hover effect -->
+                    <div class="absolute inset-0 bg-gradient-to-r from-primary-500 to-blue-500 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    
+                    <!-- Button content -->
+                    <div class="relative flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5 transform group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        <span>Tentar Novamente</span>
+                    </div>
+                </button>
             </div>
-            <p class="text-red-400 text-center">${message}</p>
-            <button onclick="loadMarketData()" class="mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
-                Tentar Novamente
-            </button>
         </div>
     `;
     }
@@ -1353,3 +1479,7 @@
 
 
 
+<div <div <div </div>
+
+
+    <div </div>

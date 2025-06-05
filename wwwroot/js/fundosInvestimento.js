@@ -378,10 +378,20 @@ async function createFundoCard(fundo) {
                 </div>
             </div>
             
-            <button onclick="abrirModalDetalhes('${fundo.id}')"
-                class="w-full py-2 bg-primary-600/20 hover:bg-primary-600/30 text-primary-400 rounded-lg transition-colors duration-200 text-sm font-medium">
-                Ver Detalhes
-            </button>
+            <!-- Action buttons container -->
+            <div class="flex gap-2">
+                <button onclick="abrirModalDetalhes('${fundo.id}')"
+                    class="flex-1 py-2 bg-primary-600/20 hover:bg-primary-600/30 text-primary-400 rounded-lg transition-colors duration-200 text-sm font-medium">
+                    Ver Detalhes
+                </button>
+                <button onclick="verGraficoFundo('${ativoSigla}', '${ativoNome.replace(/'/g, "\\\'")}')"
+                    class="flex-1 py-2 bg-green-600/20 hover:bg-green-600/30 text-green-400 rounded-lg transition-colors duration-200 text-sm font-medium flex items-center justify-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                    Ver Gráfico
+                </button>
+            </div>
         </div>
     `;
 
@@ -1266,4 +1276,26 @@ async function removerFundo() {
             confirmarBtn.disabled = false;
         }
     }
+}
+
+/**
+ * Navigate to Market page and open chart for specific fund symbol
+ * @param {string} symbol - The fund symbol to display in chart
+ * @param {string} name - The fund name for display
+ */
+function verGraficoFundo(symbol, name) {
+    if (!symbol || symbol === 'N/A') {
+        showToast('Símbolo não disponível para este fundo', 'error');
+        return;
+    }
+
+    // Create URL with query parameters to pass symbol and name to Market page
+    const params = new URLSearchParams({
+        symbol: symbol,
+        name: name,
+        openChart: 'true'
+    });
+
+    // Navigate to Market page with parameters
+    window.location.href = `/Mercado?${params.toString()}`;
 }
