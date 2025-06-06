@@ -232,29 +232,53 @@
 
                 <!-- User Menu -->
                 <div class="flex items-center space-x-4">
-                    <!-- Search -->
-                    <button class="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </button>
-
-                    <!-- Notifications -->
-                    <button
-                        class="relative p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 17h5l-5 5v-5zM12 14.5V7a3 3 0 00-6 0v7.5M18 21H6a2 2 0 01-2-2v-1a2 2 0 012-2h12a2 2 0 012 2v1a2 2 0 01-2 2z">
-                            </path>
-                        </svg>
-                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                    </button>
-
-                    <!-- Profile -->
-                    <div class="flex items-center space-x-3">
-                        <img class="w-8 h-8 rounded-full ring-2 ring-gray-700"
-                            src="https://ui-avatars.com/api/?name=User&background=0ea5e9&color=fff" alt="Avatar">
+                    <!-- Profile Dropdown -->
+                    <div class="relative group">
+                        <button class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-800 transition-colors">
+                            <img class="w-8 h-8 rounded-full ring-2 ring-gray-700"
+                                src="https://ui-avatars.com/api/?name=User&background=0ea5e9&color=fff" alt="Avatar">
+                            <div class="hidden md:block text-left">
+                                <p class="text-sm font-medium text-white" id="userDisplayName">Utilizador</p>
+                                <p class="text-xs text-gray-400">Conta Ativa</p>
+                            </div>
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        
+                        <!-- Dropdown Menu -->
+                        <div class="absolute right-0 mt-2 w-64 glass-effect rounded-lg shadow-lg border border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                            <div class="py-2">
+                                <!-- User Info Header -->
+                                <div class="px-4 py-3 border-b border-gray-700">
+                                    <p class="text-sm font-medium text-white" id="dropdownUserName">Utilizador</p>
+                                    <p class="text-xs text-gray-400" id="dropdownUserEmail">utilizador@email.com</p>
+                                </div>
+                                
+                                <!-- Menu Items -->
+                                <div class="py-1">
+                                    <a href="#" onclick="abrirPerfilModal()" 
+                                        class="flex items-center px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 transition-colors">
+                                        <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                        </svg>
+                                        Ver/Editar Perfil
+                                    </a>
+                                    
+                                    <div class="border-t border-gray-700 my-1"></div>
+                                    
+                                    <button onclick="logout()" 
+                                        class="flex items-center w-full px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-gray-800 transition-colors">
+                                        <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                        </svg>
+                                        Logout
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Mobile menu button -->
@@ -306,6 +330,29 @@
                         class="px-4 py-2 rounded-lg text-sm font-medium transition-colors @(Context.Request.Path.Value.Contains("/Mercado") ? "bg-primary-600 text-white" : "text-gray-300 hover:text-white hover:bg-gray-800")">
                         Mercado
                     </a>
+                    
+                    <!-- Mobile User Menu -->
+                    <div class="border-t border-gray-700 mt-4 pt-4">
+                        <div class="px-4 py-2 text-sm font-medium text-gray-400">
+                            Conta
+                        </div>
+                        <button onclick="abrirPerfilModal()" 
+                            class="w-full text-left px-4 py-2 rounded-lg text-sm font-medium transition-colors text-gray-300 hover:text-white hover:bg-gray-800">
+                            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            Ver/Editar Perfil
+                        </button>
+                        <button onclick="logout()" 
+                            class="w-full text-left px-4 py-2 rounded-lg text-sm font-medium transition-colors text-red-400 hover:text-red-300 hover:bg-gray-800">
+                            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                            Logout
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -315,6 +362,144 @@
     <main class="pt-20 min-h-screen">
         @RenderBody()
     </main>
+
+    <!-- Modal Perfil do Usuário -->
+    <div id="perfilModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-50 hidden">
+        <div class="bg-gray-900/95 backdrop-blur-xl border border-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-white">Informações do Perfil</h2>
+                    <button onclick="fecharPerfilModal()" class="text-gray-400 hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <form id="perfilForm" class="space-y-6">
+                    <!-- Avatar Section -->
+                    <div class="text-center mb-6">
+                        <img id="perfilAvatar" class="w-20 h-20 rounded-full ring-4 ring-primary-500 mx-auto mb-4"
+                            src="https://ui-avatars.com/api/?name=User&background=0ea5e9&color=fff" alt="Avatar">
+                        <p class="text-sm text-gray-400">Avatar do utilizador</p>
+                    </div>
+
+                    <!-- Informações Pessoais -->
+                    <div class="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
+                        <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            Informações Pessoais
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="perfilNome" class="block text-sm font-medium text-gray-300 mb-2">Nome Completo</label>
+                                <input type="text" id="perfilNome" name="nome" required
+                                    class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+                            </div>
+
+                            <div>
+                                <label for="perfilEmail" class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                                <input type="email" id="perfilEmail" name="email" required
+                                    class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+                            </div>
+
+                            <div>
+                                <label for="perfilTelefone" class="block text-sm font-medium text-gray-300 mb-2">Telefone</label>
+                                <input type="text" id="perfilTelefone" name="telefone"
+                                    class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+                            </div>
+
+                            <div>
+                                <label for="perfilNif" class="block text-sm font-medium text-gray-300 mb-2">NIF</label>
+                                <input type="text" id="perfilNif" name="nif"
+                                    class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label for="perfilIban" class="block text-sm font-medium text-gray-300 mb-2">IBAN</label>
+                                <input type="text" id="perfilIban" name="iban"
+                                    class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informações de Morada -->
+                    <div class="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
+                        <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            Informações de Morada
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="md:col-span-2">
+                                <label for="perfilRua" class="block text-sm font-medium text-gray-300 mb-2">Rua</label>
+                                <input type="text" id="perfilRua" name="rua"
+                                    class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+                            </div>
+
+                            <div>
+                                <label for="perfilPiso" class="block text-sm font-medium text-gray-300 mb-2">Piso</label>
+                                <input type="text" id="perfilPiso" name="piso"
+                                    class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+                            </div>
+
+                            <div>
+                                <label for="perfilNumeroPorta" class="block text-sm font-medium text-gray-300 mb-2">Número da Porta</label>
+                                <input type="text" id="perfilNumeroPorta" name="numeroPorta"
+                                    class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+                            </div>
+
+                            <div>
+                                <label for="perfilLocalidade" class="block text-sm font-medium text-gray-300 mb-2">Localidade</label>
+                                <input type="text" id="perfilLocalidade" name="localidade"
+                                    class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+                            </div>
+
+                            <div>
+                                <label for="perfilConcelho" class="block text-sm font-medium text-gray-300 mb-2">Concelho</label>
+                                <input type="text" id="perfilConcelho" name="concelho"
+                                    class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+                            </div>
+
+                            <div>
+                                <label for="perfilDistrito" class="block text-sm font-medium text-gray-300 mb-2">Distrito</label>
+                                <input type="text" id="perfilDistrito" name="distrito"
+                                    class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+                            </div>
+
+                            <div>
+                                <label for="perfilCodPostal" class="block text-sm font-medium text-gray-300 mb-2">Código Postal</label>
+                                <input type="text" id="perfilCodPostal" name="codPostal"
+                                    class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25 transition-colors">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-700">
+                        <div class="flex justify-end gap-3">
+                            <button type="button" onclick="fecharPerfilModal()"
+                                class="px-6 py-3 bg-gray-800 text-gray-300 rounded-xl hover:bg-gray-700 transition-colors duration-200 font-medium">
+                                Cancelar
+                            </button>
+                            <button type="submit"
+                                class="px-6 py-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-colors duration-200 font-medium">
+                                Guardar Alterações
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Scripts -->
     <!-- Authentication Script - Must load first -->
@@ -330,8 +515,192 @@
             mobileMenu.classList.toggle('hidden');
         }
 
-        // Add loading states
+        // Profile Modal Functions
+        function abrirPerfilModal() {
+            const modal = document.getElementById('perfilModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            carregarDadosUsuario();
+        }
+
+        function fecharPerfilModal() {
+            const modal = document.getElementById('perfilModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Load user data into profile modal
+        async function carregarDadosUsuario() {
+            try {
+                const response = await fetch('/api/userinfo/getInfo?id=-1', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const userData = data.userInfoRequest;
+                    const moradaData = data.moradaRequest;
+                    
+                    // Update profile modal fields - Informações Pessoais
+                    document.getElementById('perfilNome').value = userData.nome || '';
+                    document.getElementById('perfilEmail').value = userData.email || '';
+                    document.getElementById('perfilTelefone').value = userData.telefone || '';
+                    document.getElementById('perfilNif').value = userData.nif || '';
+                    document.getElementById('perfilIban').value = userData.iban || '';
+                    
+                    // Update profile modal fields - Morada
+                    document.getElementById('perfilRua').value = moradaData.rua || '';
+                    document.getElementById('perfilPiso').value = moradaData.piso || '';
+                    document.getElementById('perfilNumeroPorta').value = moradaData.numeroPorta || '';
+                    document.getElementById('perfilLocalidade').value = moradaData.localidade || '';
+                    document.getElementById('perfilConcelho').value = moradaData.concelho || '';
+                    document.getElementById('perfilDistrito').value = moradaData.distrito || '';
+                    document.getElementById('perfilCodPostal').value = moradaData.codPostal || '';
+                    
+                    // Update avatar
+                    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.nome || 'User')}&background=0ea5e9&color=fff`;
+                    document.getElementById('perfilAvatar').src = avatarUrl;
+                    
+                    // Update dropdown display
+                    document.getElementById('userDisplayName').textContent = userData.nome || 'Utilizador';
+                    document.getElementById('dropdownUserName').textContent = userData.nome || 'Utilizador';
+                    document.getElementById('dropdownUserEmail').textContent = userData.email || 'utilizador@email.com';
+                    
+                    // Update navigation avatar
+                    const navAvatars = document.querySelectorAll('img[alt="Avatar"]');
+                    navAvatars.forEach(avatar => {
+                        avatar.src = avatarUrl;
+                    });
+                } else {
+                    console.error('Erro ao carregar dados do usuário:', response.status);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dados do usuário:', error);
+            }
+        }
+
+        // Handle profile form submission
+        document.getElementById('perfilForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const requestData = {
+                userInfoRequest: {
+                    id: -1,
+                    nome: document.getElementById('perfilNome').value,
+                    email: document.getElementById('perfilEmail').value,
+                    telefone: document.getElementById('perfilTelefone').value,
+                    morada_id: 0,
+                    nif: document.getElementById('perfilNif').value,
+                    dateTime: new Date().toISOString(),
+                    iban: document.getElementById('perfilIban').value
+                },
+                moradaRequest: {
+                    rua: document.getElementById('perfilRua').value,
+                    piso: document.getElementById('perfilPiso').value,
+                    numeroPorta: document.getElementById('perfilNumeroPorta').value,
+                    concelho: document.getElementById('perfilConcelho').value,
+                    distrito: document.getElementById('perfilDistrito').value,
+                    localidade: document.getElementById('perfilLocalidade').value,
+                    codPostal: document.getElementById('perfilCodPostal').value
+                }
+            };
+
+            try {
+                const response = await fetch('/api/userinfo/setInfo', {
+                    method: 'PUT',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                if (response.ok) {
+                    showToast('Perfil atualizado com sucesso!', 'success');
+                    fecharPerfilModal();
+                    // Reload user data to update UI
+                    carregarDadosUsuario();
+                } else {
+                    showToast('Erro ao atualizar perfil', 'error');
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar perfil:', error);
+                showToast('Erro ao atualizar perfil', 'error');
+            }
+        });
+
+        // Logout function
+        async function logout() {
+            try {
+                const response = await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                // Clear auth cookies regardless of response
+                clearAuthCookies();
+                
+                // Redirect to login page
+                window.location.href = '/';
+            } catch (error) {
+                console.error('Erro durante logout:', error);
+                // Still redirect even if logout fails
+                clearAuthCookies();
+                window.location.href = '/';
+            }
+        }
+
+        // Toast notification function
+        function showToast(message, type = 'info') {
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `fixed top-4 right-4 px-6 py-4 rounded-xl shadow-lg transform transition-transform duration-300 z-50 ${
+                type === 'success' ? 'bg-green-600' : 
+                type === 'error' ? 'bg-red-600' : 'bg-blue-600'
+            } text-white`;
+            
+            toast.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        ${type === 'success' ? 
+                            '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>' :
+                            type === 'error' ?
+                            '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>' :
+                            '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>'
+                        }
+                    </svg>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Show toast
+            setTimeout(() => {
+                toast.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Hide toast after 3 seconds
+            setTimeout(() => {
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+        // Load user data on page load
         document.addEventListener('DOMContentLoaded', function () {
+            // Load user info for navigation display
+            carregarDadosUsuario();
+            
             // Animate cards on load
             const cards = document.querySelectorAll('.card-hover');
             cards.forEach((card, index) => {
